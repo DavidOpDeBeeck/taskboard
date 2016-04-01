@@ -25,10 +25,10 @@ public class ProjectController
     }
 
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity<String> addProjects( @RequestParam( "title" ) String title )
+    public ResponseEntity<Project> addProjects( @RequestParam( "title" ) String title )
     {
         Project project = taskBoard.createProject( title );
-        return new ResponseEntity<>( project.getId(), HttpStatus.OK );
+        return new ResponseEntity<>( project, HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{id}", method = RequestMethod.GET )

@@ -63,13 +63,13 @@ public class ProjectControllerTest extends ControllerTest
         requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
 
         HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title, requestHeaders );
-        String projectId = restTemplate.postForObject( url(), httpEntity, String.class );
+        Project apiResponse = restTemplate.postForObject( url(), httpEntity, Project.class );
 
-        assertNotNull( projectId );
+        assertNotNull( apiResponse );
 
-        Project project = projectDAO.getById( projectId );
-        assertEquals( projectId, project.getId() );
-        assertEquals( title, project.getTitle() );
+        Project project = projectDAO.getById( apiResponse.getId() );
+        assertEquals( apiResponse.getId(), project.getId() );
+        assertEquals( apiResponse.getTitle(), project.getTitle() );
 
         projectDAO.remove( project );
     }
