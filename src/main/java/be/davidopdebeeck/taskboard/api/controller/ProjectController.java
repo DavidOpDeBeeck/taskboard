@@ -7,9 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -27,10 +25,10 @@ public class ProjectController
     }
 
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity addProjects( @RequestParam( "title" ) String title )
+    public ResponseEntity<String> addProjects( @RequestParam( "title" ) String title )
     {
-        taskBoard.createProject( title );
-        return new ResponseEntity<>( HttpStatus.OK );
+        Project project = taskBoard.createProject( title );
+        return new ResponseEntity<>( project.getId(), HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{id}", method = RequestMethod.GET )
