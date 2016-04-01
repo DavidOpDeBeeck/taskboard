@@ -37,4 +37,11 @@ public class ProjectController
         return new ResponseEntity<>( taskBoard.getProjectById( id ), HttpStatus.OK );
     }
 
+    @RequestMapping( value = "/{id}", method = RequestMethod.DELETE )
+    public ResponseEntity removeProjectById( @PathVariable( "id" ) String id )
+    {
+        taskBoard.removeProject( id );
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
 }

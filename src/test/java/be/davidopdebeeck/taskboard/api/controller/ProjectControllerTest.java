@@ -22,7 +22,7 @@ public class ProjectControllerTest extends ControllerTest
 
 
     @Test
-    public void testGetProjects() throws Exception
+    public void testGetProjects()
     {
         Project p1 = new Project( "Test Project #1" );
         Project p2 = new Project( "Test Project #2" );
@@ -55,7 +55,7 @@ public class ProjectControllerTest extends ControllerTest
     }
 
     @Test
-    public void testAddProjects() throws Exception
+    public void testAddProjects()
     {
         String title = "Test Project";
 
@@ -75,7 +75,7 @@ public class ProjectControllerTest extends ControllerTest
     }
 
     @Test
-    public void testGetProjectById() throws Exception
+    public void testGetProjectById()
     {
         Project project = new Project( "Test Project" );
         String projectId = project.getId();
@@ -89,6 +89,20 @@ public class ProjectControllerTest extends ControllerTest
         assertEquals( project.getTitle(), apiResponse.getTitle() );
 
         projectDAO.remove( project );
+    }
+
+    @Test
+    public void testRemoveProjectById()
+    {
+        Project project = new Project( "Test Project" );
+        String projectId = project.getId();
+
+        projectDAO.create( project );
+
+        restTemplate.delete( url() + "/" + projectId );
+
+        Project removedProject = projectDAO.getById( projectId );
+        assertNull( removedProject );
     }
 
     @Override
