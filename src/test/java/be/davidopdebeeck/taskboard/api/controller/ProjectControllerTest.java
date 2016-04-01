@@ -1,6 +1,7 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.application.Application;
+import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,8 +69,8 @@ public class ProjectControllerTest extends ControllerTest
         assertNotNull( apiResponse );
 
         Project project = projectDAO.getById( apiResponse.getId() );
-        assertEquals( apiResponse.getId(), project.getId() );
-        assertEquals( apiResponse.getTitle(), project.getTitle() );
+        assertEquals( project.getId(), apiResponse.getId() );
+        assertEquals( project.getTitle(), apiResponse.getTitle() );
 
         projectDAO.remove( project );
     }
@@ -103,6 +104,36 @@ public class ProjectControllerTest extends ControllerTest
 
         Project removedProject = projectDAO.getById( projectId );
         assertNull( removedProject );
+    }
+
+    @Test
+    public void testAddLaneToProjectById()
+    {
+        String title = "To Verify";
+        int sequence = 3;
+        boolean completed = true;
+
+        Project project = new Project( "Test Project" );
+
+        projectDAO.create( project );
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+
+        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
+        Project apiResponse = restTemplate.postForObject( url() + "/" + project.getId() + "/lanes", httpEntity, Project.class );
+
+        assertNotNull( apiResponse );
+        
+        Lane lane = apiResponse.getLanes()
+                .iterator()
+                .next();
+
+        assertEquals( title, lane.getTitle() );
+        assertEquals( sequence, lane.getSequence() );
+        assertEquals( completed, lane.isCompleted() );
+
+        projectDAO.remove( project );
     }
 
     @Override

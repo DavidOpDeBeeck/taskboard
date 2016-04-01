@@ -28,7 +28,6 @@ public class ProjectController
     public ResponseEntity<Project> addProjects( @RequestParam( "title" ) String title )
     {
         Project project = taskBoard.createProject( title );
-        taskBoard.addLaneToProject( project.getId(), "ToDo", 0, false );
         return new ResponseEntity<>( project, HttpStatus.OK );
     }
 
@@ -43,6 +42,14 @@ public class ProjectController
     {
         taskBoard.removeProject( id );
         return new ResponseEntity<>( HttpStatus.OK );
+    }
+
+    @RequestMapping( value = "/{id}/lanes", method = RequestMethod.POST )
+    public ResponseEntity<Project> addLaneToProjectById( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
+    {
+        Project project = taskBoard.getProjectById( id );
+        taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
+        return new ResponseEntity<>( taskBoard.getProjectById( id ), HttpStatus.OK );
     }
 
 }
