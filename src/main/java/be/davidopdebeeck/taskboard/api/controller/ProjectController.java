@@ -28,6 +28,7 @@ public class ProjectController
     public ResponseEntity<Project> addProjects( @RequestParam( "title" ) String title )
     {
         Project project = taskBoard.createProject( title );
+        taskBoard.addLaneToProject( project.getId(), "ToDo", 0, false );
         return new ResponseEntity<>( project, HttpStatus.OK );
     }
 

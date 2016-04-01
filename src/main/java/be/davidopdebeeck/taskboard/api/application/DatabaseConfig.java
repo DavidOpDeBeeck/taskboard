@@ -1,6 +1,8 @@
 package be.davidopdebeeck.taskboard.api.application;
 
+import be.davidopdebeeck.taskboard.dao.LaneDAO;
 import be.davidopdebeeck.taskboard.dao.ProjectDAO;
+import be.davidopdebeeck.taskboard.dao.impl.LaneDAOImpl;
 import be.davidopdebeeck.taskboard.dao.impl.ProjectDAOImpl;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import be.davidopdebeeck.taskboard.service.TaskBoardImpl;
@@ -29,6 +31,14 @@ public class DatabaseConfig
         ProjectDAOImpl projectDAO = new ProjectDAOImpl();
         projectDAO.setJdbcTemplate( jdbcTemplate() );
         return projectDAO;
+    }
+
+    @Bean
+    public LaneDAO laeDAO()
+    {
+        LaneDAOImpl laneDAO = new LaneDAOImpl();
+        laneDAO.setJdbcTemplate( jdbcTemplate() );
+        return laneDAO;
     }
 
     @Bean
