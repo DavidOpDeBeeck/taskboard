@@ -3,9 +3,12 @@ package be.davidopdebeeck.taskboard.api.controller;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 
@@ -25,31 +28,53 @@ public class ProjectController
     }
 
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity<Project> addProjects( @RequestParam( "title" ) String title )
+    public ResponseEntity addProject( @RequestParam( "title" ) String title, UriComponentsBuilder b )
     {
         Project project = taskBoard.createProject( title );
-        return new ResponseEntity<>( project, HttpStatus.OK );
+
+        UriComponents components = b.path( "/projects/{id}" ).buildAndExpand( project.getId() );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation( components.toUri() );
+
+        return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
     }
 
     @RequestMapping( value = "/{id}", method = RequestMethod.GET )
-    public ResponseEntity<Project> getProjectById( @PathVariable( "id" ) String id )
+    public ResponseEntity<Project> getProject( @PathVariable( "id" ) String id )
     {
         return new ResponseEntity<>( taskBoard.getProjectById( id ), HttpStatus.OK );
     }
 
+    @RequestMapping( value = "/{id}", method = RequestMethod.PUT )
+    public ResponseEntity updateProject( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title )
+    {
+        Project project = taskBoard.getProjectById( id );
+        project.setTitle( title );
+        taskBoard.updateProject( project );
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
     @RequestMapping( value = "/{id}", method = RequestMethod.DELETE )
-    public ResponseEntity removeProjectById( @PathVariable( "id" ) String id )
+    public ResponseEntity removeProject( @PathVariable( "id" ) String id )
     {
         taskBoard.removeProject( id );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{id}/lanes", method = RequestMethod.POST )
-    public ResponseEntity<Project> addLaneToProjectById( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
+    public ResponseEntity addLaneToProject( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed, UriComponentsBuilder b )
     {
         Project project = taskBoard.getProjectById( id );
+        // Todo let addLaneToProject retur na Lane Object
         taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
-        return new ResponseEntity<>( taskBoard.getProjectById( id ), HttpStatus.OK );
+
+        UriComponents components = b.path( "/lanes/{id}" ).buildAndExpand( project.getId() );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation( components.toUri() );
+
+        return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
     }
 
 }

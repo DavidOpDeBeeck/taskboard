@@ -1,7 +1,6 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.dao.ProjectDAO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.TestRestTemplate;
@@ -21,8 +20,6 @@ public abstract class ControllerTest
     private boolean ssl;
 
     protected RestTemplate restTemplate = new TestRestTemplate();
-
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     protected ProjectDAO projectDAO;
