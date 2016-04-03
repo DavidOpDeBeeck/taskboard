@@ -9,18 +9,31 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping( "/lanes" )
+@RequestMapping( "/lanes/{id}" )
 public class LanesController
 {
 
     @Autowired
     TaskBoard taskBoard;
 
-    @RequestMapping( value = "/{id}", method = RequestMethod.GET )
+    @RequestMapping( method = RequestMethod.GET )
     public ResponseEntity<Lane> getLane( @PathVariable( "id" ) String id )
     {
         Lane lane = taskBoard.getLaneById( id );
         return new ResponseEntity<>( lane, HttpStatus.OK );
+    }
+
+    @RequestMapping( method = RequestMethod.PUT )
+    public ResponseEntity updateLane( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
+    {
+        Lane lane = taskBoard.getLaneById( id );
+
+        lane.setTitle( title );
+        lane.setSequence( sequence );
+        lane.setCompleted( completed );
+
+        taskBoard.updateLane( lane );
+        return new ResponseEntity<>( HttpStatus.OK );
     }
 
 }
