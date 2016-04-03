@@ -1,5 +1,6 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
+import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +67,9 @@ public class ProjectController
     public ResponseEntity addLaneToProject( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed, UriComponentsBuilder b )
     {
         Project project = taskBoard.getProjectById( id );
-        // Todo let addLaneToProject retur na Lane Object
-        taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
+        Lane lane = taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
 
-        UriComponents components = b.path( "/lanes/{id}" ).buildAndExpand( project.getId() );
+        UriComponents components = b.path( "/lanes/{id}" ).buildAndExpand( lane.getId() );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation( components.toUri() );

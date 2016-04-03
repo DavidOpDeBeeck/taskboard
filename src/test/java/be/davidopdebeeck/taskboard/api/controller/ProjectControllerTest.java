@@ -1,6 +1,7 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.application.Application;
+import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -135,8 +136,7 @@ public class ProjectControllerTest extends ControllerTest
     @Test
     public void testAddLaneToProject()
     {
-        // TODO when api returns location header fix this test
-        /*String title = "To Verify";
+        String title = "To Verify";
         int sequence = 3;
         boolean completed = true;
 
@@ -148,17 +148,23 @@ public class ProjectControllerTest extends ControllerTest
         requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
 
         HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
-        Project apiResponse = restTemplate.postForObject( url() + "/" + project.getId() + "/lanes", httpEntity, Project.class );
+        HttpEntity<String> response = restTemplate.exchange( url() + "/" + project.getId() + "/lanes", HttpMethod.POST, httpEntity, String.class );
+
+        HttpHeaders headers = response.getHeaders();
+        String location = headers.getLocation().toString();
+
+        HttpEntity<Lane> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Lane.class );
 
         assertNotNull( apiResponse );
 
-        Lane lane = apiResponse.getLanes().iterator().next();
+        Lane lane = laneDAO.getById( apiResponse.getBody().getId() );
 
-        assertEquals( title, lane.getTitle() );
-        assertEquals( sequence, lane.getSequence() );
-        assertEquals( completed, lane.isCompleted() );
+        assertEquals( lane.getId(), apiResponse.getBody().getId() );
+        assertEquals( lane.getTitle(), apiResponse.getBody().getTitle() );
+        assertEquals( lane.getSequence(), apiResponse.getBody().getSequence() );
+        assertEquals( lane.isCompleted(), apiResponse.getBody().isCompleted() );
 
-        projectDAO.remove( project );*/
+        projectDAO.remove( project );
     }
 
     @Override
