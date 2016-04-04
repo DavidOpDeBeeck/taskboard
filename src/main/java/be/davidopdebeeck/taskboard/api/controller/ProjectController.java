@@ -177,7 +177,7 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.DELETE )
-    public ResponseEntity removeLane( @PathVariable( "projectId" ) String id,
+    public ResponseEntity removeTask( @PathVariable( "projectId" ) String id,
             @PathVariable( "laneId" ) String laneId,
             @PathVariable( "taskId" ) String taskId
     )
