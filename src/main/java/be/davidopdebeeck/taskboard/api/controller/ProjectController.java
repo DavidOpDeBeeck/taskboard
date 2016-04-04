@@ -89,13 +89,14 @@ public class ProjectController
     @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.PUT )
     public ResponseEntity updateLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
     {
+        Project project = taskBoard.getProjectById( id );
         Lane lane = taskBoard.getLaneById( id );
 
         lane.setTitle( title );
         lane.setSequence( sequence );
         lane.setCompleted( completed );
 
-        taskBoard.updateLane( lane );
+        taskBoard.updateLane( project, lane );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
