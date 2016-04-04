@@ -33,7 +33,8 @@ public class ProjectController
     {
         Project project = taskBoard.createProject( title );
 
-        UriComponents components = b.path( "/projects/{id}" ).buildAndExpand( project.getId() );
+        UriComponents components = b.path( "/projects/{id}" )
+                .buildAndExpand( project.getId() );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation( components.toUri() );
@@ -69,12 +70,44 @@ public class ProjectController
         Project project = taskBoard.getProjectById( id );
         Lane lane = taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
 
-        UriComponents components = b.path( "/lanes/{id}" ).buildAndExpand( lane.getId() );
+        UriComponents components = b.path( "projects/{id}/lanes/{id}" )
+                .buildAndExpand( project.getId(), lane.getId() );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation( components.toUri() );
 
         return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
+    }
+
+    @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.GET )
+    public ResponseEntity<Lane> getLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId )
+    {
+        Lane lane = taskBoard.getLaneById( laneId );
+        return new ResponseEntity<>( lane, HttpStatus.OK );
+    }
+
+    @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.PUT )
+    public ResponseEntity updateLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
+    {
+        Project project = taskBoard.getProjectById( id );
+        Lane lane = taskBoard.getLaneById( laneId );
+
+        lane.setTitle( title );
+        lane.setSequence( sequence );
+        lane.setCompleted( completed );
+
+        for ( Lane l : project.getLanes() )
+        {
+            if ( l.getSequence() == sequence )
+            {
+                l.setSequence( sequence + 1 );
+                taskBoard.updateLane( l );
+                sequence += 1;
+            }
+        }
+
+        taskBoard.updateLane( lane );
+        return new ResponseEntity<>( HttpStatus.OK );
     }
 
 }

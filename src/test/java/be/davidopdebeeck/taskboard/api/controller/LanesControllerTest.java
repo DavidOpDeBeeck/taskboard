@@ -3,6 +3,8 @@ package be.davidopdebeeck.taskboard.api.controller;
 import be.davidopdebeeck.taskboard.api.application.Application;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -22,16 +24,28 @@ import static org.junit.Assert.assertNotNull;
 public class LanesControllerTest extends ControllerTest
 {
 
+    private Project project;
+
+    @Before
+    public void setUp()
+    {
+        Project project = new Project( "Test Project" );
+        projectDAO.create( project );
+        this.project = project;
+    }
+
+    @After
+    public void breakDown()
+    {
+        projectDAO.remove( project );
+    }
+
     @Test
     public void testGetLane() throws Exception
     {
         String title = "To Verify";
         int sequence = 3;
         boolean completed = true;
-
-        Project project = new Project( "Test Project" );
-
-        projectDAO.create( project );
 
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
@@ -40,20 +54,24 @@ public class LanesControllerTest extends ControllerTest
         HttpEntity<String> response = restTemplate.exchange( baseUrl() + "/projects/" + project.getId() + "/lanes", HttpMethod.POST, httpEntity, String.class );
 
         HttpHeaders headers = response.getHeaders();
-        String location = headers.getLocation().toString();
+        String location = headers.getLocation()
+                .toString();
 
         HttpEntity<Lane> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Lane.class );
 
         assertNotNull( apiResponse );
 
-        Lane lane = laneDAO.getById( apiResponse.getBody().getId() );
+        Lane lane = laneDAO.getById( apiResponse.getBody()
+                .getId() );
 
-        assertEquals( lane.getId(), apiResponse.getBody().getId() );
-        assertEquals( lane.getTitle(), apiResponse.getBody().getTitle() );
-        assertEquals( lane.getSequence(), apiResponse.getBody().getSequence() );
-        assertEquals( lane.isCompleted(), apiResponse.getBody().isCompleted() );
-
-        projectDAO.remove( project );
+        assertEquals( lane.getId(), apiResponse.getBody()
+                .getId() );
+        assertEquals( lane.getTitle(), apiResponse.getBody()
+                .getTitle() );
+        assertEquals( lane.getSequence(), apiResponse.getBody()
+                .getSequence() );
+        assertEquals( lane.isCompleted(), apiResponse.getBody()
+                .isCompleted() );
     }
 
     @Test
@@ -63,29 +81,31 @@ public class LanesControllerTest extends ControllerTest
         int sequence = 3;
         boolean completed = true;
 
-        Project project = new Project( "Test Project" );
-
-        projectDAO.create( project );
-
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
 
         HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
-        HttpEntity<String> response = restTemplate.exchange( baseUrl() + "/projects/" + project.getId() + "/lanes", HttpMethod.POST, httpEntity, String.class );
+        HttpEntity<String> response = restTemplate.exchange( url(), HttpMethod.POST, httpEntity, String.class );
 
         HttpHeaders headers = response.getHeaders();
-        String location = headers.getLocation().toString();
+        String location = headers.getLocation()
+                .toString();
 
         HttpEntity<Lane> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Lane.class );
 
         assertNotNull( apiResponse );
 
-        Lane lane = laneDAO.getById( apiResponse.getBody().getId() );
+        Lane lane = laneDAO.getById( apiResponse.getBody()
+                .getId() );
 
-        assertEquals( lane.getId(), apiResponse.getBody().getId() );
-        assertEquals( lane.getTitle(), apiResponse.getBody().getTitle() );
-        assertEquals( lane.getSequence(), apiResponse.getBody().getSequence() );
-        assertEquals( lane.isCompleted(), apiResponse.getBody().isCompleted() );
+        assertEquals( lane.getId(), apiResponse.getBody()
+                .getId() );
+        assertEquals( lane.getTitle(), apiResponse.getBody()
+                .getTitle() );
+        assertEquals( lane.getSequence(), apiResponse.getBody()
+                .getSequence() );
+        assertEquals( lane.isCompleted(), apiResponse.getBody()
+                .isCompleted() );
 
         title = "ToDo";
         sequence = 1;
@@ -94,18 +114,17 @@ public class LanesControllerTest extends ControllerTest
         httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
         restTemplate.put( url() + "/" + lane.getId(), httpEntity, Lane.class );
 
-        lane = laneDAO.getById( apiResponse.getBody().getId() );
+        lane = laneDAO.getById( apiResponse.getBody()
+                .getId() );
 
         assertEquals( title, lane.getTitle() );
         assertEquals( sequence, lane.getSequence() );
         assertEquals( completed, lane.isCompleted() );
-
-        projectDAO.remove( project );
     }
 
     @Override
     protected String context()
     {
-        return "lanes";
+        return String.format( "projects/%s/lanes", project.getId() );
     }
 }
