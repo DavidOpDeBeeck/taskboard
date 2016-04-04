@@ -2,6 +2,7 @@ package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.dao.LaneDAO;
 import be.davidopdebeeck.taskboard.dao.ProjectDAO;
+import be.davidopdebeeck.taskboard.dao.TaskDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.TestRestTemplate;
@@ -27,6 +28,9 @@ public abstract class ControllerTest
 
     @Autowired
     protected LaneDAO laneDAO;
+
+    @Autowired
+    protected TaskDAO taskDAO;
 
     protected String url()
     {

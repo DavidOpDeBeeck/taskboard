@@ -2,6 +2,7 @@ package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
+import be.davidopdebeeck.taskboard.core.Task;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -28,8 +29,14 @@ public class ProjectController
         return new ResponseEntity<>( taskBoard.getAllProjects(), HttpStatus.OK );
     }
 
+    //-------------------------------------------
+    // region Project
+    //-------------------------------------------
+
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity addProject( @RequestParam( "title" ) String title, UriComponentsBuilder b )
+    public ResponseEntity addProject( @RequestParam( "title" ) String title,
+            UriComponentsBuilder b
+    )
     {
         Project project = taskBoard.createProject( title );
 
@@ -49,7 +56,9 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{id}", method = RequestMethod.PUT )
-    public ResponseEntity updateProject( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title )
+    public ResponseEntity updateProject( @PathVariable( "id" ) String id,
+            @RequestParam( "title" ) String title
+    )
     {
         Project project = taskBoard.getProjectById( id );
         project.setTitle( title );
@@ -64,8 +73,21 @@ public class ProjectController
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
-    @RequestMapping( value = "/{id}/lanes", method = RequestMethod.POST )
-    public ResponseEntity addLaneToProject( @PathVariable( "id" ) String id, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed, UriComponentsBuilder b )
+    //-------------------------------------------
+    // endregion
+    //-------------------------------------------
+
+    //-------------------------------------------
+    // region Lane
+    //-------------------------------------------
+
+    @RequestMapping( value = "/{projectId}/lanes", method = RequestMethod.POST )
+    public ResponseEntity addLaneToProject( @PathVariable( "projectId" ) String id,
+            @RequestParam( "title" ) String title,
+            @RequestParam( "sequence" ) Integer sequence,
+            @RequestParam( "completed" ) Boolean completed,
+            UriComponentsBuilder b
+    )
     {
         Project project = taskBoard.getProjectById( id );
         Lane lane = taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
@@ -79,23 +101,31 @@ public class ProjectController
         return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
     }
 
-    @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.GET )
-    public ResponseEntity<Lane> getLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId )
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.GET )
+    public ResponseEntity<Lane> getLane( @PathVariable( "projectId" ) String id,
+            @PathVariable( "laneId" ) String laneId
+    )
     {
         Lane lane = taskBoard.getLaneById( laneId );
         return new ResponseEntity<>( lane, HttpStatus.OK );
     }
 
-    @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.DELETE )
-    public ResponseEntity<Lane> removeLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId )
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.DELETE )
+    public ResponseEntity<Lane> removeLane( @PathVariable( "projectId" ) String id,
+            @PathVariable( "laneId" ) String laneId
+    )
     {
         taskBoard.removeLaneFromProject( id, laneId );
-        taskBoard.removeLane( laneId );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
-    @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.PUT )
-    public ResponseEntity updateLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.PUT )
+    public ResponseEntity updateLane( @PathVariable( "projectId" ) String id,
+            @PathVariable( "laneId" ) String laneId,
+            @RequestParam( "title" ) String title,
+            @RequestParam( "sequence" ) Integer sequence,
+            @RequestParam( "completed" ) Boolean completed
+    )
     {
         Project project = taskBoard.getProjectById( id );
         Lane lane = taskBoard.getLaneById( laneId );
@@ -107,5 +137,57 @@ public class ProjectController
         taskBoard.updateLane( project, lane );
         return new ResponseEntity<>( HttpStatus.OK );
     }
+
+    //-------------------------------------------
+    // endregion
+    //-------------------------------------------
+
+    //-------------------------------------------
+    // region Task
+    //-------------------------------------------
+
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks", method = RequestMethod.POST )
+    public ResponseEntity addTaskToLane( @PathVariable( "projectId" ) String id,
+            @PathVariable( "laneId" ) String laneId,
+            @RequestParam( "title" ) String title,
+            @RequestParam( "description" ) String description,
+            @RequestParam( "assignee" ) String assignee,
+            UriComponentsBuilder b
+    )
+    {
+        Task task = taskBoard.addTaskToLane( laneId, title, description, assignee );
+
+        UriComponents components = b.path( "projects/{id}/lanes/{id}/tasks/{id}" )
+                .buildAndExpand( id, laneId, task.getId() );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation( components.toUri() );
+
+        return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
+    }
+
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.GET )
+    public ResponseEntity<Task> getTask( @PathVariable( "projectId" ) String id,
+            @PathVariable( "laneId" ) String laneId,
+            @PathVariable( "taskId" ) String taskId
+    )
+    {
+        Task task = taskBoard.getTaskById( taskId );
+        return new ResponseEntity<>( task, HttpStatus.OK );
+    }
+
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.DELETE )
+    public ResponseEntity removeLane( @PathVariable( "projectId" ) String id,
+            @PathVariable( "laneId" ) String laneId,
+            @PathVariable( "taskId" ) String taskId
+    )
+    {
+        taskBoard.removeTaskFromLane( laneId, taskId );
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
+    //-------------------------------------------
+    // endregion
+    //-------------------------------------------
 
 }

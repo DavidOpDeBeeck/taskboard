@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 @RunWith( SpringJUnit4ClassRunner.class )
 @SpringApplicationConfiguration( classes = Application.class )
 @WebIntegrationTest
-public class LanesControllerTest extends ControllerTest
+public class LaneControllerTest extends ControllerTest
 {
 
     private Project project;
