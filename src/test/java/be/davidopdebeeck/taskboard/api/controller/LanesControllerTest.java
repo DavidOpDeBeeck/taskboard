@@ -15,8 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith( SpringJUnit4ClassRunner.class )
 @SpringApplicationConfiguration( classes = Application.class )
@@ -122,7 +121,22 @@ public class LanesControllerTest extends ControllerTest
         assertEquals( completed, lane.isCompleted() );
     }
 
+    @Test
+    public void testRemoveLane()
+    {
+        Lane lane = new Lane( "Test Lane", 0, false );
+        String laneId = lane.getId();
+
+        laneDAO.create( lane );
+
+        restTemplate.delete( url() + "/" + laneId );
+
+        Lane removedLane = laneDAO.getById( laneId );
+        assertNull( removedLane );
+    }
+
     @Override
+
     protected String context()
     {
         return String.format( "projects/%s/lanes", project.getId() );
