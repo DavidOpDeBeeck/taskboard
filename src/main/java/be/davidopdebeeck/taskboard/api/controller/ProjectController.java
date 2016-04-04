@@ -90,7 +90,7 @@ public class ProjectController
     public ResponseEntity updateLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
     {
         Project project = taskBoard.getProjectById( id );
-        Lane lane = taskBoard.getLaneById( id );
+        Lane lane = taskBoard.getLaneById( laneId );
 
         lane.setTitle( title );
         lane.setSequence( sequence );
