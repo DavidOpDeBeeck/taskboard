@@ -62,24 +62,43 @@ public class TaskControllerTest extends ControllerTest
         HttpEntity<String> response = restTemplate.exchange( url(), HttpMethod.POST, httpEntity, String.class );
 
         HttpHeaders headers = response.getHeaders();
-        String location = headers.getLocation()
-                .toString();
+        String location = headers.getLocation().toString();
 
         HttpEntity<Task> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Task.class );
 
         assertNotNull( apiResponse );
 
-        Task task = taskDAO.getById( apiResponse.getBody()
-                .getId() );
+        Task task = taskDAO.getById( apiResponse.getBody().getId() );
 
-        assertEquals( task.getId(), apiResponse.getBody()
-                .getId() );
-        assertEquals( task.getTitle(), apiResponse.getBody()
-                .getTitle() );
-        assertEquals( task.getDescription(), apiResponse.getBody()
-                .getDescription() );
-        assertEquals( task.getAssignee(), apiResponse.getBody()
-                .getAssignee() );
+        assertEquals( task.getId(), apiResponse.getBody().getId() );
+        assertEquals( task.getTitle(), apiResponse.getBody().getTitle() );
+        assertEquals( task.getDescription(), apiResponse.getBody().getDescription() );
+        assertEquals( task.getAssignee(), apiResponse.getBody().getAssignee() );
+
+        projectDAO.remove( project );
+    }
+
+    @Test
+    public void testUpdateTask()
+    {
+        String title1 = "Test Task #1";
+        String title2 = "Test Task #2";
+        String description = "Make a Task description";
+        String assignee = "David";
+
+        Task task = new Task( title1, description, assignee );
+
+        taskDAO.create( task );
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+
+        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title2 + "&description=" + description + "&assignee=" + assignee, requestHeaders );
+        restTemplate.put( url() + "/" + task.getId(), httpEntity, Task.class );
+
+        Task newTask = taskDAO.getById( task.getId() );
+        assertEquals( task.getId(), newTask.getId() );
+        assertEquals( title2, newTask.getTitle() );
 
         projectDAO.remove( project );
     }

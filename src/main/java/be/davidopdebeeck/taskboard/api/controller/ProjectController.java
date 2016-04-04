@@ -49,27 +49,27 @@ public class ProjectController
         return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
     }
 
-    @RequestMapping( value = "/{id}", method = RequestMethod.GET )
-    public ResponseEntity<Project> getProject( @PathVariable( "id" ) String id )
+    @RequestMapping( value = "/{projectId}", method = RequestMethod.GET )
+    public ResponseEntity<Project> getProject( @PathVariable( "projectId" ) String projectId )
     {
-        return new ResponseEntity<>( taskBoard.getProjectById( id ), HttpStatus.OK );
+        return new ResponseEntity<>( taskBoard.getProjectById( projectId ), HttpStatus.OK );
     }
 
-    @RequestMapping( value = "/{id}", method = RequestMethod.PUT )
-    public ResponseEntity updateProject( @PathVariable( "id" ) String id,
+    @RequestMapping( value = "/{projectId}", method = RequestMethod.PUT )
+    public ResponseEntity updateProject( @PathVariable( "projectId" ) String projectId,
             @RequestParam( "title" ) String title
     )
     {
-        Project project = taskBoard.getProjectById( id );
+        Project project = taskBoard.getProjectById( projectId );
         project.setTitle( title );
         taskBoard.updateProject( project );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
-    @RequestMapping( value = "/{id}", method = RequestMethod.DELETE )
-    public ResponseEntity removeProject( @PathVariable( "id" ) String id )
+    @RequestMapping( value = "/{projectId}", method = RequestMethod.DELETE )
+    public ResponseEntity removeProject( @PathVariable( "projectId" ) String projectId )
     {
-        taskBoard.removeProject( id );
+        taskBoard.removeProject( projectId );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
@@ -82,14 +82,14 @@ public class ProjectController
     //-------------------------------------------
 
     @RequestMapping( value = "/{projectId}/lanes", method = RequestMethod.POST )
-    public ResponseEntity addLaneToProject( @PathVariable( "projectId" ) String id,
+    public ResponseEntity addLaneToProject( @PathVariable( "projectId" ) String projectId,
             @RequestParam( "title" ) String title,
             @RequestParam( "sequence" ) Integer sequence,
             @RequestParam( "completed" ) Boolean completed,
             UriComponentsBuilder b
     )
     {
-        Project project = taskBoard.getProjectById( id );
+        Project project = taskBoard.getProjectById( projectId );
         Lane lane = taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
 
         UriComponents components = b.path( "projects/{id}/lanes/{id}" )
@@ -102,7 +102,7 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.GET )
-    public ResponseEntity<Lane> getLane( @PathVariable( "projectId" ) String id,
+    public ResponseEntity<Lane> getLane( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId
     )
     {
@@ -111,23 +111,23 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.DELETE )
-    public ResponseEntity<Lane> removeLane( @PathVariable( "projectId" ) String id,
+    public ResponseEntity<Lane> removeLane( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId
     )
     {
-        taskBoard.removeLaneFromProject( id, laneId );
+        taskBoard.removeLaneFromProject( projectId, laneId );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.PUT )
-    public ResponseEntity updateLane( @PathVariable( "projectId" ) String id,
+    public ResponseEntity updateLane( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId,
             @RequestParam( "title" ) String title,
             @RequestParam( "sequence" ) Integer sequence,
             @RequestParam( "completed" ) Boolean completed
     )
     {
-        Project project = taskBoard.getProjectById( id );
+        Project project = taskBoard.getProjectById( projectId );
         Lane lane = taskBoard.getLaneById( laneId );
 
         lane.setTitle( title );
@@ -147,7 +147,7 @@ public class ProjectController
     //-------------------------------------------
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks", method = RequestMethod.POST )
-    public ResponseEntity addTaskToLane( @PathVariable( "projectId" ) String id,
+    public ResponseEntity addTaskToLane( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId,
             @RequestParam( "title" ) String title,
             @RequestParam( "description" ) String description,
@@ -158,7 +158,7 @@ public class ProjectController
         Task task = taskBoard.addTaskToLane( laneId, title, description, assignee );
 
         UriComponents components = b.path( "projects/{id}/lanes/{id}/tasks/{id}" )
-                .buildAndExpand( id, laneId, task.getId() );
+                .buildAndExpand( projectId, laneId, task.getId() );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation( components.toUri() );
@@ -166,8 +166,28 @@ public class ProjectController
         return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
     }
 
+    @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.PUT )
+    public ResponseEntity updateTask( @PathVariable( "projectId" ) String projectId,
+                                         @PathVariable( "laneId" ) String laneId,
+                                         @PathVariable( "taskId" ) String taskId,
+                                         @RequestParam( "title" ) String title,
+                                         @RequestParam( "description" ) String description,
+                                         @RequestParam( "assignee" ) String assignee
+    )
+    {
+        Task task = taskBoard.getTaskById( taskId );
+
+        task.setTitle( title );
+        task.setDescription( description );
+        task.setAssignee( assignee );
+
+        taskBoard.updateTask( task );
+
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
     @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.GET )
-    public ResponseEntity<Task> getTask( @PathVariable( "projectId" ) String id,
+    public ResponseEntity<Task> getTask( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId,
             @PathVariable( "taskId" ) String taskId
     )
@@ -177,7 +197,7 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.DELETE )
-    public ResponseEntity removeTask( @PathVariable( "projectId" ) String id,
+    public ResponseEntity removeTask( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId,
             @PathVariable( "taskId" ) String taskId
     )
