@@ -70,8 +70,8 @@ public class ProjectController
         Project project = taskBoard.getProjectById( id );
         Lane lane = taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
 
-        UriComponents components = b.path( "projects/{id}/lanes/{id}" )
-                .buildAndExpand( project.getId(), lane.getId() );
+        UriComponents components = b.path( "/lanes/{id}" )
+                .buildAndExpand( lane.getId() );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation( components.toUri() );
@@ -89,22 +89,11 @@ public class ProjectController
     @RequestMapping( value = "/{id}/lanes/{laneId}", method = RequestMethod.PUT )
     public ResponseEntity updateLane( @PathVariable( "id" ) String id, @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed )
     {
-        Project project = taskBoard.getProjectById( id );
-        Lane lane = taskBoard.getLaneById( laneId );
+        Lane lane = taskBoard.getLaneById( id );
 
         lane.setTitle( title );
         lane.setSequence( sequence );
         lane.setCompleted( completed );
-
-        for ( Lane l : project.getLanes() )
-        {
-            if ( l.getSequence() == sequence )
-            {
-                l.setSequence( sequence + 1 );
-                taskBoard.updateLane( l );
-                sequence += 1;
-            }
-        }
 
         taskBoard.updateLane( lane );
         return new ResponseEntity<>( HttpStatus.OK );
