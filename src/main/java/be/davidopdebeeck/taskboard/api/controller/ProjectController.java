@@ -56,10 +56,10 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}", method = RequestMethod.PUT )
-    public ResponseEntity updateProject( @PathVariable( "projectId" ) String projectId, @RequestParam( "title" ) String title )
+    public ResponseEntity updateProject( @PathVariable( "projectId" ) String projectId, @RequestBody ProjectDTO dto )
     {
         Project project = taskBoard.getProjectById( projectId );
-        project.setTitle( title );
+        project.setTitle( dto.getTitle() );
         taskBoard.updateProject( project );
         return new ResponseEntity<>( HttpStatus.OK );
     }

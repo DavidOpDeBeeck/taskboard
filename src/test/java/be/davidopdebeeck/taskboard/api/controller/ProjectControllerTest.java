@@ -111,10 +111,13 @@ public class ProjectControllerTest extends ControllerTest
 
         projectDAO.create( project );
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        ProjectDTO dto = new ProjectDTO();
+        dto.setTitle( title2 );
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title2, requestHeaders );
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_JSON );
+
+        HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         restTemplate.put( url() + "/" + project.getId(), httpEntity, Project.class );
 
         Project newProject = projectDAO.getById( project.getId() );
