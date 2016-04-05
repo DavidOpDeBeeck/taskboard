@@ -89,11 +89,10 @@ public class ProjectController
             UriComponentsBuilder b
     )
     {
-        Project project = taskBoard.getProjectById( projectId );
-        Lane lane = taskBoard.addLaneToProject( project.getId(), title, sequence, completed );
+        Lane lane = taskBoard.addLaneToProject( projectId, title, sequence, completed );
 
         UriComponents components = b.path( "projects/{id}/lanes/{id}" )
-                .buildAndExpand( project.getId(), lane.getId() );
+                .buildAndExpand( projectId, lane.getId() );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation( components.toUri() );
@@ -197,7 +196,7 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}/tasks/{taskId}", method = RequestMethod.DELETE )
-    public ResponseEntity removeTask( @PathVariable( "projectId" ) String projectId,
+    public ResponseEntity removeTaskFromLane( @PathVariable( "projectId" ) String projectId,
             @PathVariable( "laneId" ) String laneId,
             @PathVariable( "taskId" ) String taskId
     )

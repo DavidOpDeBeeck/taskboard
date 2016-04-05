@@ -104,7 +104,7 @@ public class TaskControllerTest extends ControllerTest
     }
 
     @Test
-    public void testRemoveTask()
+    public void testRemoveTaskFromLane()
     {
         Task task = new Task( "Test Task", "Test Task description", "David" );
         String taskId = task.getId();
