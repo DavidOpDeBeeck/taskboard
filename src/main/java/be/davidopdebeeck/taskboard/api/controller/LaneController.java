@@ -51,10 +51,15 @@ public class LaneController
     }
 
     @RequestMapping( value = "/tasks", method = RequestMethod.POST )
-    public ResponseEntity addTaskToLane( @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "description" ) String description, @RequestParam( "assignee" ) String assignee, UriComponentsBuilder b
+    public ResponseEntity addTaskToLane( @PathVariable( "laneId" ) String laneId, @RequestParam( value = "id", required = false ) String id, @RequestParam( "title" ) String title, @RequestParam( "description" ) String description, @RequestParam( "assignee" ) String assignee, UriComponentsBuilder b
     )
     {
-        Task task = taskBoard.addTaskToLane( laneId, title, description, assignee );
+        Task task;
+
+        if ( id == null )
+            task = taskBoard.addTaskToLane( laneId, title, description, assignee );
+        else
+            task = taskBoard.addTaskToLane( laneId, id );
 
         UriComponents components = b.path( "tasks/{id}" ).buildAndExpand( task.getId() );
 
