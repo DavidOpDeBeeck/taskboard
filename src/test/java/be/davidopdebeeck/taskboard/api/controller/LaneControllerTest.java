@@ -1,6 +1,8 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.application.Application;
+import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
+import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.core.Task;
@@ -76,10 +78,15 @@ public class LaneControllerTest extends ControllerTest
         sequence = 1;
         completed = false;
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        LaneDTO dto = new LaneDTO();
+        dto.setTitle( title );
+        dto.setSequence( sequence );
+        dto.setCompleted( completed );
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_JSON );
+
+        HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         restTemplate.put( url() + "/" + lane.getId(), httpEntity, Lane.class );
 
         lane = laneDAO.getById( lane.getId() );
@@ -115,10 +122,16 @@ public class LaneControllerTest extends ControllerTest
         String description = "Make a Task description";
         String assignee = "David";
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        TaskDTO dto = new TaskDTO();
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&description=" + description + "&assignee=" + assignee, requestHeaders );
+        dto.setTitle( title );
+        dto.setDescription( description );
+        dto.setAssignee( assignee );
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_JSON );
+
+        HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         HttpEntity<String> response = restTemplate.exchange( url() + "/" + lane.getId() + "/tasks", HttpMethod.POST, httpEntity, String.class );
 
         HttpHeaders headers = response.getHeaders();

@@ -1,6 +1,8 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.application.Application;
+import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
+import be.davidopdebeeck.taskboard.api.dto.ProjectDTO;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import org.junit.Test;
@@ -59,10 +61,13 @@ public class ProjectControllerTest extends ControllerTest
     {
         String title = "Test Project";
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        ProjectDTO dto = new ProjectDTO();
+        dto.setTitle( title );
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title, requestHeaders );
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_JSON );
+
+        HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         HttpEntity<String> response = restTemplate.exchange( url(), HttpMethod.POST, httpEntity, String.class );
 
         HttpHeaders headers = response.getHeaders();
@@ -144,10 +149,15 @@ public class ProjectControllerTest extends ControllerTest
 
         projectDAO.create( project );
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        LaneDTO dto = new LaneDTO();
+        dto.setTitle( title );
+        dto.setSequence( sequence );
+        dto.setCompleted( completed );
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_JSON );
+
+        HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         HttpEntity<String> response = restTemplate.exchange( url() + "/" + project.getId() + "/lanes", HttpMethod.POST, httpEntity, String.class );
 
         HttpHeaders headers = response.getHeaders();

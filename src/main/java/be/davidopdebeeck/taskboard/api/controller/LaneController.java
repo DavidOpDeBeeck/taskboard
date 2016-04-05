@@ -1,5 +1,7 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
+import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
+import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Task;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
@@ -37,41 +39,42 @@ public class LaneController
     }
 
     @RequestMapping( method = RequestMethod.PUT )
-    public ResponseEntity updateLane( @PathVariable( "laneId" ) String laneId, @RequestParam( "title" ) String title, @RequestParam( "sequence" ) Integer sequence, @RequestParam( "completed" ) Boolean completed
-    )
+    public ResponseEntity updateLane( @PathVariable( "laneId" ) String laneId, @RequestBody LaneDTO dto )
     {
         Lane lane = taskBoard.getLaneById( laneId );
 
-        lane.setTitle( title );
-        lane.setSequence( sequence );
-        lane.setCompleted( completed );
+        lane.setTitle( dto.getTitle() );
+        lane.setSequence( dto.getSequence() );
+        lane.setCompleted( dto.isCompleted() );
 
         taskBoard.updateLane( lane );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
     @RequestMapping( value = "/tasks", method = RequestMethod.POST )
-    public ResponseEntity addTaskToLane( @PathVariable( "laneId" ) String laneId, @RequestParam( value = "id", required = false ) String id, @RequestParam( "title" ) String title, @RequestParam( "description" ) String description, @RequestParam( "assignee" ) String assignee, UriComponentsBuilder b
-    )
+    public ResponseEntity addTaskToLane( @PathVariable( "laneId" ) String laneId, @RequestBody TaskDTO dto, UriComponentsBuilder b )
     {
-        Task task;
+        if ( dto.getId() == null )
+        {
+            Task task = taskBoard.addTaskToLane( laneId, dto.getTitle(), dto.getDescription(), dto.getAssignee() );
 
-        if ( id == null )
-            task = taskBoard.addTaskToLane( laneId, title, description, assignee );
+
+            UriComponents components = b.path( "tasks/{id}" ).buildAndExpand( task.getId() );
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation( components.toUri() );
+
+            return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
+        }
         else
-            task = taskBoard.addTaskToLane( laneId, id );
-
-        UriComponents components = b.path( "tasks/{id}" ).buildAndExpand( task.getId() );
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation( components.toUri() );
-
-        return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
+        {
+            taskBoard.addTaskToLane( laneId, dto.getId() );
+            return new ResponseEntity<Void>( HttpStatus.OK );
+        }
     }
 
     @RequestMapping( value = "/tasks/{taskId}", method = RequestMethod.DELETE )
-    public ResponseEntity removeTaskFromLane( @PathVariable( "laneId" ) String laneId, @PathVariable( "taskId" ) String taskId
-    )
+    public ResponseEntity removeTaskFromLane( @PathVariable( "laneId" ) String laneId, @PathVariable( "taskId" ) String taskId )
     {
         taskBoard.removeTaskFromLane( laneId, taskId );
         return new ResponseEntity<>( HttpStatus.OK );

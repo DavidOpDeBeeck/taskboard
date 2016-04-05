@@ -1,6 +1,7 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.application.Application;
+import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +33,16 @@ public class TaskControllerTest extends ControllerTest
 
         taskDAO.create( task );
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        TaskDTO dto = new TaskDTO();
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title2 + "&description=" + description + "&assignee=" + assignee, requestHeaders );
+        dto.setTitle( title2 );
+        dto.setDescription( description );
+        dto.setAssignee( assignee );
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_JSON );
+
+        HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         restTemplate.put( url() + "/" + task.getId(), httpEntity, Task.class );
 
         Task newTask = taskDAO.getById( task.getId() );

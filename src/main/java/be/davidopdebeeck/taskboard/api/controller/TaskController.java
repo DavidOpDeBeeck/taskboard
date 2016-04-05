@@ -1,5 +1,6 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
+import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Task;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,13 @@ public class TaskController
     TaskBoard taskBoard;
 
     @RequestMapping( method = RequestMethod.PUT )
-    public ResponseEntity updateTask( @PathVariable( "taskId" ) String taskId, @RequestParam( "title" ) String title, @RequestParam( "description" ) String description, @RequestParam( "assignee" ) String assignee
-    )
+    public ResponseEntity updateTask( @PathVariable( "taskId" ) String taskId, @RequestBody TaskDTO dto )
     {
         Task task = taskBoard.getTaskById( taskId );
 
-        task.setTitle( title );
-        task.setDescription( description );
-        task.setAssignee( assignee );
+        task.setTitle( dto.getTitle() );
+        task.setDescription( dto.getDescription() );
+        task.setAssignee( dto.getAssignee() );
 
         taskBoard.updateTask( task );
 
@@ -32,16 +32,14 @@ public class TaskController
     }
 
     @RequestMapping( method = RequestMethod.GET )
-    public ResponseEntity<Task> getTask( @PathVariable( "taskId" ) String taskId
-    )
+    public ResponseEntity<Task> getTask( @PathVariable( "taskId" ) String taskId )
     {
         Task task = taskBoard.getTaskById( taskId );
         return new ResponseEntity<>( task, HttpStatus.OK );
     }
 
     @RequestMapping( method = RequestMethod.DELETE )
-    public ResponseEntity removeTask( @PathVariable( "taskId" ) String taskId
-    )
+    public ResponseEntity removeTask( @PathVariable( "taskId" ) String taskId )
     {
         taskBoard.removeTask( taskId );
         return new ResponseEntity<>( HttpStatus.OK );
