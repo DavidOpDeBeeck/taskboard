@@ -3,6 +3,7 @@ package be.davidopdebeeck.taskboard.api.controller;
 import be.davidopdebeeck.taskboard.api.application.Application;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
+import be.davidopdebeeck.taskboard.core.Task;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,31 +47,17 @@ public class LaneControllerTest extends ControllerTest
         int sequence = 3;
         boolean completed = true;
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        Lane lane = new Lane( title, sequence, completed );
+        laneDAO.create( lane );
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
-        HttpEntity<String> response = restTemplate.exchange( baseUrl() + "/projects/" + project.getId() + "/lanes", HttpMethod.POST, httpEntity, String.class );
-
-        HttpHeaders headers = response.getHeaders();
-        String location = headers.getLocation()
-                .toString();
-
-        HttpEntity<Lane> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Lane.class );
+        HttpEntity<Lane> apiResponse = restTemplate.exchange( url() + "/" + lane.getId(), HttpMethod.GET, null, Lane.class );
 
         assertNotNull( apiResponse );
 
-        Lane lane = laneDAO.getById( apiResponse.getBody()
-                .getId() );
-
-        assertEquals( lane.getId(), apiResponse.getBody()
-                .getId() );
-        assertEquals( lane.getTitle(), apiResponse.getBody()
-                .getTitle() );
-        assertEquals( lane.getSequence(), apiResponse.getBody()
-                .getSequence() );
-        assertEquals( lane.isCompleted(), apiResponse.getBody()
-                .isCompleted() );
+        assertEquals( lane.getId(), apiResponse.getBody().getId() );
+        assertEquals( lane.getTitle(), apiResponse.getBody().getTitle() );
+        assertEquals( lane.getSequence(), apiResponse.getBody().getSequence() );
+        assertEquals( lane.isCompleted(), apiResponse.getBody().isCompleted() );
     }
 
     @Test
@@ -80,41 +67,22 @@ public class LaneControllerTest extends ControllerTest
         int sequence = 3;
         boolean completed = true;
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+        Lane lane = new Lane( title, sequence, completed );
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
-        HttpEntity<String> response = restTemplate.exchange( url(), HttpMethod.POST, httpEntity, String.class );
-
-        HttpHeaders headers = response.getHeaders();
-        String location = headers.getLocation()
-                .toString();
-
-        HttpEntity<Lane> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Lane.class );
-
-        assertNotNull( apiResponse );
-
-        Lane lane = laneDAO.getById( apiResponse.getBody()
-                .getId() );
-
-        assertEquals( lane.getId(), apiResponse.getBody()
-                .getId() );
-        assertEquals( lane.getTitle(), apiResponse.getBody()
-                .getTitle() );
-        assertEquals( lane.getSequence(), apiResponse.getBody()
-                .getSequence() );
-        assertEquals( lane.isCompleted(), apiResponse.getBody()
-                .isCompleted() );
+        laneDAO.create( lane );
+        projectDAO.addLane( project, lane );
 
         title = "ToDo";
         sequence = 1;
         completed = false;
 
-        httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+
+        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&sequence=" + sequence + "&completed=" + completed, requestHeaders );
         restTemplate.put( url() + "/" + lane.getId(), httpEntity, Lane.class );
 
-        lane = laneDAO.getById( apiResponse.getBody()
-                .getId() );
+        lane = laneDAO.getById( lane.getId() );
 
         assertEquals( title, lane.getTitle() );
         assertEquals( sequence, lane.getSequence() );
@@ -135,10 +103,43 @@ public class LaneControllerTest extends ControllerTest
         assertNull( removedLane );
     }
 
+    @Test
+    public void testAddTaskToLane() throws Exception
+    {
+        Lane lane = new Lane( "To Verify", 3, true );
+
+        laneDAO.create( lane );
+        projectDAO.addLane( project, lane );
+
+        String title = "Make a Task";
+        String description = "Make a Task description";
+        String assignee = "David";
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType( MediaType.APPLICATION_FORM_URLENCODED );
+
+        HttpEntity<String> httpEntity = new HttpEntity<>( "title=" + title + "&description=" + description + "&assignee=" + assignee, requestHeaders );
+        HttpEntity<String> response = restTemplate.exchange( url() + "/" + lane.getId() + "/tasks", HttpMethod.POST, httpEntity, String.class );
+
+        HttpHeaders headers = response.getHeaders();
+        String location = headers.getLocation().toString();
+
+        HttpEntity<Task> apiResponse = restTemplate.exchange( location, HttpMethod.GET, null, Task.class );
+
+        assertNotNull( apiResponse );
+
+        Task task = taskDAO.getById( apiResponse.getBody().getId() );
+
+        assertEquals( task.getId(), apiResponse.getBody().getId() );
+        assertEquals( task.getTitle(), apiResponse.getBody().getTitle() );
+        assertEquals( task.getDescription(), apiResponse.getBody().getDescription() );
+        assertEquals( task.getAssignee(), apiResponse.getBody().getAssignee() );
+    }
+
     @Override
 
     protected String context()
     {
-        return String.format( "projects/%s/lanes", project.getId() );
+        return "lanes";
     }
 }
