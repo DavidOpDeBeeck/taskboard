@@ -1,9 +1,11 @@
 version: "2"
 
 services:
-  # Domain project needs a MYSQL server with host 'mysql'
-  domain:
+  # REST API project needs a MYSQL server with host 'mysql'
+  rest-api:
     build: .
+    expose:
+      - "8080"
     links:
      - mysql:mysql
     networks:
@@ -13,12 +15,12 @@ services:
   mysql:
     image: mysql
     env_file:
-      - .database/database.env
+      - ./database/database.env
     volumes:
       - ./database:/docker-entrypoint-initdb.d
     networks:
       - bridge-network
 networks:
-  # Network between the domain and the MYSQL server
+  # Network between the API and the MYSQL server
   bridge-network:
     driver: bridge
