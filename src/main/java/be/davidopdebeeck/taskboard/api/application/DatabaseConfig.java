@@ -22,19 +22,19 @@ import javax.sql.DataSource;
 public class DatabaseConfig
 {
 
-    @Value( "${host}" )
+    @Value( "${mysql.address}" )
     private String host;
 
-    @Value( "${port}" )
+    @Value( "${mysql.port}" )
     private int port;
 
-    @Value( "${database}" )
+    @Value( "${mysql.database}" )
     private String database;
 
-    @Value( "${user}" )
+    @Value( "${mysql.user}" )
     private String user;
 
-    @Value( "${password}" )
+    @Value( "${mysql.password}" )
     private String password;
 
 
