@@ -8,6 +8,7 @@ import be.davidopdebeeck.taskboard.dao.impl.ProjectDAOImpl;
 import be.davidopdebeeck.taskboard.dao.impl.TaskDAOImpl;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import be.davidopdebeeck.taskboard.service.TaskBoardImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,22 @@ import javax.sql.DataSource;
 @ComponentScan( "be.davidopdebeeck.taskboard" )
 public class DatabaseConfig
 {
+
+    @Value( "${host}" )
+    private String host;
+
+    @Value( "${port}" )
+    private int port;
+
+    @Value( "${database}" )
+    private String database;
+
+    @Value( "${user}" )
+    private String user;
+
+    @Value( "${password}" )
+    private String password;
+
 
     @Bean
     public TaskBoard taskBoard()
@@ -57,9 +74,9 @@ public class DatabaseConfig
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
         dataSource.setDriverClassName( "com.mysql.jdbc.Driver" );
-        dataSource.setUrl( "jdbc:mysql://localhost:3306/taskboard" );
-        dataSource.setUsername( "David" );
-        dataSource.setPassword( "1234" );
+        dataSource.setUrl( String.format( "jdbc:mysql://%s:%d/%s", host, port, database ) );
+        dataSource.setUsername( user );
+        dataSource.setPassword( password );
 
         return dataSource;
     }

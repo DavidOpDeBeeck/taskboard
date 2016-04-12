@@ -25,6 +25,7 @@ repositories {
 ext {
     springVersion = '4.2.5.RELEASE'
     taskBoardVersion = 1.0
+    junitVersion = 4.11
 }
 
 dependencies {
@@ -32,7 +33,7 @@ dependencies {
     compile "org.springframework:spring-jdbc:$springVersion"
     compile "org.springframework.boot:spring-boot-starter-web"
     testCompile "org.springframework.boot:spring-boot-starter-test"
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile "junit:junit:$junitVersion"
 }
 
 springBoot {
