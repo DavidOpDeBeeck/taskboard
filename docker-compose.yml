@@ -1,0 +1,24 @@
+version: "2"
+
+services:
+  # Domain project needs a MYSQL server with host 'mysql'
+  domain:
+    build: .
+    links:
+     - mysql:mysql
+    networks:
+      - bridge-network
+  # MYSQL server needs an initialise script and
+  # environment variables to define the default user
+  mysql:
+    image: mysql
+    env_file:
+      - .database/database.env
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - bridge-network
+networks:
+  # Network between the domain and the MYSQL server
+  bridge-network:
+    driver: bridge
