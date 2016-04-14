@@ -1,19 +1,16 @@
 version: "2"
 
 services:
-  # REST API project needs a MYSQL server with host 'mysql'
-  rest-api:
+  domain:
     build: .
-    expose:
-      - "8080"
     links:
      - mysql:mysql
     networks:
-      - bridge-network
-  # MYSQL server needs an initialise script and
-  # environment variables to define the default user
+     - bridge-network
   mysql:
     image: mysql
+    expose:
+      - "3306"
     env_file:
       - ./database/database.env
     volumes:
@@ -21,6 +18,5 @@ services:
     networks:
       - bridge-network
 networks:
-  # Network between the API and the MYSQL server
   bridge-network:
     driver: bridge
