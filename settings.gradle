@@ -1,3 +1,4 @@
 rootProject.name = 'taskboard-rest-api'
+include 'taskboard-api'
 include 'taskboard-domain'
 

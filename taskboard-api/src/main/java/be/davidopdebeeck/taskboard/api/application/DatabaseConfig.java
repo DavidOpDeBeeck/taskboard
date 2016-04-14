@@ -22,21 +22,14 @@ import javax.sql.DataSource;
 public class DatabaseConfig
 {
 
-    @Value( "${mysql.address}" )
-    private String host;
+    @Value( "#{systemProperties['flyway.url']}" )
+    private String url;
 
-    @Value( "${mysql.port}" )
-    private int port;
-
-    @Value( "${mysql.database}" )
-    private String database;
-
-    @Value( "${mysql.user}" )
+    @Value( "#{systemProperties['flyway.user']}" )
     private String user;
 
-    @Value( "${mysql.password}" )
+    @Value( "#{systemProperties['flyway.password']}" )
     private String password;
-
 
     @Bean
     public TaskBoard taskBoard()
@@ -74,7 +67,7 @@ public class DatabaseConfig
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
         dataSource.setDriverClassName( "com.mysql.jdbc.Driver" );
-        dataSource.setUrl( String.format( "jdbc:mysql://%s:%d/%s", host, port, database ) );
+        dataSource.setUrl( url );
         dataSource.setUsername( user );
         dataSource.setPassword( password );
 
