@@ -12,9 +12,7 @@ services:
     expose:
       - "3306"
     env_file:
-      - ./database/database.env
-    volumes:
-      - ./database:/docker-entrypoint-initdb.d
+      - ./database/conf/test/conf.env
     networks:
       - bridge-network
 networks:
