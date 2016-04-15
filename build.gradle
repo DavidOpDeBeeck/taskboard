@@ -28,11 +28,29 @@ dependencies {
 }
 
 flywayMigrate {
-    if (!project.hasProperty('env'))
-        return
-    Properties props = new Properties()
-    props.load(new FileInputStream("$project.rootDir/conf/${env}.properties"))
-    props.each { prop ->
-        project.ext.set(prop.key.toString(), prop.value.toString())
+    initialiseEnvironment().each { prop ->
+        project.ext[prop.key] = prop.value
     }
+}
+
+def initialiseEnvironment() {
+    Map<String, String> map = new HashMap<>();
+    Properties props = new Properties()
+    String location, env;
+
+    if (env == null)
+        env = 'local'
+
+    if (project.parent == null)
+        location = "$project.rootDir/conf/${env}.properties"
+    else
+        location = "$project.parent.rootDir/conf/${env}.properties"
+
+    props.load(new FileInputStream(location))
+
+    props.each { prop ->
+        map.put(prop.key.toString(), prop.value.toString())
+    }
+
+    return map
 }

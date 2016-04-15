@@ -23,11 +23,5 @@ dependencies {
 }
 
 test {
-    if (!project.hasProperty('env'))
-        return
-    Properties props = new Properties()
-    props.load(new FileInputStream("$project.parent.rootDir/conf/${env}.properties"))
-    props.each { prop ->
-        systemProperty prop.key.toString(), prop.value.toString()
-    }
+    systemProperties initialiseEnvironment()
 }
