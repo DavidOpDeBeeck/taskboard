@@ -6,5 +6,7 @@ EXPOSE 8080
 
 WORKDIR /app
 
-CMD task flywayMigrate -Penv=test && \
-	task repositoryTests -Penv=test
+ENTRYPOINT ['/bin/sh -c']
+
+CMD gradle task flywayMigrate -Penv=test && \
+	gradle task repositoryTests -Penv=test
