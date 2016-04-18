@@ -6,4 +6,4 @@ EXPOSE 8080
 
 WORKDIR /app
 
-ENTRYPOINT ["gradle" ,"task", "repositoryTests", "-Denv=test"]
+ENTRYPOINT ["gradle" ,"task", "repositoryTests", "-Penv=test"]

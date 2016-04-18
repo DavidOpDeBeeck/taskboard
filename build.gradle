@@ -80,7 +80,7 @@ task acceptanceTests {
 def initEnvironment() {
     Map<String, String> map = new HashMap<>();
     Properties props = new Properties()
-    String location, env;
+    String location;
 
     if (env == null)
         env = 'loc'
