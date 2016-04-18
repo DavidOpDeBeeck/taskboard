@@ -19,19 +19,10 @@ apply plugin: 'org.flywaydb.flyway'
 // ------------------------------------------
 
 allprojects {
-    apply plugin: 'java'
-
     group 'be.davidopdebeeck'
     version = '1.0'
-}
 
-// ------------------------------------------
-// Sub projects
-// ------------------------------------------
-
-subprojects {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    apply plugin: 'java'
 
     project.ext {
         mysqlVersion = '5.1.38'
@@ -45,6 +36,15 @@ subprojects {
         mavenLocal()
         mavenCentral()
     }
+}
+
+// ------------------------------------------
+// Sub projects
+// ------------------------------------------
+
+subprojects {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     test {
         systemProperties initEnvironment()
