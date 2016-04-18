@@ -33,6 +33,10 @@ flywayMigrate {
     }
 }
 
+test {
+    systemProperties initialiseEnvironment()
+}
+
 def initialiseEnvironment() {
     Map<String, String> map = new HashMap<>();
     Properties props = new Properties()
