@@ -83,7 +83,7 @@ def initEnvironment() {
     String location, env;
 
     if (env == null)
-        env = 'local'
+        env = 'loc'
 
     if (project.parent == null)
         location = "$project.rootDir/conf/${env}.properties"
