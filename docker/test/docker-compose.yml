@@ -12,7 +12,7 @@ services:
     expose:
       - "3306"
     env_file:
-      - /database/conf/test.properties
+      - ./database/conf/test.properties
     networks:
       - bridge-network
 networks:
