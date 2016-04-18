@@ -12,32 +12,72 @@ buildscript {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-apply plugin: 'java'
 apply plugin: 'org.flywaydb.flyway'
 
-ext {
-    mysqlVersion = '5.1.38'
+// ------------------------------------------
+// All projects
+// ------------------------------------------
+
+allprojects {
+    apply plugin: 'java'
+
+    group 'be.davidopdebeeck'
+    version = '1.0'
 }
 
-dependencies {
-    compile "mysql:mysql-connector-java:$mysqlVersion"
+// ------------------------------------------
+// Sub projects
+// ------------------------------------------
+
+subprojects {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    project.ext {
+        mysqlVersion = '5.1.38'
+    }
+
+    dependencies {
+        compile "mysql:mysql-connector-java:$mysqlVersion"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    test {
+        systemProperties initEnvironment()
+    }
 }
+
+// ------------------------------------------
+// Flyway migrate needs properties
+// ------------------------------------------
 
 flywayMigrate {
-    initialiseEnvironment().each { prop ->
+    initEnvironment().each { prop ->
         project.ext[prop.key] = prop.value
     }
 }
 
-test {
-    systemProperties initialiseEnvironment()
+// ------------------------------------------
+// Test tasks for the different environments
+// ------------------------------------------
+
+task repositoryTests {
+    dependsOn project(':taskboard-domain').test
 }
 
-def initialiseEnvironment() {
+task acceptanceTests {
+    dependsOn project(':taskboard-rest-api').test
+}
+
+// ------------------------------------------
+// Read properties from the given environment
+// ------------------------------------------
+
+def initEnvironment() {
     Map<String, String> map = new HashMap<>();
     Properties props = new Properties()
     String location, env;

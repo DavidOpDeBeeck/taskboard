@@ -10,9 +10,6 @@ buildscript {
 }
 
 apply plugin: 'spring-boot'
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
 
 repositories {
     jcenter()
@@ -36,8 +33,4 @@ dependencies {
 
 springBoot {
     mainClass = "be.davidopdebeeck.taskboard.api.application.Application"
-}
-
-test {
-    systemProperties initialiseEnvironment()
 }
