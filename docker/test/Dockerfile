@@ -4,4 +4,4 @@ COPY . /app
 
 EXPOSE 8080
 
-CMD task flywayMigrate -Penv=test
+ENTRYPOINT ["task", "flywayMigrate", "-Penv=test"]
