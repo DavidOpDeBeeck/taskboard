@@ -4,4 +4,4 @@ COPY . /app
 
 EXPOSE 8080
 
-ENTRYPOINT ["gradle", "task", "flywayMigrate", "-Penv=test"]
+ENTRYPOINT ["gradle", "task", "repositoryTests", "-Denv=test"]

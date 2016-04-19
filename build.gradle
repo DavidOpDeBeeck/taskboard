@@ -1,5 +1,6 @@
-group 'be.davidopdebeeck'
-version '1.0'
+// ------------------------------------------
+// All projects
+// ------------------------------------------
 
 buildscript {
     repositories {
@@ -12,17 +13,12 @@ buildscript {
     }
 }
 
-apply plugin: 'org.flywaydb.flyway'
-
-// ------------------------------------------
-// All projects
-// ------------------------------------------
-
 allprojects {
     group 'be.davidopdebeeck'
     version = '1.0'
 
     apply plugin: 'java'
+    apply plugin: 'org.flywaydb.flyway'
 
     project.ext {
         mysqlVersion = '5.1.38'
@@ -36,6 +32,12 @@ allprojects {
         mavenLocal()
         mavenCentral()
     }
+
+    flywayMigrate {
+        initEnvironment().each { prop ->
+            project.ext[prop.key] = prop.value
+        }
+    }
 }
 
 // ------------------------------------------
@@ -47,17 +49,8 @@ subprojects {
     targetCompatibility = 1.8
 
     test {
+        dependsOn flywayMigrate
         systemProperties initEnvironment()
-    }
-}
-
-// ------------------------------------------
-// Flyway migrate needs properties
-// ------------------------------------------
-
-flywayMigrate {
-    initEnvironment().each { prop ->
-        project.ext[prop.key] = prop.value
     }
 }
 
@@ -80,7 +73,9 @@ task acceptanceTests {
 def initEnvironment() {
     Map<String, String> map = new HashMap<>();
     Properties props = new Properties()
-    String location;
+    String location, env;
+
+    env = System.getProperty("env")
 
     if (env == null)
         env = 'loc'
