@@ -1,0 +1,26 @@
+{
+  "name": "taskboard-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidOpDeBeeck/taskboard-web.git"
+  },
+  "author": "David Op de Beeck",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DavidOpDeBeeck/taskboard-web/issues"
+  },
+  "homepage": "https://github.com/DavidOpDeBeeck/taskboard-web#readme",
+  "devDependencies": {
+    "jasmine": "^2.4.1",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^0.2.3",
+    "karma-jasmine": "^0.3.8"
+  }
+}
