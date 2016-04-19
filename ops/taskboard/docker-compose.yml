@@ -8,11 +8,9 @@ services:
     networks:
      - bridge-network
   mysql:
-    image: mysql
+    build: db/acceptance/Dockerfile
     expose:
       - "3306"
-    env_file:
-      - ./database/conf/test.properties
     networks:
       - bridge-network
 networks:
