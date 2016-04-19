@@ -42,7 +42,15 @@ def testEnvironment() {
     connect(taskboardContainer.id, TEST_NETWORK)
     connect(mysqlContainer.id, TEST_NETWORK)
 
-    exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
+    try {
+        exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
+  	} catch(err) {
+  		printError(err)
+  		currentBuild.result  = "FAILURE"
+  	} finally {
+  		removeContainer(mvnName)
+  	}
+
   } catch (err) {}
     finally {
        disconnect(taskboardContainer.id, TEST_NETWORK)

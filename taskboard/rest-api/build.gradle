@@ -49,7 +49,6 @@ subprojects {
     targetCompatibility = 1.8
 
     test {
-        dependsOn flywayMigrate
         systemProperties initEnvironment()
     }
 }
