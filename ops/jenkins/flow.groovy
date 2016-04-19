@@ -30,26 +30,26 @@ def testEnvironment() {
 
   try {
     createNetwork(TEST_NETWORK)
+
+    def currentDir = pwd()
+
+
     sh 'cp ops/taskboard/back-end/test/Dockerfile taskboard/Dockerfile'
     def taskboardImage = docker.build(TASKBOARD_CONTAINER, "taskboard")
 
     sh 'cp ops/taskboard/db/test/Dockerfile taskboard/Dockerfile'
     def mysqlImage = docker.build(MYSQL_CONTAINER, "taskboard")
 
-    taskboardContainer = taskboardImage.run("-i")
+    taskboardContainer = taskboardImage.run("-i -v $currentDir/taskboard/rest-api:/app/rest-api")
     mysqlContainer = mysqlImage.run("-i --name=mysql")
 
     connect(taskboardContainer.id, TEST_NETWORK)
     connect(mysqlContainer.id, TEST_NETWORK)
 
-    try {
-        exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
-  	} catch(err) {
-  		printError(err)
-  		currentBuild.result  = "FAILURE"
-  	} finally {
-  		removeContainer(mvnName)
-  	}
+    exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
+    step([$class: 'JUnitResultArchiver', testResults: "$currentDir/taskboard/rest-api/taskboard-domain/build/reports/tests/index.html"])
+
+    sh "cat $currentDir/taskboard/rest-api/taskboard-domain/build/reports/tests/index.html"
 
   } catch (err) {}
     finally {
