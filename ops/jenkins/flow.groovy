@@ -26,6 +26,8 @@ node {
 }
 
 def testEnvironment() {
+  def taskboardContainer, mysqlContainer;
+
   try {
     createNetwork(TEST_NETWORK)
     sh 'cp ops/taskboard/back-end/test/Dockerfile taskboard/Dockerfile'
@@ -34,8 +36,8 @@ def testEnvironment() {
     sh 'cp ops/taskboard/db/test/Dockerfile taskboard/Dockerfile'
     def mysqlImage = docker.build(MYSQL_CONTAINER, "taskboard")
 
-    def taskboardContainer = taskboardImage.run("-d")
-    def mysqlContainer = mysqlImage.run("-d")
+    taskboardContainer = taskboardImage.run("-i")
+    mysqlContainer = mysqlImage.run("-i --name=mysql")
 
     connect(taskboardContainer.id, TEST_NETWORK)
     connect(mysqlContainer.id, TEST_NETWORK)
@@ -43,9 +45,11 @@ def testEnvironment() {
     exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
   } catch (err) {}
     finally {
-        try { taskboardContainer.stop } catch(err) {}
-        try { mysqlContainer.stop } catch(err) {}
-        try { removeNetwork(TEST_NETWORK) } catch(err) {}
+       disconnect(taskboardContainer.id, TEST_NETWORK)
+       disconnect(mysqlContainer.id, TEST_NETWORK)
+       stop(taskboardContainer.id)
+       stop(mysqlContainer.id)
+       removeNetwork(TEST_NETWORK)
     }
 }
 
@@ -55,6 +59,14 @@ def exec(container, cmd) {
 
 def connect(container, network) {
 	sh "docker network connect ${network} ${container}"
+}
+
+def disconnect(container, network) {
+	sh "docker network disconnect ${network} ${container}"
+}
+
+def stop(container) {
+  sh "docker rm -f ${container}"
 }
 
 def createNetwork(network) {
