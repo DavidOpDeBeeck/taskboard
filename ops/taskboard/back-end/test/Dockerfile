@@ -1,3 +1,5 @@
 FROM qlik/gradle
 
-COPY . /app
+COPY rest-api /app
+
+ENTRYPOINT ["/bin/sh", "-c", "bash"]

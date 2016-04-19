@@ -34,8 +34,8 @@ def testEnvironment() {
     sh 'cp ops/taskboard/db/test/Dockerfile taskboard/Dockerfile'
     def mysqlImage = docker.build(MYSQL_CONTAINER, "taskboard")
 
-    def taskboardContainer = taskboardImage.run()
-    def mysqlContainer = mysqlImage.run()
+    def taskboardContainer = taskboardImage.run("-d")
+    def mysqlContainer = mysqlImage.run("-d")
 
     connect(taskboardContainer.id, TEST_NETWORK)
     connect(mysqlContainer.id, TEST_NETWORK)
@@ -43,8 +43,8 @@ def testEnvironment() {
     exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
   } catch (err) {}
     finally {
-        try { taskboardContainer.stop() } catch(err) {}
-        try { mysqlContainer.stop() } catch(err) {}
+        try { taskboardContainer.stop } catch(err) {}
+        try { mysqlContainer.stop } catch(err) {}
         try { removeNetwork(TEST_NETWORK) } catch(err) {}
     }
 }
