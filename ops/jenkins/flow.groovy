@@ -4,10 +4,19 @@
 NETWORK_TEST = 'test-network';
 NETWORK_ACC = 'acc-network';
 
-// CONTAINERS
+// IMAGES
 
-CONT_TASKBOARD = 'taskboard-container';
-CONT_MYSQL = 'mysql-container';
+TASKBOARD = [
+  img : null,
+  name : 'mysql-image',
+  dockerfile : 'ops/taskboard/back-end/test/Dockerfile'
+]
+
+MYSQL = [
+  img : null,
+  name : 'taskboard-image',
+  dockerfile : 'ops/taskboard/db/test/Dockerfile'
+]
 
 /**
 * Workflow
@@ -19,14 +28,23 @@ node {
 
     git 'https://github.com/DavidOpDeBeeck/taskboard.git'
 
+    stage 'Making Docker Images'
+
+    MYSQL.img = build(MYSQL.name, MYSQL.dockerfile)
+    TASKBOARD.img = build(TASKBOARD.name, TASKBOARD.dockerfile)
+
     stage 'Test Environment'
 
-    initTestEnvironment()
-    execTestEnvironment()
+    cleanTestEnvironment()
+    testEnvironment()
 
 }
 
-def initTestEnvironment(){
+/**
+* TEST ENVIRONMENT
+*/
+
+def cleanTestEnvironment(){
   try {
     disconnect(taskboardContainer.id, NETWORK_TEST)
     disconnect(mysqlContainer.id, NETWORK_TEST)
@@ -36,20 +54,16 @@ def initTestEnvironment(){
   } catch (err) {}
 }
 
-def execTestEnvironment() {
+def testEnvironment() {
   def taskboardContainer, mysqlContainer;
   try {
     createNetwork(NETWORK_TEST)
 
     def currentDir = pwd()
-
-    def taskboardImage = build(CONT_TASKBOARD, 'ops/taskboard/back-end/test/Dockerfile')
-    def mysqlImage = build(CONT_MYSQL, 'ops/taskboard/db/test/Dockerfile')
-
     def resultVolume = "${currentDir}/taskboard/rest-api/taskboard-domain/build/test-results:/app/taskboard-domain/build/test-results"
 
-    taskboardContainer = taskboardImage.run("-i -v ${resultVolume}")
-    mysqlContainer = mysqlImage.run("-i --name=mysql")
+    taskboardContainer = TASKBOARD.img.run("-i -v ${resultVolume}")
+    mysqlContainer = MYSQL.img.run("-i --name=mysql")
 
     connect(taskboardContainer.id, NETWORK_TEST)
     connect(mysqlContainer.id, NETWORK_TEST)
@@ -60,15 +74,15 @@ def execTestEnvironment() {
     step([$class: 'JUnitResultArchiver', testResults: "**/test-results/TEST-*.xml"])
   } catch (err) {
     throw err
+  } finally {
+      cleanTestEnvironment()
   }
-    finally {
-       disconnect(taskboardContainer.id, NETWORK_TEST)
-       disconnect(mysqlContainer.id, NETWORK_TEST)
-       stop(taskboardContainer.id)
-       stop(mysqlContainer.id)
-       removeNetwork(NETWORK_TEST)
-    }
 }
+
+/**
+* ACCEPTANCE ENVIRONMENT
+*/
+
 
 /**
 * Docker functions

@@ -4,45 +4,64 @@
 greenballs:1.15
 
 # git dependencies
-git-client:1.19.1
+git-client:1.19.6
 scm-api:1.0
 matrix-project:1.6
-credentials:1.24
+credentials:1.27
 mailer:1.16
 ssh-credentials:1.11
 
 # git
-git:2.4.1
+git:2.4.4
 
 # worfklow-aggregator dependencies
 script-security:1.17
-workflow-step-api:1.13
-workflow-basic-steps:1.13
-workflow-scm-step:1.13
-workflow-api:1.13
+structs:1.1
+workflow-step-api:2.0
+workflow-step-api:1.15
+workflow-api:1.15
+workflow-basic-steps:2.0
+workflow-scm-step:2.0
+workflow-scm-step:1.15
+workflow-step-api:1.15
+workflow-api:2.0
 durable-task:1.7
-workflow-support:1.13
+workflow-support:2.0
+workflow-support:1.14
+workflow-support:1.15
 jquery-detached:1.2
 ace-editor:1.0.1
-workflow-cps:1.13
+workflow-cps:2.0
 git-server:1.6
-workflow-cps-global-lib:1.13
-workflow-job:1.14
-workflow-durable-task-step:1.13
+workflow-cps-global-lib:2.0
+workflow-job:2.0
+pipeline-build-step:2.0
+cloudbees-folder:5.2.1
+branch-api:1.1
+workflow-multibranch:2.0
+workflow-durable-task-step:2.0
 authentication-tokens:1.2
+pipeline-stage-step:2.0
+pipeline-input-step:2.0
 
 # worklfow plugin
-workflow-aggregator:1.13
+workflow-aggregator:2.0
 
 # workflow stage view dependencies
 handlebars:1.1
 momentjs:1.1
+workflow-job:1.14
+pipeline-rest-api:1.3
 
 # workflow stage view
 pipeline-stage-view:1.3
 
 # Cloudbees docker Workflow dependencies
+icon-shim:2.0.3
 docker-commons:1.3.1
+workflow-step-api:1.13
+workflow-step-api:1.13
+workflow-cps:1.13
 
 # Cloudbees docker Workflow
 docker-workflow:1.4
