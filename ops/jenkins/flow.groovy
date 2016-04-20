@@ -33,19 +33,19 @@ def testEnvironment() {
 
     def currentDir = pwd()
 
+    sh 'cp ops/taskboard/back-end/test/Dockerfile Dockerfile'
+    def taskboardImage = docker.build(TASKBOARD_CONTAINER)
 
-    sh 'cp ops/taskboard/back-end/test/Dockerfile taskboard/Dockerfile'
-    def taskboardImage = docker.build(TASKBOARD_CONTAINER, "taskboard")
+    sh 'cp ops/taskboard/db/test/Dockerfile Dockerfile'
+    def mysqlImage = docker.build(MYSQL_CONTAINER)
 
-    sh 'cp ops/taskboard/db/test/Dockerfile taskboard/Dockerfile'
-    def mysqlImage = docker.build(MYSQL_CONTAINER, "taskboard")
-
-    taskboardContainer = taskboardImage.run("-i -v ${currentDir}:/app")
+    taskboardContainer = taskboardImage.run("-i -v ${currentDir}/taskboard/rest-api/taskboard-domain/build/test-results:/app/taskboard-domain/build/test-results")
     mysqlContainer = mysqlImage.run("-i --name=mysql")
 
     connect(taskboardContainer.id, TEST_NETWORK)
     connect(mysqlContainer.id, TEST_NETWORK)
 
+    exec(taskboardContainer.id, "gradle flywayMigrate -Denv=test")
     exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
     step([$class: 'JUnitResultArchiver', testResults: "${currentDir}/taskboard/rest-api/taskboard-domain/build/test-results/TEST-*.xml"])
 
@@ -53,7 +53,7 @@ def testEnvironment() {
     finally {
        disconnect(taskboardContainer.id, TEST_NETWORK)
        disconnect(mysqlContainer.id, TEST_NETWORK)
-       //stop(taskboardContainer.id)
+       stop(taskboardContainer.id)
        stop(mysqlContainer.id)
        removeNetwork(TEST_NETWORK)
     }
