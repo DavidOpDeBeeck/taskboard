@@ -1,11 +1,19 @@
-FROM python:3.5.1-slim
+FROM node:5.10.1-wheezy
+
+RUN \
+    apt-get update && apt-get install -y python2.7-dev
+
+RUN \
+    npm install -g bower
 
 RUN mkdir /app
 
 COPY taskboard/web /app
 
+RUN cd /app && bower update --allow-root
+
 EXPOSE 8000
 
 WORKDIR /app
 
-ENTRYPOINT [ "python", "-m", "http.server" ]
+ENTRYPOINT [ "python", "-m", "SimpleHTTPServer" ]

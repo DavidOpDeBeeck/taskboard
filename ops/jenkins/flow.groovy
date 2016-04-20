@@ -9,21 +9,28 @@ NETWORK_ACC = 'acc-network';
 TASKBOARD = [
   img         : null,
   container   : null,
-  name        : 'mysql-test-image',
+  name        : 'taskboard-image',
   dockerfile  : 'ops/taskboard/back-end/Dockerfile'
+]
+
+WEB = [
+  img         : null,
+  container   : null,
+  name        : 'web-image',
+  dockerfile  : 'ops/taskboard/front-end/web/Dockerfile'
 ]
 
 MYSQL_TEST = [
   img         : null,
   container   : null,
-  name        : 'taskboard-test-image',
+  name        : 'mysql-test-image',
   dockerfile  : 'ops/taskboard/db/test/Dockerfile'
 ]
 
 MYSQL_ACC = [
   img         : null,
   container   : null,
-  name        : 'taskboard-acc-image',
+  name        : 'mysql-acc-image',
   dockerfile  : 'ops/taskboard/db/acceptance/Dockerfile'
 ]
 
@@ -39,9 +46,10 @@ node {
 
     stage 'Making Docker Images'
 
-    TASKBOARD.img = build(TASKBOARD.name, TASKBOARD.dockerfile)
-    MYSQL_ACC.img = build(MYSQL_ACC.name, MYSQL_ACC.dockerfile)
-    MYSQL_TEST.img = build(MYSQL_TEST.name, MYSQL_TEST.dockerfile)
+    TASKBOARD.img   = build(TASKBOARD.name, TASKBOARD.dockerfile)
+    WEB.img         = build(WEB.name, WEB.dockerfile)
+    MYSQL_ACC.img   = build(MYSQL_ACC.name, MYSQL_ACC.dockerfile)
+    MYSQL_TEST.img  = build(MYSQL_TEST.name, MYSQL_TEST.dockerfile)
 
     stage 'Test Environment'
 
@@ -53,6 +61,9 @@ node {
     cleanAcceptanceEnvironment()
     acceptanceEnvironment()
 
+    stage 'Web Deploy'
+
+    webDeploy()
 }
 
 /**
@@ -125,6 +136,14 @@ def acceptanceEnvironment() {
   } finally {
       cleanAcceptanceEnvironment()
   }
+}
+
+/**
+* WEB DEPLOY
+*/
+
+def webDeploy() {
+  WEB.container = WEB.img.run("-i -p 8000:8000")
 }
 
 

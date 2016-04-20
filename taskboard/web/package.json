@@ -6,16 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DavidOpDeBeeck/taskboard-web.git"
-  },
   "author": "David Op de Beeck",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DavidOpDeBeeck/taskboard-web/issues"
-  },
-  "homepage": "https://github.com/DavidOpDeBeeck/taskboard-web#readme",
   "devDependencies": {
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.4.1",
