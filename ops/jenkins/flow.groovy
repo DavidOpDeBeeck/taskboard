@@ -7,15 +7,24 @@ NETWORK_ACC = 'acc-network';
 // IMAGES
 
 TASKBOARD = [
-  img : null,
-  name : 'mysql-image',
-  dockerfile : 'ops/taskboard/back-end/test/Dockerfile'
+  img         : null,
+  container   : null,
+  name        : 'mysql-test-image',
+  dockerfile  : 'ops/taskboard/back-end/Dockerfile'
 ]
 
-MYSQL = [
-  img : null,
-  name : 'taskboard-image',
-  dockerfile : 'ops/taskboard/db/test/Dockerfile'
+MYSQL_TEST = [
+  img         : null,
+  container   : null,
+  name        : 'taskboard-test-image',
+  dockerfile  : 'ops/taskboard/db/test/Dockerfile'
+]
+
+MYSQL_ACC = [
+  img         : null,
+  container   : null,
+  name        : 'taskboard-acc-image',
+  dockerfile  : 'ops/taskboard/db/acceptance/Dockerfile'
 ]
 
 /**
@@ -30,13 +39,19 @@ node {
 
     stage 'Making Docker Images'
 
-    MYSQL.img = build(MYSQL.name, MYSQL.dockerfile)
     TASKBOARD.img = build(TASKBOARD.name, TASKBOARD.dockerfile)
+    MYSQL_ACC.img = build(MYSQL_ACC.name, MYSQL_ACC.dockerfile)
+    MYSQL_TEST.img = build(MYSQL_TEST.name, MYSQL_TEST.dockerfile)
 
     stage 'Test Environment'
 
     cleanTestEnvironment()
     testEnvironment()
+
+    stage 'Acceptance Environment'
+
+    cleanAcceptanceEnvironment()
+    acceptanceEnvironment()
 
 }
 
@@ -46,32 +61,31 @@ node {
 
 def cleanTestEnvironment(){
   try {
-    disconnect(taskboardContainer.id, NETWORK_TEST)
-    disconnect(mysqlContainer.id, NETWORK_TEST)
-    stop(taskboardContainer.id)
-    stop(mysqlContainer.id)
+    disconnect(TASKBOARD.container.id, NETWORK_TEST)
+    disconnect(MYSQL_TEST.container.id, NETWORK_TEST)
+    stop(TASKBOARD.container.id)
+    stop(MYSQL_TEST.container.id)
     removeNetwork(NETWORK_TEST)
   } catch (err) {}
 }
 
 def testEnvironment() {
-  def taskboardContainer, mysqlContainer;
   try {
     createNetwork(NETWORK_TEST)
 
     def currentDir = pwd()
     def resultVolume = "${currentDir}/taskboard/rest-api/taskboard-domain/build/test-results:/app/taskboard-domain/build/test-results"
 
-    taskboardContainer = TASKBOARD.img.run("-i -v ${resultVolume}")
-    mysqlContainer = MYSQL.img.run("-i --name=mysql")
+    TASKBOARD.container = TASKBOARD.img.run("-i -v ${resultVolume}")
+    MYSQL_TEST.container = MYSQL_TEST.img.run("-i --name=mysql")
 
-    connect(taskboardContainer.id, NETWORK_TEST)
-    connect(mysqlContainer.id, NETWORK_TEST)
+    connect(TASKBOARD.container.id, NETWORK_TEST)
+    connect(MYSQL_TEST.container.id, NETWORK_TEST)
 
-    exec(taskboardContainer.id, "gradle flywayMigrate -Denv=test")
-    exec(taskboardContainer.id, "gradle repositoryTests -Denv=test")
+    exec(TASKBOARD.container.id, "gradle flywayMigrate -Denv=test")
+    exec(TASKBOARD.container.id, "gradle repositoryTests -Denv=test")
 
-    step([$class: 'JUnitResultArchiver', testResults: "**/test-results/TEST-*.xml"])
+    step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-domain/build/test-results/TEST-*.xml"])
   } catch (err) {
     throw err
   } finally {
@@ -82,6 +96,40 @@ def testEnvironment() {
 /**
 * ACCEPTANCE ENVIRONMENT
 */
+
+def cleanAcceptanceEnvironment() {
+  try {
+    disconnect(TASKBOARD.container.id, NETWORK_ACC)
+    disconnect(MYSQL_ACC.container.id, NETWORK_ACC)
+    stop(TASKBOARD.container.id)
+    stop(MYSQL_ACC.container.id)
+    removeNetwork(NETWORK_ACC)
+  } catch (err) {}
+}
+
+def acceptanceEnvironment() {
+  try {
+    createNetwork(NETWORK_ACC)
+
+    def currentDir = pwd()
+    def resultVolume = "${currentDir}/taskboard/rest-api/taskboard-rest-api/build/test-results:/app/taskboard-rest-api/build/test-results"
+
+    TASKBOARD.container = TASKBOARD.img.run("-i -v ${resultVolume}")
+    MYSQL_ACC.container = MYSQL_ACC.img.run("-i --name=mysql")
+
+    connect(TASKBOARD.container.id, NETWORK_TEST)
+    connect(MYSQL_ACC.container.id, NETWORK_TEST)
+
+    exec(TASKBOARD.container.id, "gradle flywayMigrate -Denv=acc")
+    exec(TASKBOARD.container.id, "gradle acceptanceTests -Denv=acc")
+
+    step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-rest-api/build/test-results/TEST-*.xml"])
+  } catch (err) {
+    throw err
+  } finally {
+      cleanAcceptanceEnvironment()
+  }
+}
 
 
 /**
