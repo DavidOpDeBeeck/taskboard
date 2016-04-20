@@ -60,13 +60,11 @@ node {
 */
 
 def cleanTestEnvironment(){
-  try {
-    disconnect(TASKBOARD.container.id, NETWORK_TEST)
-    disconnect(MYSQL_TEST.container.id, NETWORK_TEST)
-    stop(TASKBOARD.container.id)
-    stop(MYSQL_TEST.container.id)
-    removeNetwork(NETWORK_TEST)
-  } catch (err) {}
+  try { disconnect(TASKBOARD.container.id, NETWORK_TEST) } catch (err) {}
+  try { disconnect(MYSQL_TEST.container.id, NETWORK_TEST) } catch (err) {}
+  try { stop(TASKBOARD.container.id) } catch (err) {}
+  try { stop(MYSQL_TEST.container.id) } catch (err) {}
+  try { removeNetwork(NETWORK_TEST) } catch (err) {}
 }
 
 def testEnvironment() {
@@ -98,13 +96,11 @@ def testEnvironment() {
 */
 
 def cleanAcceptanceEnvironment() {
-  try {
-    disconnect(TASKBOARD.container.id, NETWORK_ACC)
-    disconnect(MYSQL_ACC.container.id, NETWORK_ACC)
-    stop(TASKBOARD.container.id)
-    stop(MYSQL_ACC.container.id)
-    removeNetwork(NETWORK_ACC)
-  } catch (err) {}
+  try { disconnect(TASKBOARD.container.id, NETWORK_ACC) } catch (err) {}
+  try { disconnect(MYSQL_ACC.container.id, NETWORK_ACC) } catch (err) {}
+  try { stop(TASKBOARD.container.id) } catch (err) {}
+  try { stop(MYSQL_ACC.container.id) } catch (err) {}
+  try { removeNetwork(NETWORK_ACC) } catch (err) {}
 }
 
 def acceptanceEnvironment() {
@@ -117,11 +113,11 @@ def acceptanceEnvironment() {
     TASKBOARD.container = TASKBOARD.img.run("-i -v ${resultVolume}")
     MYSQL_ACC.container = MYSQL_ACC.img.run("-i --name=mysql")
 
-    connect(TASKBOARD.container.id, NETWORK_TEST)
-    connect(MYSQL_ACC.container.id, NETWORK_TEST)
+    connect(TASKBOARD.container.id, NETWORK_ACC)
+    connect(MYSQL_ACC.container.id, NETWORK_ACC)
 
-    exec(TASKBOARD.container.id, "gradle flywayMigrate -Denv=acc")
-    exec(TASKBOARD.container.id, "gradle acceptanceTests -Denv=acc")
+    exec(TASKBOARD.container.id, "gradle flywayMigrate -Denv=acceptance")
+    exec(TASKBOARD.container.id, "gradle acceptanceTests -Denv=acceptance")
 
     step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-rest-api/build/test-results/TEST-*.xml"])
   } catch (err) {
