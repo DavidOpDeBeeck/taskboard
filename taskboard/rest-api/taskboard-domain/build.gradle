@@ -2,6 +2,9 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 ext {
     springVersion = '4.2.5.RELEASE'
     mysqlVersion = '5.1.38'

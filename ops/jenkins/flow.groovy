@@ -38,23 +38,38 @@ MYSQL_ACC = [
 * Workflow
 */
 
-node {
-
-    stage 'Git Clone'
-
+stage 'COMMIT STAGE'
+var dbUrl = null;
+node('docker') {
+  // spin up DB
+  dbUrl =
+}
+node('java') {
     git 'https://github.com/DavidOpDeBeeck/taskboard.git'
+    // build gradle -> build + unit tests
+    // collect results
+    // archive workspace
+  }
 
-    stage 'Making Docker Images'
+stage 'TEST STAGE'
+  node('docker') {
+    makeImages()
+    cleanTestEnvironment()
+    testEnvironment()
+  }
 
-    TASKBOARD.img   = build(TASKBOARD.name, TASKBOARD.dockerfile)
-    WEB.img         = build(WEB.name, WEB.dockerfile)
-    MYSQL_ACC.img   = build(MYSQL_ACC.name, MYSQL_ACC.dockerfile)
-    MYSQL_TEST.img  = build(MYSQL_TEST.name, MYSQL_TEST.dockerfile)
+  node('java') {
+    // unarchive workspace
+    // run tests against TEST ENV
+    // collect results
+    // archive workspace
+  }
+
+
 
     stage 'Test Environment'
 
-    cleanTestEnvironment()
-    testEnvironment()
+
 
     stage 'Acceptance Environment'
 
@@ -64,6 +79,13 @@ node {
     stage 'Web Deploy'
 
     webDeploy()
+}
+
+def makeImages() {
+  TASKBOARD.img   = build(TASKBOARD.name, TASKBOARD.dockerfile)
+  WEB.img         = build(WEB.name, WEB.dockerfile)
+  MYSQL_ACC.img   = build(MYSQL_ACC.name, MYSQL_ACC.dockerfile)
+  MYSQL_TEST.img  = build(MYSQL_TEST.name, MYSQL_TEST.dockerfile)
 }
 
 /**
@@ -179,5 +201,5 @@ def createNetwork(network) {
 }
 
 def removeNetwork(network) {
-	try { sh "docker network rm ${network}" } catch(err) {}
+	sh "docker network rm ${network} || echo 'Network ${network} does not exist!'"
 }
