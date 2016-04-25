@@ -14,7 +14,6 @@ function ProjectsController ( API ) {
     vm.project = {
         title : ""
     };
-
     vm.projects = [];
 
     /**
