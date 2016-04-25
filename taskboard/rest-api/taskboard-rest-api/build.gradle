@@ -37,3 +37,7 @@ dependencies {
 springBoot {
     mainClass = "be.davidopdebeeck.taskboard.api.application.Application"
 }
+
+bootRun {
+    systemProperties System.properties
+}

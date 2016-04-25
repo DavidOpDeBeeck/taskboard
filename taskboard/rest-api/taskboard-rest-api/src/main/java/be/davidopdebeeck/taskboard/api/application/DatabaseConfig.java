@@ -22,13 +22,13 @@ import javax.sql.DataSource;
 public class DatabaseConfig
 {
 
-    @Value( "#{systemProperties['datasource.url']}" )
+    @Value( "${datasource.url}" )
     private String url;
 
-    @Value( "#{systemProperties['datasource.user']}" )
+    @Value( "${datasource.user}" )
     private String user;
 
-    @Value( "#{systemProperties['datasource.password']}" )
+    @Value( "${datasource.password}" )
     private String password;
 
     @Bean
