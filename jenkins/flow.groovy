@@ -63,7 +63,7 @@ node ('gradle')
 
 node ('docker')
 {
-    mysqlContainer.stop()
+    testDatabase.instance.stop()
     if (stageFailed){
       error 'Stage failed'
     }
@@ -94,40 +94,43 @@ node ('gradle')
 
 node ('docker')
 {
-    if (stageFailed){
-      mysqlContainer.stop()
+    if (stageFailed) {
+      accDatabase.instance.stop()
       error 'Stage failed'
     }
 }
 
-//------------------------------
-// DEPLOY STAGE
-//------------------------------
-
-stage "DEPLOY"
-
-node ('docker')
-{
-  mysqlContainer = mysqlImage.run("-it -p $dbPort:3306")
-}
+stage "WEB TESTS"
 
 node ('gradle')
 {
-  unstash 'rest-api'
+  unstash 'taskboard'
   sh "gradle build -x test"
   archive '**/taskboard-rest-api/build/libs/*.jar'
   dir ('conf') {
-    stash includes: '*', name: 'API-CONFIG'
+    stash includes: 'acc.properties', name: 'config'
   }
   dir ('taskboard-rest-api/build/libs/') {
-    stash includes: '*', name: 'API'
+    stash includes: '*.jar', name: 'rest-api'
   }
+  dir ('taskboard-web') {
+    stash includes: '**', name: 'web'
+  }
+}
+
+def web = [
+    port      : '9000',
+    instance  : null
+]
+
+node ('docker')
+{
+  unstash 'web'
+  web.instance = docker.build(env.BUILD_TAG).run("-p $web.port:8000")
 }
 
 node ('docker && java')
 {
-  unstash 'API'
-  unstash 'API-CONFIG'
   sh 'ls -l'
   //sh 'mv test.properties application.properties'
   //sh 'java -jar -Ddatasource.url=jdbc:mysql://192.168.99.100:2376:3306/taskboard taskboard-rest-api-1.0.jar'
@@ -135,7 +138,7 @@ node ('docker && java')
 
 node ('docker')
 {
-    mysqlContainer.stop()
+    accDatabase.instance.stop()
     if (stageFailed){
       error 'Stage failed'
     }
