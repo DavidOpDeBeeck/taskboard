@@ -25,12 +25,12 @@ def accDatabase = [
 ]
 
 def web = [
-    port      : '9000',
+    port      : '8000',
     instance  : null
 ]
 
 def restApi = [
-    port      : '8181',
+    port      : '9000',
     instance  :  null
 ]
 
