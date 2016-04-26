@@ -1,0 +1,292 @@
+<div class="container">
+    <h2>
+        {{ project.title }}
+    </h2>
+    <div class="row m-t-md">
+        <div class="col-md-6">
+            <input type="text" class="input-sm form-control col-md-4" placeholder="Search by text" ng-model="project.filter.text"/>
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="input-sm form-control col-md-4" placeholder="Search by assignee" ng-model="project.filter.assignee"/>
+        </div>
+    </div>
+    <div class="row m-t-md">
+        <div ng-repeat="lane in project.lanes" class="col-md-3">
+            <div class="panel {{ lane.completed ? 'panel-danger' : 'panel-info' }}">
+                <div class="panel-heading">
+                    <a class="pull-left" ng-if="project.lowest != lane.sequence" ng-cloak ng-click="project.moveLaneToLeft(lane)">
+                        <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                    </a>
+                    <a class="pull-right" ng-if="project.highest != lane.sequence" ng-cloak ng-click="project.moveLaneToRight(lane)">
+                        <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+                    </a>
+                    <h3 class="panel-title text-center">{{ lane.title }}</h3>
+                </div>
+                <div class="panel-body"
+                     dnd-list="lane.tasks"
+                     dnd-drop="project.dragEnd(item, lane)">
+                    <div ng-repeat="task in lane.tasks | filter: project.filterTask"
+                         dnd-draggable="task"
+                         dnd-moved="lane.tasks.splice($index, 1)"
+                         dnd-effect-allowed="move"
+                         dnd-dragstart="project.dragStart(lane)">
+                        <div class="panel {{ lane.completed ? 'panel-danger' : 'panel-info' }} m-b-md">
+                            <div class="panel-heading">
+                                <button type=" button" class="close pull-right" aria-label="Close">
+                                    <span aria-hidden="true" ng-click="project.removeTask(lane, task, $index)">&times;</span>
+                                </button>
+                                {{ task.title }}
+                            </div>
+                            <div class="panel-body" ng-click="project.initEditTask(lane, task)" data-toggle="modal" data-target="#editTask">
+                                <p>{{ task.description }}</p>
+                                <span class="label {{ lane.completed ? 'label-warning' : 'label-primary' }} pull-right ">{{ task.assignee }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="" ng-click="project.initEditLane(lane)" data-toggle="modal" data-target="#editLane">
+                                    <span class="glyphicon glyphicon-edit m-r-md" aria-hidden="true"></span>Edit this lane
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" ng-click="project.initCreateTask(lane)" data-toggle="modal" data-target="#createTask">
+                                    <span class="glyphicon glyphicon-plus-sign m-r-md" aria-hidden="true"></span>Add a new Task
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href="" ng-click="project.removeLane(lane.id)">
+                                    <span class="glyphicon glyphicon-trash m-r-md" aria-hidden="true"></span>Remove this lane
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#/projects" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back
+            </a>
+            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createLane">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Lane
+            </button>
+            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mt-xs mb-xs ml-xxs">
+                <taskboard-loading-status></taskboard-loading-status>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Lane Modal -->
+
+<div class="modal fade" id="createLane" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Create a new Lane</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="title" class="form-control" placeholder="Title" ng-model="project.formLane.title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sequence" class="col-sm-3 control-label">Insert after</label>
+                        <div class="col-sm-9">
+                            <select id="sequence" ng-model="project.formLane.sequence" class="form-control" convert-to-number>
+                                <option value="0">at the start</option>
+                                <option ng-repeat="lane in project.lanes" value="{{ lane.sequence }}">{{ lane.title }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <label for="completed" class="col-sm-3 control-label">Completed</label>
+                        <div class="col-sm-9">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="completed" ng-model="project.formLane.completed">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="project.createLane()" data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Lane Modal -->
+
+<div class="modal fade" id="editLane" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Lane : {{ project.formLane.lane.title }}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="title" class="form-control" placeholder="Title" ng-model="project.formLane.title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sequence" class="col-sm-3 control-label">Insert after</label>
+                        <div class="col-sm-9">
+                            <select id="sequence" ng-model="project.formLane.sequence" class="form-control" convert-to-number>
+                                <option value="0">at the start</option>
+                                <option ng-repeat="lane in project.lanes" ng-if="lane.id != project.formLane.id" value="{{ lane.sequence }}">{{ lane.title }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <label for="completed" class="col-sm-3 control-label">Completed</label>
+                        <div class="col-sm-9">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="completed" ng-model="project.formLane.completed">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="project.removeLane()" data-dismiss="modal">Remove</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="project.editLane()" data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+
+<div class="modal fade" id="createTask" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Create a new Task</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="title" class="form-control" placeholder="Title" ng-model="project.formTask.title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" id="description" class="form-control" placeholder="Description" ng-model="project.formTask.description" rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <label for="assignee" class="col-sm-3 control-label">Assignee</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="assignee" class="form-control" placeholder="Assignee" ng-model="project.formTask.assignee">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="project.createTask()" data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+
+<div class="modal fade" id="editTask" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Task : {{ project.formTask.task.title }}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="title" class="form-control" placeholder="Title" ng-model="project.formTask.title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="title" class="col-sm-3 control-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" id="description" class="form-control" placeholder="Description" ng-model="project.formTask.description" rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <label for="assignee" class="col-sm-3 control-label">Assignee</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="assignee" class="form-control" placeholder="Assignee" ng-model="project.formTask.assignee">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="project.editTask()" data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+
+<div class="modal fade" id="settings" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Settings</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group m-b-0">
+                        <label for="title" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="title" class="form-control" placeholder="Title" ng-model="project.formSettings.title">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="project.remove()" data-dismiss="modal">Remove</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="project.saveSettings()" data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+// ------------------------------------------
+// All projects
+// ------------------------------------------
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.boxfuse.client:flyway-release:4.0"
+    }
+}
+
+allprojects {
+    group 'be.davidopdebeeck'
+    version = '1.0'
+
+    apply plugin: 'java'
+    apply plugin: 'org.flywaydb.flyway'
+
+    project.ext {
+        mysqlVersion = '5.1.38'
+    }
+
+    dependencies {
+        compile "mysql:mysql-connector-java:$mysqlVersion"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    flywayMigrate {
+        initEnvironment().each { prop ->
+            project.ext[prop.key] = prop.value
+        }
+    }
+}
+
+// ------------------------------------------
+// Sub projects
+// ------------------------------------------
+
+subprojects {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    test {
+        systemProperties initEnvironment()
+    }
+}
+
+// ------------------------------------------
+// Test tasks for the different environments
+// ------------------------------------------
+
+task repositoryTests {
+    dependsOn project(':taskboard-domain').test
+}
+
+task acceptanceTests {
+    dependsOn project(':taskboard-rest-api').test
+}
+
+// ------------------------------------------
+// Read properties from the given environment
+// ------------------------------------------
+
+def initEnvironment() {
+    Map<String, String> map = new HashMap<>();
+    Properties props = new Properties()
+    String location, env;
+
+    env = System.getProperty("env")
+
+    if (env == null)
+        env = 'local' // we default to local config
+
+    if (project.parent == null)
+        location = "$project.rootDir/conf/${env}.properties"
+    else
+        location = "$project.parent.rootDir/conf/${env}.properties"
+
+    props.load(new FileInputStream(location))
+
+    props.each { prop ->
+        map.put(prop.key.toString(), prop.value.toString())
+    }
+
+    props = System.properties // system properties override environment config
+
+    props.each { prop ->
+        map.put(prop.key.toString(), prop.value.toString())
+    }
+
+    return map
+}

@@ -1,0 +1,29 @@
+<div class="container m-t-md">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group">
+                    <input id="searchOrAddField" type="text" ng-model="projects.project.title" class="form-control" placeholder="Search or create a project">
+                    <span class="input-group-btn">
+                        <button id="searchOrAddButton" ng-click="projects.create()" class="btn btn-default" type="button">Create</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row m-t-md">
+            <div class="col-md-12">
+                <div ng-repeat="project in projects.projects | filter:{title:projects.project.title}" class="project panel panel-default m-b-md">
+                    <div class="panel-body">
+                        <span class="title">{{ project.title }}</span>
+                        <a class="pull-right link" href="#/projects/{{ project.id}}">
+                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        </a>
+                        <a class="pull-right m-r-md delete" ng-click="projects.remove(project.id)">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

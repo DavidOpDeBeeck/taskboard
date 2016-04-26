@@ -1,0 +1,43 @@
+group 'be.davidopdebeeck'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE")
+    }
+}
+
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+ext {
+    springVersion = '4.2.5.RELEASE'
+    taskBoardVersion = 1.0
+    junitVersion = 4.11
+    flywayVersion = 4.0
+}
+
+dependencies {
+    compile project(":taskboard-domain")
+    compile "org.springframework:spring-jdbc:$springVersion"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "junit:junit:$junitVersion"
+}
+
+springBoot {
+    mainClass = "be.davidopdebeeck.taskboard.api.application.Application"
+}
+
+bootRun {
+    systemProperties System.properties
+}

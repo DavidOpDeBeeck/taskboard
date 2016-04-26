@@ -1,9 +1,0 @@
-# Bower and Node
-bower_components
-node_modules
-
-# Intellij project files
-*.iml
-*.ipr
-*.iws
-.idea/
