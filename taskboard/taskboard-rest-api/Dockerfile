@@ -1,12 +1,8 @@
 FROM java:8-jdk
 
-RUN mkdir app
+COPY acc.properties /application.properties
+COPY build/libs/taskboard-rest-api-1.0.jar /rest-api.jar
 
-COPY acc.properties /app/application.properties
-COPY build/libs/taskboard-rest-api-*.jar /app/rest-api.jar
+RUN sh -c 'touch /rest-api.jar'
 
-EXPOSE 8080
-
-WORKDIR app
-
-ENTRYPOINT [ "java", "-jar", "rest-api.jar" ]
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/rest-api.jar"]
