@@ -137,7 +137,7 @@ node ('docker')
 node ('docker') {
   unstash 'config'
   unstash 'rest-api'
-  
+  restApi.instance = docker.build(env.BUILD_TAG + "-rest-api").run("-p $restApi.port:8080")
 }
 
 node ('docker && java')
