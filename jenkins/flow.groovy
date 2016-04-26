@@ -5,13 +5,24 @@
 def stageFailed = false;
 
 //------------------------------
-// DATABASE
+// DATABASE CONFIGS
 //------------------------------
 
-def dbPort = 3306
-def dbUrl = "jdbc:mysql://192.168.99.100:$dbPort/taskboard";
-def mysqlImage = docker.image("mysql"); // TODO is local now, needs test and acc different images
-def mysqlContainer;
+def testDatabase = [
+    ip        : '192.168.99.100',
+    port      : '50000',
+    user      : 'db-test',
+    password  : 'g6qf98xy',
+    instance  :  null
+]
+
+def accDatabase = [
+    ip        : '192.168.99.100',
+    port      : '60000',
+    user      : 'db-acc',
+    password  : 'asiyat37',
+    instance  :  null
+]
 
 //------------------------------
 // COMMIT STAGE
@@ -22,14 +33,8 @@ stage "COMMIT STAGE"
 node('gradle')
 {
     git 'https://github.com/DavidOpDeBeeck/taskboard.git'
-    dir ('taskboard/rest-api'){
-      stash includes: '**', name: 'rest-api'
-    }
-    dir ('taskboard/web') {
-      stash includes: '**', name: 'web'
-    }
-    dir ('taskboard/web-test') {
-      stash includes: '**', name: 'web-test'
+    dir ('taskboard'){
+      stash includes: '**', name: 'taskboard'
     }
 }
 
@@ -41,15 +46,15 @@ stage 'REPOSITORY TESTS'
 
 node ('docker')
 {
-  mysqlContainer = mysqlImage.run("-it -p $dbPort:3306")
+  testDatabase.instance = docker.image('mysql').run("-it -p $testDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true")
 }
 
 node ('gradle')
 {
   try {
-    unstash 'rest-api'
-    sh "gradle flywayMigrate -Denv=test -Dflyway.url=$dbUrl"
-    sh "gradle repositoryTests -Denv=test -Ddatasource.url=$dbUrl"
+    unstash 'taskboard'
+    sh "gradle flywayMigrate -Denv=test"
+    sh "gradle repositoryTests -Denv=test"
     step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-domain/build/test-results/TEST-*.xml"])
   } catch (err){
     stageFailed = true
@@ -72,15 +77,15 @@ stage "REST API TESTS"
 
 node ('docker')
 {
-  mysqlContainer = mysqlImage.run("-it -p $dbPort:3306")
+  accDatabase.instance = docker.image('mysql').run("-it -p $accDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$accDatabase.user -e MYSQL_PASSWORD=$accDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true")
 }
 
 node ('gradle')
 {
     try {
-      unstash 'rest-api'
-      sh "gradle flywayMigrate -Denv=test -Dflyway.url=$dbUrl"
-      sh "gradle acceptanceTests -Denv=test -Ddatasource.url=$dbUrl"
+      unstash 'taskboard'
+      sh "gradle flywayMigrate -Denv=acc"
+      sh "gradle acceptanceTests -Denv=acc"
       step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-rest-api/build/test-results/TEST-*.xml"])
     } catch (err){
       stageFailed = true
@@ -89,8 +94,8 @@ node ('gradle')
 
 node ('docker')
 {
-    mysqlContainer.stop()
     if (stageFailed){
+      mysqlContainer.stop()
       error 'Stage failed'
     }
 }

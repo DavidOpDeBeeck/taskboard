@@ -65,6 +65,10 @@ task acceptanceTests {
     dependsOn project(':taskboard-rest-api').test
 }
 
+task webTests {
+    dependsOn project(':taskboard-web-test').test
+}
+
 // ------------------------------------------
 // Read properties from the given environment
 // ------------------------------------------
