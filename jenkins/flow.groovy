@@ -24,6 +24,16 @@ def accDatabase = [
     instance  :  null
 ]
 
+def web = [
+    port      : '9000',
+    instance  : null
+]
+
+def restApi = [
+    port      : '8181',
+    instance  :  null
+]
+
 //------------------------------
 // COMMIT STAGE
 //------------------------------
@@ -110,23 +120,24 @@ node ('gradle')
   dir ('conf') {
     stash includes: 'acc.properties', name: 'config'
   }
-  dir ('taskboard-rest-api/build/libs/') {
-    stash includes: '*.jar', name: 'rest-api'
+  dir ('taskboard-rest-api') {
+    stash includes: '**', name: 'rest-api'
   }
   dir ('taskboard-web') {
     stash includes: '**', name: 'web'
   }
 }
 
-def web = [
-    port      : '9000',
-    instance  : null
-]
-
 node ('docker')
 {
   unstash 'web'
-  web.instance = docker.build(env.BUILD_TAG).run("-p $web.port:8000")
+  web.instance = docker.build(env.BUILD_TAG + "-web").run("-p $web.port:8000")
+}
+
+node ('docker') {
+  unstash 'config'
+  unstash 'rest-api'
+  
 }
 
 node ('docker && java')
