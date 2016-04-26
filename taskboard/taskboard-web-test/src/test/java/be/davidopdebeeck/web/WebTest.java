@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
 public abstract class WebTest
 {
 
-    @Value( "${server.address}" )
+    @Value( "${web.driver.server.address}" )
     private String address;
 
-    @Value( "${server.port}" )
+    @Value( "${web.driver.server.port}" )
     private int port;
 
-    @Value( "${server.ssl.enabled}" )
+    @Value( "${web.driver.server.ssl.enabled}" )
     private boolean ssl;
 
     protected WebDriver webDriver;
