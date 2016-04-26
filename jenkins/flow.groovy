@@ -140,11 +140,15 @@ node ('docker') {
   restApi.instance = docker.build(env.BUILD_TAG + "-rest-api").run("-p $restApi.port:8080")
 }
 
-node ('docker && java')
+node ('java')
 {
-  sh 'ls -l'
-  //sh 'mv test.properties application.properties'
-  //sh 'java -jar -Ddatasource.url=jdbc:mysql://192.168.99.100:2376:3306/taskboard taskboard-rest-api-1.0.jar'
+  try {
+    unstash 'taskboard'
+    sh "gradle webTests -Denv=acc"
+    step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-web-tests/build/test-results/TEST-*.xml"])
+  } catch (err){
+    stageFailed = true
+  }
 }
 
 node ('docker')
@@ -154,7 +158,3 @@ node ('docker')
       error 'Stage failed'
     }
 }
-
-// breng web op python docker
-// breng rest api op java docker
-// breng web tests op java docker
