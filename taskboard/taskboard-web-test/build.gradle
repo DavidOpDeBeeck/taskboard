@@ -10,7 +10,6 @@ ext {
     fluentleniumVersion = '0.10.3'
     seleniumVersion = '2.45.0'
     commonsVersion = '1.7'
-    springVersion = '4.2.5.RELEASE'
     assertjVersion = '1.7.0'
     junitVersion = '4.11'
 }
@@ -20,7 +19,6 @@ dependencies {
     compile "org.fluentlenium:fluentlenium-assertj:$fluentleniumVersion"
     compile "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
     compile "commons-configuration:commons-configuration:$commonsVersion"
-    compile "org.springframework:spring-beans:$springVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
     testCompile "junit:junit:$junitVersion"
 }

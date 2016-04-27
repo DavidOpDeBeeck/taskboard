@@ -4,6 +4,7 @@ package be.davidopdebeeck.web;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -11,28 +12,30 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.TimeUnit;
+
 
 public abstract class WebTest
 {
 
-    @Value( "${web.driver.server.address}" )
-    private String address;
-
-    @Value( "${web.driver.server.port}" )
-    private int port;
-
-    @Value( "${web.driver.server.ssl.enabled}" )
-    private boolean ssl;
+    private static String address;
+    private static int port;
+    private static boolean ssl;
 
     protected WebDriver webDriver;
+
+    @BeforeClass
+    public static void beforeClass()
+    {
+        address = System.getProperty( "webdriver.server.address" );
+        port = Integer.parseInt( System.getProperty( "webdriver.server.port" ) );
+        ssl = Boolean.parseBoolean( System.getProperty( "webdriver.server.ssl.enabled" ) );
+    }
 
     @Before
     public void setUp() throws ConfigurationException
     {
-        System.setProperty( "webdriver.chrome.driver", "driver/chromedriver.exe" );
         webDriver = new ChromeDriver();
     }
 
