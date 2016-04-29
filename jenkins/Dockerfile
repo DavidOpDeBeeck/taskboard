@@ -1,4 +1,4 @@
-FROM jenkins
+FROM jenkins:2.0
 
 # We need root
 

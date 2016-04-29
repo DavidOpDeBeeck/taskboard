@@ -10,7 +10,7 @@ def stageFailed = false;
 
 def testDatabase = [
     ip        : '192.168.99.100',
-    port      : '50000',
+    port      : '55000',
     user      : 'db-test',
     password  : 'g6qf98xy',
     instance  :  null
@@ -140,15 +140,15 @@ node ('docker') {
   restApi.instance = docker.build(env.BUILD_TAG + "-rest-api").run("-p $restApi.port:8080")
 }
 
-node ('java')
+node ('webdriver && gradle')
 {
   try {
     unstash 'taskboard'
     sh "gradle webTests -Denv=acc"
-    step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-web-tests/build/test-results/TEST-*.xml"])
   } catch (err){
     stageFailed = true
   }
+  step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-web-test/build/test-results/TEST-*.xml"])
 }
 
 node ('docker')
