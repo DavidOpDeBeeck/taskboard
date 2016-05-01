@@ -9,7 +9,9 @@
 
     ///////////////////
 
-    vm.title     = "";
+    vm.title = "";
+    vm.password = "";
+    vm.protected = false;
 
     ///////////////////
 
@@ -22,7 +24,10 @@
     ///////////////////
 
     function activate () {
-      API.getProject($routeParams.id).then((project) => vm.title = project.title);
+      API.getProject($routeParams.id).then((project) => {
+        vm.title = project.title;
+        vm.protected = project.protected;
+      });
     }
 
     function save() {

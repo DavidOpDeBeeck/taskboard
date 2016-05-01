@@ -4,8 +4,6 @@
       <a href="javascript:void(0);" class="pull-right link" ng-click="project.redirect()">
           <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
       </a>
-      <a href="javascript:void(0);" class="pull-right m-r-md delete" ng-click="project.remove()">
-          <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-      </a>
+      <span ng-show="project.protected" class="glyphicon glyphicon-lock pull-right m-r-md" aria-hidden="true"></span>
   </div>
 </div>

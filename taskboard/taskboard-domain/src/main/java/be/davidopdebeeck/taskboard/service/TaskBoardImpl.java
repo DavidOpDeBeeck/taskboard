@@ -34,6 +34,12 @@ public class TaskBoardImpl implements TaskBoard
     }
 
     @Override
+    public Project createProject( String title, String plainTextPassword )
+    {
+        return projectDAO.create( new Project( title, plainTextPassword ) );
+    }
+
+    @Override
     public Project updateProject( Project project )
     {
         return projectDAO.update( project );

@@ -5,9 +5,15 @@
                 <div class="input-group">
                     <input type="text" ng-model="projects.project.title" class="form-control" placeholder="Search or create a project">
                     <span class="input-group-btn">
+                        <button ng-click="projects.toggleProtected()" class="btn btn-{{ projects.protected ? 'success' : 'danger' }}" type="button">
+                          <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                        </button>
                         <button ng-click="projects.create()" class="btn btn-default" type="button">Create</button>
                     </span>
                 </div>
+            </div>
+            <div class="col-md-12 m-t" ng-show="projects.protected">
+              <input type="text" ng-model="projects.project.password" class="form-control" placeholder="Password for your project">
             </div>
         </div>
         <div class="row m-t-md">

@@ -30,16 +30,21 @@ public class ProjectController
         return new ResponseEntity<>( taskBoard.getAllProjects(), HttpStatus.OK );
     }
 
-
     @RequestMapping( method = RequestMethod.POST )
     public ResponseEntity addProject( @RequestBody ProjectDTO dto, UriComponentsBuilder b )
     {
         String title = dto.getTitle();
+        String password = dto.getPassword();
 
         if ( title.isEmpty() )
-            return new ResponseEntity<>( HttpStatus.OK );
+            return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
 
-        Project project = taskBoard.createProject( title );
+        Project project;
+
+        if ( password == null || password.isEmpty() )
+            project = taskBoard.createProject( title );
+        else
+            project = taskBoard.createProject( title, password );
 
         UriComponents components = b.path( "projects/{id}" ).buildAndExpand( project.getId() );
 
@@ -60,6 +65,7 @@ public class ProjectController
     {
         Project project = taskBoard.getProjectById( projectId );
         project.setTitle( dto.getTitle() );
+        project.setPassword( dto.getPassword() );
         taskBoard.updateProject( project );
         return new ResponseEntity<>( HttpStatus.OK );
     }

@@ -23,7 +23,9 @@ public class Converter
     {
         String uuid = set.getString( "id" );
         String title = set.getString( "title" );
-        return new Project( UUID.fromString( uuid ), title );
+        String password = set.getString( "password" );
+        String salt = set.getString( "salt" );
+        return new Project( UUID.fromString( uuid ), title, password, salt );
     }
 
     /**

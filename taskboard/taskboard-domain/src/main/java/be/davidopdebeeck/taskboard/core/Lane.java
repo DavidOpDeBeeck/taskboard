@@ -1,11 +1,14 @@
 package be.davidopdebeeck.taskboard.core;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Lane class
  */
+@JsonInclude( JsonInclude.Include.NON_NULL )
 public class Lane extends Identifiable
 {
 

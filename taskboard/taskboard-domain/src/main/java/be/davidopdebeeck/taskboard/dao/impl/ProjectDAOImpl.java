@@ -46,7 +46,9 @@ public class ProjectDAOImpl extends JdbcTemplateDAO implements ProjectDAO
     {
         String id = project.getId();
         String title = project.getTitle();
-        jdbcTemplate.update( "insert into project values(?,?)", id, title );
+        String password = project.getPassword();
+        String salt = project.getSalt();
+        jdbcTemplate.update( "insert into project (id,title,password,salt) values(?,?,?,?)", id, title, password, salt );
         return project;
     }
 
@@ -55,7 +57,9 @@ public class ProjectDAOImpl extends JdbcTemplateDAO implements ProjectDAO
     {
         String id = project.getId();
         String title = project.getTitle();
-        jdbcTemplate.update( "update project set title=? WHERE id=?", title, id );
+        String password = project.getPassword();
+        String salt = project.getSalt();
+        jdbcTemplate.update( "update project set title=?, password=?, salt=? WHERE id=?", title, password, salt, id );
         return project;
     }
 

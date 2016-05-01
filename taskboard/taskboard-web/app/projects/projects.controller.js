@@ -10,13 +10,18 @@
 
       ///////////////////
 
-      vm.project  = { title : "" };
-      vm.projects = [];
+      vm.project  = {
+        title   : "",
+        password: ""
+      };
+      vm.protected = false;
+      vm.projects  = [];
 
       ///////////////////
 
-      vm.create   = create;
+      vm.create = create;
       vm.onProjectRemove = activate;
+      vm.toggleProtected = toggleProtected;
 
       activate();
 
@@ -28,6 +33,10 @@
 
       function create () {
         API.addProject(vm.project).then(activate);
+      }
+
+      function toggleProtected() {
+        vm.protected = !vm.protected;
       }
   }
 })();

@@ -24,6 +24,14 @@ public interface TaskBoard
     Project createProject( String title );
 
     /**
+     * Creates a new project with the specified title and password in the database
+     *
+     * @param title             The title of the project that will be created
+     * @param plainTextPassword The plaintext password of the project that will be created
+     */
+    Project createProject( String title, String plainTextPassword );
+
+    /**
      * Updates a project in the database
      *
      * @param project The project that will be updated
