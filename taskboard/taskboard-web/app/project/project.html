@@ -1,0 +1,19 @@
+<header>
+  <section class="controls">
+    <button type="button" class="btn btn-default btn-sm" ng-click="project.goBack()">
+        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Overview
+    </button>
+    <button type="button" class="btn btn-default btn-sm" ng-click="project.openNewLane()">
+        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Lane
+    </button>
+    <button type="button" class="btn btn-default btn-sm" ng-click="project.openSettings()">
+        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings
+    </button>
+  </section>
+  <h2>{{ project.title }}</h2>
+</header>
+<main class="wrapper">
+  <section class="lanes" ng-nicescroll>
+    <lane-panel ng-repeat="l in project.lanes" lane-id="l.id" on-remove="project.onLaneRemove()"></lane-panel>
+  </section>
+</main>

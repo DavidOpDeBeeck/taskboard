@@ -13,6 +13,16 @@ buildscript {
     }
 }
 
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE")
+    }
+}
+
 allprojects {
     group 'be.davidopdebeeck'
     version = '1.0'
@@ -48,6 +58,24 @@ subprojects {
     test {
         systemProperties initEnvironment()
     }
+}
+
+// ------------------------------------------
+// Start REST API
+// ------------------------------------------
+
+project(':taskboard-rest-api') {
+    apply plugin: 'spring-boot'
+    bootRun {
+        systemProperties initEnvironment()
+    }
+    bootRepackage {
+        mainClass = "be.davidopdebeeck.taskboard.api.application.Application"
+    }
+}
+
+task bootRun {
+    dependsOn project(':taskboard-rest-api').bootRun
 }
 
 // ------------------------------------------

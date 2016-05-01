@@ -1,0 +1,60 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,800italic,800,700italic,700,600italic,600,400italic,300italic,300);
+
+html,
+body,
+body > div {
+  font-family: 'Open Sans', sans-serif;
+  height: 100%;
+}
+
+/*-------------------------*/
+
+button,
+.form-control {
+  background-color: #ffffff;
+  border: 1px solid #D9D9D9;
+  box-shadow: 1px 1px 1px #D9D9D9;
+}
+
+/*-------------------------*/
+
+.dndPlaceholder {
+    display: block;
+    min-height: 50px;
+    padding: 20px;
+    margin: 5px;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid #D9D9D9;
+    box-shadow: 1px 1px 1px #D9D9D9;
+}
+
+.dndPlaceholder:after {
+  content: 'Place here'
+}
+
+/*-------------------------*/
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  margin: 0 10px;
+  background-color: rgba(0,0,0,0);
+  -webkit-border-radius: 100px;
+}
+
+::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  background: rgba(0,0,0,0.4);
+  -webkit-border-radius: 100px;
+  background-clip: padding-box;
+  border: 2px solid rgba(0, 0, 0, 0);
+  min-height: 10px;
+}
+::-webkit-scrollbar-thumb:vertical:active {
+  background: rgba(0,0,0,0.61);
+  -webkit-border-radius: 100px;
+}

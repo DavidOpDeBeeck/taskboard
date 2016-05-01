@@ -11,20 +11,55 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "bower_components"
   ],
   "dependencies": {
-    "angular-resource": "^1.5.2",
-    "angular": "^1.5.2",
+    "jquery": "^2.2.3",
+    "jquery.nicescroll": "jquery-nicescroll#3.6.0",
     "bootstrap": "^3.3.6",
+    "angular": "^1.5.2",
     "angular-route": "~1.5.3",
-    "css-spaces": "~0.3.5",
+    "angular-bootstrap": "~1.3.2",
+    "angular-resource": "^1.5.2",
+    "angular-nicescroll": "^0.0.9",
     "angular-drag-and-drop-lists": "~1.4.0",
-    "angular-mocks": "^1.5.3"
+    "css-spaces": "~0.3.5"
   },
   "resolutions": {
     "angular": "1.5.3"
+  },
+  "exportsOverride": {
+    "jquery": {
+      "js": "dist/jquery.min.js"
+    },
+    "jquery.nicescroll": {
+      "js": "dist/jquery.nicescroll.min.js"
+    },
+    "bootstrap": {
+      "js": "dist/js/bootstrap.min.js",
+      "css": "dist/css/bootstrap.min.css",
+      "fonts": "dist/fonts/*.*"
+    },
+    "angular": {
+      "js": "angular.min.js"
+    },
+    "angular-route": {
+      "js": "angular-route.min.js"
+    },
+    "angular-bootstrap": {
+      "js": "ui-bootstrap-tpls.min.js"
+    },
+    "angular-resource": {
+      "js": "angular-resource.min.js"
+    },
+    "angular-nicescroll": {
+      "js": "angular-nicescroll.js"
+    },
+    "angular-drag-and-drop-lists": {
+      "js": "angular-drag-and-drop-lists.min.js"
+    },
+    "css-spaces": {
+      "css": "dist/spaces.bootstrap.min.css"
+    }
   }
 }

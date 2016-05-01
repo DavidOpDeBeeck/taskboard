@@ -1,6 +1,8 @@
 # Bower and Node
 bower_components
 node_modules
+lib
+dist
 
 # Intellij project files
 *.iml

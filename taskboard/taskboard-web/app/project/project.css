@@ -1,0 +1,39 @@
+header {
+  padding: 1.5rem;
+  background: #fefefe;
+  border-bottom: 1px solid #D9D9D9;
+  box-shadow: 1px 1px 1px #D9D9D9;
+}
+
+header > h2 {
+  margin: 0;
+}
+
+/*-------------------------*/
+
+.wrapper {
+  margin: 0px 15px;
+}
+
+/*-------------------------*/
+
+.lanes {
+  position: absolute;
+  top: calc(10px + 64px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 5px 0px;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+/*-------------------------*/
+
+.controls {
+  float: right;
+}
+
+.controls button > span {
+  margin-right: 2px;
+}

@@ -1,0 +1,28 @@
+.lane {
+  position: relative;
+  display:inline-block;
+  white-space: normal;
+  width: 290px;
+  margin: 0px 15px;
+  height: 100%;
+  min-height: 100%;
+}
+
+.lane > .panel-body {
+  height: calc(100% - 39px - 51px - 15px);
+  margin: 5px 0;
+  border-left: 1px solid #D9D9D9;
+  border-right: 1px solid #D9D9D9;
+  overflow-y: auto;
+}
+
+.lane > .panel-heading {
+  background-color: #ffffff;
+  border: 1px solid #D9D9D9;
+  box-shadow: 1px 1px 1px #D9D9D9;
+}
+
+.lane > .panel-heading > h3 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}

@@ -1,0 +1,21 @@
+.task {
+  background-color: #ffffff;
+  border: 1px solid #D9D9D9;
+  box-shadow: 1px 1px 1px #D9D9D9;
+}
+
+.task > .panel-heading > h3 {
+  font-size: 1.45rem;
+  text-transform: uppercase;
+}
+
+.task > .panel-body {
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+/*-------------------------*/
+
+.completed {
+  background: #f5f5f5;
+}

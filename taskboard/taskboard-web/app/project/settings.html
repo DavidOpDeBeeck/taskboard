@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="settings.close()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Settings</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        <div class="form-group m-b-0">
+            <label for="title" class="col-sm-3 control-label">Title</label>
+            <div class="col-sm-9">
+                <input type="text" id="title" class="form-control" placeholder="Title" ng-model="settings.title">
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger" ng-click="settings.remove()">Remove</button>
+    <button type="button" class="btn btn-default" ng-click="settings.close()">Close</button>
+    <button type="button" class="btn btn-primary" ng-click="settings.save()">Save changes</button>
+</div>
