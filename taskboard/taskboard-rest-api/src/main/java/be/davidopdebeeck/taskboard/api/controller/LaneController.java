@@ -23,16 +23,14 @@ public class LaneController
     TaskBoard taskBoard;
 
     @RequestMapping( method = RequestMethod.GET )
-    public ResponseEntity<Lane> getLane( @PathVariable( "laneId" ) String laneId
-    )
+    public ResponseEntity<Lane> getLane( @PathVariable( "laneId" ) String laneId )
     {
         Lane lane = taskBoard.getLaneById( laneId );
         return new ResponseEntity<>( lane, HttpStatus.OK );
     }
 
     @RequestMapping( method = RequestMethod.DELETE )
-    public ResponseEntity removeTask( @PathVariable( "laneId" ) String laneId
-    )
+    public ResponseEntity removeLane( @PathVariable( "laneId" ) String laneId )
     {
         taskBoard.removeLane( laneId );
         return new ResponseEntity<>( HttpStatus.OK );
@@ -65,8 +63,7 @@ public class LaneController
             headers.setLocation( components.toUri() );
 
             return new ResponseEntity<Void>( headers, HttpStatus.CREATED );
-        }
-        else
+        } else
         {
             taskBoard.addTaskToLane( laneId, dto.getId() );
             return new ResponseEntity<Void>( HttpStatus.OK );

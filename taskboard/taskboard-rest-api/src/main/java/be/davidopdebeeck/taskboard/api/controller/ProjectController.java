@@ -72,8 +72,7 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes", method = RequestMethod.POST )
-    public ResponseEntity addLaneToProject( @PathVariable( "projectId" ) String projectId, @RequestBody LaneDTO dto, UriComponentsBuilder b
-    )
+    public ResponseEntity addLaneToProject( @PathVariable( "projectId" ) String projectId, @RequestBody LaneDTO dto, UriComponentsBuilder b )
     {
         Lane lane = taskBoard.addLaneToProject( projectId, dto.getTitle(), dto.getSequence(), dto.isCompleted() );
 
@@ -86,8 +85,7 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.DELETE )
-    public ResponseEntity<Lane> removeLane( @PathVariable( "projectId" ) String projectId, @PathVariable( "laneId" ) String laneId
-    )
+    public ResponseEntity<Lane> removeLaneFromProject( @PathVariable( "projectId" ) String projectId, @PathVariable( "laneId" ) String laneId )
     {
         taskBoard.removeLaneFromProject( projectId, laneId );
         return new ResponseEntity<>( HttpStatus.OK );

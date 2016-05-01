@@ -54,14 +54,14 @@ module.exports = function(grunt) {
     concat: {
       'libs-js': {
         options: {
-            separator: ';',
+            separator: ';'
         },
         src: dependencies.js,
         dest: 'dist/js/libs.js'
       },
       'app-js': {
         options: {
-            separator: ';',
+            separator: ';'
         },
         src: [app + '*/app.*.js', app + '**/*.js'],
         dest: 'dist/js/app.js'
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
       'app-css': {
         src: app + '**/*.css',
         dest: 'dist/css/app.css'
-      },
+      }
     },
     babel: {
       options: {
