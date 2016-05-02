@@ -9,29 +9,27 @@ def stageFailed = false;
 //------------------------------
 
 def testDatabase = [
-    ip        : '192.168.99.100',
+    name      : env.BUILD_TAG + "-test-database",
     port      : '55000',
     user      : 'db-test',
-    password  : 'g6qf98xy',
-    instance  :  null
+    password  : 'g6qf98xy'
 ]
 
 def accDatabase = [
-    ip        : '192.168.99.100',
+    name      : env.BUILD_TAG + "-acc-database",
     port      : '60000',
     user      : 'db-acc',
-    password  : 'asiyat37',
-    instance  :  null
+    password  : 'asiyat37'
 ]
 
 def web = [
-    port      : '8000',
-    instance  : null
+    name      : env.BUILD_TAG + "-web",
+    port      : '8000'
 ]
 
 def restApi = [
-    port      : '9000',
-    instance  :  null
+    name      : env.BUILD_TAG + "-rest-api",
+    port      : '9000'
 ]
 
 //------------------------------
@@ -56,27 +54,30 @@ stage 'REPOSITORY TESTS'
 
 node ('docker')
 {
-  testDatabase.instance = docker.image('mysql').run("-it -p $testDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true")
+  runContainer( testDatabase.name,
+                'mysql',
+                "-it -p $testDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
 }
 
 node ('gradle')
 {
-  try {
+  try
+  {
     unstash 'taskboard'
     sh "gradle flywayMigrate -Denv=test"
     sh "gradle repositoryTests -Denv=test"
     step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-domain/build/test-results/TEST-*.xml"])
-  } catch (err){
+  } catch (err)
+  {
     stageFailed = true
   }
 }
 
 node ('docker')
 {
-    testDatabase.instance.stop()
-    if (stageFailed){
-      error 'Stage failed'
-    }
+  removeContainer( testDatabase.name )
+  if (stageFailed)
+    error 'Stage failed'
 }
 
 //------------------------------
@@ -87,17 +88,21 @@ stage "REST API TESTS"
 
 node ('docker')
 {
-  accDatabase.instance = docker.image('mysql').run("-it -p $accDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$accDatabase.user -e MYSQL_PASSWORD=$accDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true")
+  runContainer( accDatabase.name,
+                'mysql',
+                "-it -p $accDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$accDatabase.user -e MYSQL_PASSWORD=$accDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
 }
 
 node ('gradle')
 {
-    try {
+    try
+    {
       unstash 'taskboard'
       sh "gradle flywayMigrate -Denv=acc"
       sh "gradle acceptanceTests -Denv=acc"
       step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-rest-api/build/test-results/TEST-*.xml"])
-    } catch (err){
+    } catch (err)
+    {
       stageFailed = true
     }
 }
@@ -105,7 +110,7 @@ node ('gradle')
 node ('docker')
 {
     if (stageFailed) {
-      accDatabase.instance.stop()
+      removeContainer( accDatabase.name )
       error 'Stage failed'
     }
 }
@@ -131,21 +136,25 @@ node ('gradle')
 node ('docker')
 {
   unstash 'web'
-  web.instance = docker.build(env.BUILD_TAG + "-web").run("-p $web.port:8000")
+  buildImage( web.name )
+  runContainer( web.name, web.name, "-p $web.port:8000" )
 }
 
 node ('docker') {
   unstash 'config'
   unstash 'rest-api'
-  restApi.instance = docker.build(env.BUILD_TAG + "-rest-api").run("-p $restApi.port:8080")
+  buildImage( restApi.name )
+  runContainer( restApi.name, restApi.name, "-p $restApi.port:8080" )
 }
 
 node ('webdriver && gradle')
 {
-  try {
+  try
+  {
     unstash 'taskboard'
     sh "gradle webTests -Denv=acc"
-  } catch (err){
+  } catch (err)
+  {
     stageFailed = true
   }
   step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-web-test/build/test-results/TEST-*.xml"])
@@ -153,8 +162,46 @@ node ('webdriver && gradle')
 
 node ('docker')
 {
-    accDatabase.instance.stop()
-    if (stageFailed){
-      error 'Stage failed'
-    }
+  removeContainer( accDatabase.name )
+  if (stageFailed)
+    error 'Stage failed'
+}
+
+//------------------------------
+// DOCKER FUNCTIONS
+//------------------------------
+
+def buildImage( name )
+{
+  sh "docker build -t $name ."
+}
+
+def runContainer( name , image , options )
+{
+  sh "docker create $options --name=$name $image"
+}
+
+def removeContainer( name )
+{
+  sh "docker rm -f $name"
+}
+
+def createNetwork( name )
+{
+  sh "docker network create -d bridge $name"
+}
+
+def removeNetwork( name )
+{
+  sh "docker network rm $name"
+}
+
+def connect( network , container )
+{
+  sh "docker network connect $network $container"
+}
+
+def disconnect( network , container )
+{
+  sh "docker network disconnect $network $container"
 }

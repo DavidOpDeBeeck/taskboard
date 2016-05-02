@@ -1,6 +1,5 @@
 package be.davidopdebeeck.web;
 
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
@@ -36,7 +35,7 @@ public abstract class WebTest
     @Before
     public void setUp() throws ConfigurationException
     {
-        webDriver = new ChromeDriver();
+        webDriver = new FirefoxDriver();
     }
 
     @After
