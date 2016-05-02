@@ -9,9 +9,9 @@
 
     ///////////////////
 
-    vm.title = "";
-    vm.password = "";
-    vm.protected = false;
+    vm.title;
+    vm.password;
+    vm.secured;
 
     ///////////////////
 
@@ -26,13 +26,15 @@
     function activate () {
       API.getProject($routeParams.id).then((project) => {
         vm.title = project.title;
-        vm.protected = project.protected;
+        vm.secured = project.secured;
       });
     }
 
     function save() {
       API.updateProject($routeParams.id, {
-        'title': vm.title
+        'title'   : vm.title,
+        'secured' : vm.secured,
+        'password': vm.password
       }).then($uibModalInstance.close);
     }
 

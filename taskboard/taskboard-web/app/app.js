@@ -2,6 +2,7 @@
   'use strict'
   angular.module( 'taskBoardApp' , [
       'dndLists' ,
+      'ngCookies',
       'angular-nicescroll',
       'taskBoardApp.config' ,
       'taskBoardApp.routes' ,

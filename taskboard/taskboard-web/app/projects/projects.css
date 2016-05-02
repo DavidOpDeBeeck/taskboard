@@ -1,0 +1,26 @@
+main h1 {
+  font-size: 7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/*-------------------------*/
+
+#search-add-field {
+  padding: 20px;
+}
+
+#password-field {
+  padding: 0 20px;
+}
+
+#is-secured-button,
+#search-add-button {
+  padding: 10px;
+}
+
+#is-secured-button > span,
+#search-add-button > span {
+  padding: 0 5px;
+}

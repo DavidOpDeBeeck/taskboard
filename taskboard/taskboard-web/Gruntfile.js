@@ -12,6 +12,7 @@ module.exports = function(grunt) {
       ['angular', 'angular.min.js'],
       ['bootstrap', 'bootstrap.min.js'],
       ['angular-route', 'angular-route.min.js'],
+      ['angular-cookies', 'angular-cookies.min.js'],
       ['angular-resource', 'angular-resource.min.js'],
       ['angular-nicescroll', 'angular-nicescroll.js'],
       ['angular-drag-and-drop-lists', 'angular-drag-and-drop-lists.min.js'],

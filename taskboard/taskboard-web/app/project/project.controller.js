@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.controllers')
     .controller("ProjectController", ProjectController);
 
-  function ProjectController( API , $routeParams , $location , $timeout , $uibModal ) {
+  function ProjectController( API , $routeParams , $location , $timeout , $uibModal , Security ) {
 
     var vm = this;
 
@@ -26,6 +26,7 @@
     ///////////////////
 
     function activate () {
+      Security.getPassword($routeParams.id).then(() => {
         API.getProject($routeParams.id).then((project) => {
             vm.id = project.id;
             vm.title = project.title;
@@ -37,6 +38,7 @@
                 API.getLane(lane.id).then((updated) => vm.lanes[ index ].tasks = updated.tasks);
             });
         });
+      });
     }
 
     function goBack() {

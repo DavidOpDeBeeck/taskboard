@@ -3,6 +3,7 @@
 html,
 body,
 body > div {
+  color: #474747;
   font-family: 'Open Sans', sans-serif;
   height: 100%;
 }
@@ -31,6 +32,12 @@ button,
 
 .dndPlaceholder:after {
   content: 'Place here'
+}
+
+/*-------------------------*/
+
+.modal-open[style] {
+padding-right: 0px !important;
 }
 
 /*-------------------------*/

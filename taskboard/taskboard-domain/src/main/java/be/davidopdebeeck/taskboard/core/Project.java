@@ -94,9 +94,9 @@ public class Project extends Identifiable
     }
 
     /**
-     * @return If the project is protected with a password
+     * @return If the project is secured with a password
      */
-    public boolean isProtected()
+    public boolean isSecured()
     {
         return password != null;
     }

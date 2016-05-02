@@ -41,7 +41,7 @@ public class ProjectController
 
         Project project;
 
-        if ( password == null || password.isEmpty() )
+        if ( !dto.isSecured() || password == null || password.isEmpty() )
             project = taskBoard.createProject( title );
         else
             project = taskBoard.createProject( title, password );
@@ -65,7 +65,16 @@ public class ProjectController
     {
         Project project = taskBoard.getProjectById( projectId );
         project.setTitle( dto.getTitle() );
-        project.setPassword( dto.getPassword() );
+
+        if ( ( project.isSecured() && dto.isSecured() ) || ( !project.isSecured() && dto.isSecured() ) )
+        {
+            if ( dto.getPassword() != null && !dto.getPassword().isEmpty() )
+                project.setPassword( dto.getPassword() );
+        } else if ( project.isSecured() )
+        {
+            project.setPassword( null );
+        }
+
         taskBoard.updateProject( project );
         return new ResponseEntity<>( HttpStatus.OK );
     }

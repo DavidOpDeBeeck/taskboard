@@ -1,24 +1,27 @@
-<main class="container m-t-md">
+<main class="container">
     <div class="col-md-6 col-md-offset-3">
         <div class="row">
+            <h1>Taskboard</h1>
             <div class="col-md-12">
                 <div class="input-group">
-                    <input type="text" ng-model="projects.project.title" class="form-control" placeholder="Search or create a project">
+                    <input type="text" id="search-add-field" ng-model="projects.title" class="form-control" placeholder="Search or create a project">
                     <span class="input-group-btn">
-                        <button ng-click="projects.toggleProtected()" class="btn btn-{{ projects.protected ? 'success' : 'danger' }}" type="button">
+                        <button id="is-secured-button" ng-click="projects.toggleSecured()" class="btn btn-{{ projects.secured ? 'success' : 'danger' }}" type="button">
                           <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                         </button>
-                        <button ng-click="projects.create()" class="btn btn-default" type="button">Create</button>
+                        <button id="search-add-button" ng-click="projects.create()" class="btn btn-default" type="button">
+                          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
                     </span>
                 </div>
             </div>
-            <div class="col-md-12 m-t" ng-show="projects.protected">
-              <input type="text" ng-model="projects.project.password" class="form-control" placeholder="Password for your project">
+            <div class="col-md-12 m-t" ng-show="projects.secured">
+              <input id="password-field" type="text" ng-model="projects.password" class="form-control" placeholder="Password for your project">
             </div>
         </div>
         <div class="row m-t-md">
             <div class="col-md-12">
-                <div ng-repeat="p in projects.projects | filter : { title : projects.project.title }">
+                <div ng-repeat="p in projects.projects | filter : { title : projects.title }">
                   <project-panel project-id="p.id" on-remove="projects.onProjectRemove()"></project-panel>
                 </div>
             </div>
