@@ -7,7 +7,11 @@ RUN mkdir /app
 
 COPY . /app
 
-RUN cd /app && bower update --allow-root
+RUN cd /app && \
+    npm install && \
+    bower update --allow-root && \
+    npm install grunt-cli -g && \
+    grunt
 
 EXPOSE 8000
 
