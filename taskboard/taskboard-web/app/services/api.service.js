@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.services')
     .factory("API", apiService)
 
-  function apiService ( $resource , apiUrl ) {
+  function apiService ( $resource , apiUrl , $q ) {
 
       var project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
           update : {
@@ -81,7 +81,8 @@
         removeTaskFromLane    : removeTaskFromLane,
         getTask               : getTask,
         updateTask            : updateTask,
-        removeTask            : removeTask
+        removeTask            : removeTask,
+        validate              : validate
       };
 
       return service;
@@ -115,7 +116,7 @@
       function addLaneToProject( projectId, lane ) {
         return projectLanes.post({ 'projectId' : projectId }, lane).$promise;
       }
-      
+
       function removeLaneFromProject( projectId, laneId ) {
         return projectLanes.post({ 'projectId' : projectId, 'laneId' : laneId }).$promise;
       }
@@ -150,6 +151,13 @@
 
       function removeTask( taskId ) {
         return task.delete({'taskId': taskId}).$promise;
+      }
+
+      function validate( projectId , password ) {
+        //TODO implement
+        return $q((resolve, reject) => {
+          resolve();
+        });
       }
   };
 })();

@@ -54,9 +54,14 @@ stage 'REPOSITORY TESTS'
 
 node ('docker')
 {
-  runContainer( testDatabase.name,
+  def node = getNodeContainer()
+  runContainer( 'mysql',
                 'mysql',
-                "-it -p $testDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
+                "-d -p $testDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
+  createNetwork('test-network')
+  connect('test-network', node)
+  connect('test-network', 'mysql')
+  sh "ping mysql"
 }
 
 node ('gradle')
@@ -168,6 +173,15 @@ node ('docker')
 }
 
 //------------------------------
+// NODE FUNCTIONS
+//------------------------------
+
+def getNodeContainer()
+{
+  return env.NODE_NAME.split("-")[1]
+}
+
+//------------------------------
 // DOCKER FUNCTIONS
 //------------------------------
 
@@ -178,7 +192,7 @@ def buildImage( name )
 
 def runContainer( name , image , options )
 {
-  sh "docker create $options --name=$name $image"
+  sh "docker run $options --name=$name $image"
 }
 
 def removeContainer( name )
@@ -193,7 +207,7 @@ def createNetwork( name )
 
 def removeNetwork( name )
 {
-  sh "docker network rm $name"
+	sh "docker network rm $name || echo 'Network $name does not exist!'"
 }
 
 def connect( network , container )

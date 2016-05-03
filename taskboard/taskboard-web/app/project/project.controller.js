@@ -26,7 +26,7 @@
     ///////////////////
 
     function activate () {
-      Security.getPassword($routeParams.id).then(() => {
+      Security.validate($routeParams.id).then(() => {
         API.getProject($routeParams.id).then((project) => {
             vm.id = project.id;
             vm.title = project.title;

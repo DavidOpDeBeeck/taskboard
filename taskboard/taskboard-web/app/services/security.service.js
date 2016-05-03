@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.services')
     .factory("Security", securityService)
 
-  function securityService ( $uibModal , $q , $cookies ) {
+  function securityService ( API , $uibModal , $q , $cookies ) {
 
       let modal = {
         templateUrl : 'app/security/security.html',
@@ -12,35 +12,32 @@
         backdrop    : 'static'
       };
 
-      function checkPassword( projectId , password ) {
-        return $q((resolve, reject) => {
-          reject();
-        });
-      }
+      ///////////////////
 
-      var service = {
-        getPassword : getPassword
+      let service = {
+        validate : validate
       };
 
       return service;
 
       ///////////////////
 
-      function getPassword ( projectId ) {
+      function validate ( projectId ) {
+        let password, securityModal;
         return $q((resolve, reject) => {
-
-          modal['resolve'] = { 'projectId' : () => { return projectId; } };
-          let password = $cookies.get(projectId);
+          password = $cookies.get(projectId);
           if (password == undefined) {
-            let securityModal = $uibModal.open(modal);
+            modal.resolve = { 'projectId' : () => { return projectId; } };
+            securityModal = $uibModal.open(modal);
             securityModal.result.then((result) => {
-              checkPassword(projectId,result.password).then(() => {
-                $cookies.put(projectId,result.password );
-                resolve(result.password);
-              }, () => {
-                securityModal.close();
-                getPassword(projectId);
-              });
+              API.validate(projectId,result.password)
+                .then(() => {
+                  $cookies.put(projectId,result.password );
+                  resolve(result.password);
+                }, () => {
+                  securityModal.close();
+                  validate(projectId);
+                });
             });
           } else {
             return resolve(password);
