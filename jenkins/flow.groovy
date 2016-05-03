@@ -5,19 +5,28 @@
 def stageFailed = false;
 
 //------------------------------
+// NETWORK
+//------------------------------
+
+def generateNetworkId() {
+  Random random = new Random();
+  return 'network-' + random.nextInt(999999 - 0) + 0;
+}
+
+//------------------------------
 // DATABASE CONFIGS
 //------------------------------
 
 def testDatabase = [
     name      : env.BUILD_TAG + "-test-database",
-    port      : '55000',
+    port      : '3306',
     user      : 'db-test',
     password  : 'g6qf98xy'
 ]
 
 def accDatabase = [
     name      : env.BUILD_TAG + "-acc-database",
-    port      : '60000',
+    port      : '3306',
     user      : 'db-acc',
     password  : 'asiyat37'
 ]
@@ -50,18 +59,20 @@ node('gradle')
 // TEST ENVIRONMENT STAGE
 //------------------------------
 
+def nodeId, testNetwork;
+
 stage 'REPOSITORY TESTS'
 
 node ('docker')
 {
-  def node = getNodeContainer()
-  runContainer( 'mysql',
+  nodeId = getNodeContainer()
+  testNetwork = generateNetworkId()
+  runContainer( testDatabase.name,
                 'mysql',
-                "-d -p $testDatabase.port:3306 -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
-  createNetwork('test-network')
-  connect('test-network', node)
-  connect('test-network', 'mysql')
-  sh "ping mysql"
+                "-e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
+  createNetwork(testNetwork)
+  connect(testNetwork, nodeId, 'docker')
+  connect(testNetwork, testDatabase.name, 'mysql')
 }
 
 node ('gradle')
@@ -80,6 +91,9 @@ node ('gradle')
 
 node ('docker')
 {
+  disconnect(testNetwork, nodeId)
+  disconnect(testNetwork, testDatabase.name)
+  removeNetwork(testNetwork)
   removeContainer( testDatabase.name )
   if (stageFailed)
     error 'Stage failed'
@@ -192,7 +206,7 @@ def buildImage( name )
 
 def runContainer( name , image , options )
 {
-  sh "docker run $options --name=$name $image"
+  sh "docker run -d $options --name=$name $image"
 }
 
 def removeContainer( name )
@@ -210,9 +224,9 @@ def removeNetwork( name )
 	sh "docker network rm $name || echo 'Network $name does not exist!'"
 }
 
-def connect( network , container )
+def connect( network , container, alias )
 {
-  sh "docker network connect $network $container"
+  sh "docker network connect --alias $alias $network $container"
 }
 
 def disconnect( network , container )
