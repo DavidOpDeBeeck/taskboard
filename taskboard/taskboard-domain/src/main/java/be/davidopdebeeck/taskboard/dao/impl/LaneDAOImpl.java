@@ -53,8 +53,9 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
     {
         String id = lane.getId();
         String title = lane.getTitle();
-        int sequence = lane.getSequence();
+        int sequence = normalise( lane.getSequence() );
         boolean completed = lane.isCompleted();
+        moveRight( sequence );
         jdbcTemplate.update( "insert into lane values(?,?,?,?)", id, title, completed, sequence );
         return lane;
     }
@@ -64,8 +65,9 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
     {
         String id = lane.getId();
         String title = lane.getTitle();
-        int sequence = lane.getSequence();
+        int sequence = normalise( lane.getSequence() );
         boolean completed = lane.isCompleted();
+        moveRight( sequence );
         jdbcTemplate.update( "update lane set title=?, sequence=?, completed=? WHERE id=?", title, sequence, completed, id );
         return lane;
     }
@@ -77,16 +79,14 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
     public void remove( Lane lane )
     {
         String id = lane.getId();
-        jdbcTemplate.update( "delete from project_has_lane WHERE lane_id=?", lane.getId() );
+        jdbcTemplate.update( "delete from project_has_lane WHERE lane_id=?", id );
         jdbcTemplate.update( "delete from lane_has_task WHERE lane_id=?", id );
 
         if ( lane.getTasks() != null )
-        {
-            for ( Task task : lane.getTasks() )
-                taskDAO.remove( task );
-        }
+            lane.getTasks().forEach( taskDAO::remove );
 
         jdbcTemplate.update( "delete from lane WHERE id=?", id );
+        moveLeft( lane.getSequence() );
     }
 
     @Override
@@ -112,6 +112,32 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
                 lanes.add( Converter.toLane( rs ) );
             return lanes;
         } );
+    }
+
+    private int getMax()
+    {
+        return jdbcTemplate.query( "SELECT MAX(sequence) FROM lane", rs -> {
+            if ( rs.next() )
+                return rs.getInt( 1 );
+            return 0;
+        } );
+    }
+
+    private int normalise( int sequence )
+    {
+        return ( sequence < 0 ) ? 0 : ( sequence > getMax() + 1 ) ? getMax() + 1 : sequence;
+    }
+
+    private void moveLeft( int sequence )
+    {
+        for ( Lane lane : getAll() )
+            jdbcTemplate.update( "update lane set sequence=? WHERE sequence > ? AND id=?", lane.getSequence() - 1, sequence, lane.getId() );
+    }
+
+    private void moveRight( int sequence )
+    {
+        for ( Lane lane : getAll() )
+            jdbcTemplate.update( "update lane set sequence=? WHERE sequence >= ? AND id=?", lane.getSequence() + 1, sequence, lane.getId() );
     }
 
 }

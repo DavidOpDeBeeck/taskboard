@@ -5,7 +5,7 @@
 
   function NewTaskController( API , $uibModalInstance , laneId ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 

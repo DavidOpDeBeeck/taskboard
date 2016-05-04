@@ -5,7 +5,7 @@
 
   function NewLaneController( API , $routeParams , $uibModalInstance ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 

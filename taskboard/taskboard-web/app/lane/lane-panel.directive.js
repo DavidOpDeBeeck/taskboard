@@ -4,7 +4,7 @@
     .directive("lanePanel", lanePanel);
 
   function lanePanel() {
-    var directive = {
+    let directive = {
       bindToController : {
          id       : '=laneId',
          onRemove : '&onRemove'

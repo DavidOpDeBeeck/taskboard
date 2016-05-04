@@ -5,7 +5,7 @@
 
   function TaskPanelController( API, $uibModal ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 
@@ -39,7 +39,7 @@
     }
 
     function openEditTask () {
-      var editTaskModal = $uibModal.open({
+      let editTaskModal = $uibModal.open({
         templateUrl  : 'app/task/edit-task.html',
         controller   : 'EditTaskController',
         controllerAs : 'task',

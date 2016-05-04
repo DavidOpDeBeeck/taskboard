@@ -5,7 +5,7 @@
 
   function SecurityController( API , $uibModalInstance , projectId ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 

@@ -4,7 +4,7 @@
     .directive("projectPanel", projectPanel);
 
   function projectPanel() {
-    var directive = {
+    let directive = {
       bindToController  : {
          id         : '=projectId',
          onRemove   : '&onRemove',

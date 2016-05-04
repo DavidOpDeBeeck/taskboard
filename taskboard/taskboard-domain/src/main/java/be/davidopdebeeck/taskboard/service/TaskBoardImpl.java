@@ -71,10 +71,7 @@ public class TaskBoardImpl implements TaskBoard
         Lane lane = new Lane( title, sequence, completed );
         laneDAO.create( lane );
         if ( projectDAO.addLane( project, lane ) )
-        {
-            updateLanes( project, lane );
             return lane;
-        }
         return null;
     }
 
@@ -97,13 +94,6 @@ public class TaskBoardImpl implements TaskBoard
     @Override
     public Lane updateLane( Lane lane )
     {
-        Project project = laneDAO.getProject( lane );
-
-        if ( project == null )
-            return null;
-
-        project.setLanes( projectDAO.getLanes( project ) );
-        updateLanes( project, lane );
         return laneDAO.update( lane );
     }
 
@@ -176,19 +166,5 @@ public class TaskBoardImpl implements TaskBoard
     //-------------------------------------------
     // endregion
     //-------------------------------------------
-
-    private void updateLanes( Project project, Lane lane )
-    {
-        int sequence = lane.getSequence();
-        for ( Lane l : project.getLanes() )
-        {
-            if ( !l.equals( lane ) && l.getSequence() == sequence )
-            {
-                l.setSequence( sequence + 1 );
-                laneDAO.update( l );
-                sequence += 1;
-            }
-        }
-    }
 
 }

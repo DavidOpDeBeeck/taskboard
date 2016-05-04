@@ -2,9 +2,9 @@
     'use strict'
     angular.module( 'taskBoardApp.controllers' ).controller( "LanePanelController" , LanePanelController );
 
-    function LanePanelController ( API , $routeParams , $location , $uibModal ) {
+    function LanePanelController ( API , $routeParams , $location , $uibModal , $scope ) {
 
-        var vm = this;
+        let vm = this;
 
         ///////////////////
 
@@ -22,8 +22,7 @@
         vm.openNewTask = openNewTask;
         vm.onTaskRemove = activate;
 
-        vm.dragEnd = dragEnd;
-        vm.dragStart = dragStart;
+        vm.drop = drop;
 
         activate();
 
@@ -35,11 +34,11 @@
                 vm.title = lane.title;
                 vm.completed = lane.completed;
                 vm.tasks = lane.tasks;
-            } );
+            });
         }
 
         function openEditLane () {
-            var editLaneModal = $uibModal.open( {
+            let editLaneModal = $uibModal.open( {
                 templateUrl  : 'app/lane/edit-lane.html' ,
                 controller   : 'EditLaneController' ,
                 controllerAs : 'lane' ,
@@ -51,7 +50,7 @@
         }
 
         function openNewTask () {
-            var taskAddModal = $uibModal.open( {
+            let taskAddModal = $uibModal.open( {
                 templateUrl  : 'app/task/new-task.html' ,
                 controller   : 'NewTaskController' ,
                 controllerAs : 'task' ,
@@ -66,15 +65,20 @@
             API.removeLane( vm.id ).then( vm.onRemove );
         }
 
-        function dragEnd ( item ) {
-            API.addTaskToLane( vm.id , item ).then( activate );
+        ///////////////////
+
+        function drop (item) {
+          API.addTaskToLane( vm.id , item ).then( activate );
+          return true;
         }
 
-        function dragStart ( task ) {
-            var index = vm.tasks.indexOf( task );
-            if ( index => 0 )
-                vm.tasks.splice( index , 1 );
-            API.removeTaskFromLane( vm.id , task.id ).then( activate );
-        }
+        $scope.$watchCollection(() => { return vm.tasks }, (newVal, oldVal) => {
+            if(newVal !== oldVal) {
+              newVal = newVal[0];
+              oldVal = oldVal[0];
+              if (oldVal != undefined && newVal == undefined && vm.tasks.indexOf(oldVal) < 0)
+                API.removeTaskFromLane( vm.id , oldVal.id ).then( activate );
+            }
+        });
     }
 })();

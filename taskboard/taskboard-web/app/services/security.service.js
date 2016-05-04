@@ -25,7 +25,8 @@
       function validate ( projectId ) {
         let password, securityModal;
         return $q((resolve, reject) => {
-          password = $cookies.get(projectId);
+          resolve();
+          /*password = $cookies.get(projectId);
           if (password == undefined) {
             modal.resolve = { 'projectId' : () => { return projectId; } };
             securityModal = $uibModal.open(modal);
@@ -41,8 +42,8 @@
             });
           } else {
             return resolve(password);
-          }
-         });
+          }*/
+        });
       }
   };
 })();

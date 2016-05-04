@@ -6,7 +6,7 @@
 
   function ProjectsController ( API ) {
 
-      var vm = this;
+      let vm = this;
 
       ///////////////////
 

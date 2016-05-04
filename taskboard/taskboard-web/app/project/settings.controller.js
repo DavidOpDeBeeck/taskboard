@@ -5,7 +5,7 @@
 
   function SettingsController( API, $routeParams, $location, $uibModalInstance ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 

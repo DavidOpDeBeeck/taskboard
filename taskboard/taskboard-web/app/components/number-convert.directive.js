@@ -5,7 +5,7 @@
 
   function convertToNumber() {
 
-    var directive = {
+    let directive = {
       link        : link,
       require     : 'ngModel'
     };

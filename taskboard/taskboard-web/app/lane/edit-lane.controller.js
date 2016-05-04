@@ -5,7 +5,7 @@
 
   function EditLaneController( API , $routeParams , $uibModalInstance , id ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 

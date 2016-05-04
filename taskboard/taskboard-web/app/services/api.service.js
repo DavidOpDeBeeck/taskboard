@@ -5,21 +5,21 @@
 
   function apiService ( $resource , apiUrl , $q ) {
 
-      var project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
+      let project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
           update : {
               method  : "PUT" ,
               isArray : false
           }
       });
 
-      var projects = $resource( apiUrl + "/projects", {} , {
+      let projects = $resource( apiUrl + "/projects", {} , {
           post : {
               method  : "POST" ,
               isArray : false
           }
       });
 
-      var projectLanes = $resource( apiUrl + "/projects/:projectId/lanes" , { projectId : "@projectId" } , {
+      let projectLanes = $resource( apiUrl + "/projects/:projectId/lanes" , { projectId : "@projectId" } , {
           post : {
               method  : "POST" ,
               isArray : false
@@ -30,7 +30,7 @@
           }
       });
 
-      var lane = $resource( apiUrl + "/lanes/:laneId" , { laneId : "@laneId" } , {
+      let lane = $resource( apiUrl + "/lanes/:laneId" , { laneId : "@laneId" } , {
           update : {
               method  : "PUT" ,
               isArray : false
@@ -40,20 +40,20 @@
           }
       });
 
-      var laneTasks = $resource( apiUrl + "/lanes/:laneId/tasks" , { laneId : "@laneId" } , {
+      let laneTasks = $resource( apiUrl + "/lanes/:laneId/tasks" , { laneId : "@laneId" } , {
           post : {
               method  : "POST" ,
               isArray : false
           }
       });
 
-      var laneTask = $resource( apiUrl + "/lanes/:laneId/tasks/:taskId" , { laneId : "@laneId" , taskId : "@taskId" } , {
+      let laneTask = $resource( apiUrl + "/lanes/:laneId/tasks/:taskId" , { laneId : "@laneId" , taskId : "@taskId" } , {
           delete : {
               method : "DELETE"
           }
       } );
 
-      var task = $resource( apiUrl + "/tasks/:taskId" , { taskId : "@taskId" } , {
+      let task = $resource( apiUrl + "/tasks/:taskId" , { taskId : "@taskId" } , {
           update : {
               method  : "PUT" ,
               isArray : false
@@ -65,7 +65,7 @@
 
       ///////////////////
 
-      var service = {
+      let service = {
         getProject            : getProject,
         updateProject         : updateProject,
         removeProject         : removeProject,

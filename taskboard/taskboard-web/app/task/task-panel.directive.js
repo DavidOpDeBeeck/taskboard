@@ -4,7 +4,7 @@
     .directive("taskPanel", taskPanel);
 
   function taskPanel() {
-    var directive = {
+    let directive = {
       bindToController : {
          id      : '=taskId',
          laneId  : '=laneId',

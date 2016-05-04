@@ -5,7 +5,7 @@
 
   function EditTaskController( API , $routeParams , $uibModalInstance , id ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 

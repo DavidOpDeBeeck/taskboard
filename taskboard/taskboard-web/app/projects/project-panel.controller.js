@@ -6,7 +6,7 @@
 
   function ProjectPanelController ( API , $location ) {
 
-      var vm = this;
+      let vm = this;
 
       ///////////////////
 

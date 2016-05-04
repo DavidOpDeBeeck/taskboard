@@ -5,7 +5,7 @@
 
   function ProjectController( API , $routeParams , $location , $timeout , $uibModal , Security ) {
 
-    var vm = this;
+    let vm = this;
 
     ///////////////////
 
@@ -46,7 +46,7 @@
     }
 
     function openNewLane() {
-      var addLaneModal = $uibModal.open({
+      let addLaneModal = $uibModal.open({
         templateUrl : 'app/lane/new-lane.html',
         controller  : 'NewLaneController',
         controllerAs: 'lane'
@@ -55,7 +55,7 @@
     }
 
     function openSettings() {
-      var settingsModal = $uibModal.open({
+      let settingsModal = $uibModal.open({
         templateUrl  : 'app/project/settings.html',
         controller   : 'SettingsController',
         controllerAs : 'settings'
