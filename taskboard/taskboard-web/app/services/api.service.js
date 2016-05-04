@@ -156,7 +156,7 @@
       function validate( projectId , password ) {
         //TODO implement
         return $q((resolve, reject) => {
-          resolve();
+          reject();
         });
       }
   };

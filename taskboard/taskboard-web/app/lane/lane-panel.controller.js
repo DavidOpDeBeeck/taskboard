@@ -2,7 +2,7 @@
     'use strict'
     angular.module( 'taskBoardApp.controllers' ).controller( "LanePanelController" , LanePanelController );
 
-    function LanePanelController ( API , $routeParams , $location , $uibModal , $scope ) {
+    function LanePanelController ( API , $routeParams , $location , $uibModal ) {
 
         let vm = this;
 
@@ -23,6 +23,8 @@
         vm.onTaskRemove = activate;
 
         vm.drop = drop;
+        vm.dragStart = dragStart;
+        vm.canceled = canceled;
 
         activate();
 
@@ -67,18 +69,18 @@
 
         ///////////////////
 
-        function drop (item) {
-          API.addTaskToLane( vm.id , item ).then( activate );
-          return true;
+        function drop (task) {
+          API.addTaskToLane( vm.id , task ).then(activate);
         }
 
-        $scope.$watchCollection(() => { return vm.tasks }, (newVal, oldVal) => {
-            if(newVal !== oldVal) {
-              newVal = newVal[0];
-              oldVal = oldVal[0];
-              if (oldVal != undefined && newVal == undefined && vm.tasks.indexOf(oldVal) < 0)
-                API.removeTaskFromLane( vm.id , oldVal.id ).then( activate );
-            }
-        });
+        function dragStart (index,task) {
+          API.removeTaskFromLane( vm.id , task.id ).then(activate);
+        }
+
+        function canceled (task) {
+          console.log(task);
+          //API.addTaskToLane( vm.id , task ).then(activate);
+        }
+
     }
 })();

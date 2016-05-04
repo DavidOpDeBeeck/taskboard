@@ -8,7 +8,9 @@
         <div ng-repeat="t in lane.tasks"
              dnd-draggable="t"
              dnd-effect-allowed="move"
-             dnd-moved="lane.tasks.splice($index, 1)">
+             dnd-moved="lane.tasks.splice($index, 1)"
+             dnd-dragstart="lane.dragStart($index,t)"
+             dnd-canceled="lane.canceled(t)">
             <task-panel task-id="t.id" lane-id="lane.id" on-remove="lane.onTaskRemove()"></task-panel>
         </div>
     </div>
