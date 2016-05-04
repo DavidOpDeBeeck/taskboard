@@ -11,73 +11,69 @@
         vm.id;
         vm.title;
         vm.completed;
-        vm.tasks = [];
+        vm.tasks;
 
         ///////////////////
 
-        vm.onRemove;
-        vm.remove = remove;
+        vm.openEditLane     = openEditLane;
+        vm.openNewTask      = openNewTask;
+        vm.onTaskRemove     = activate;
 
-        vm.openEditLane = openEditLane;
-        vm.openNewTask = openNewTask;
-        vm.onTaskRemove = activate;
+        vm.taskDropped      = taskDropped;
+        vm.taskDragStart    = taskDragStart;
+        vm.taskDragCanceled = taskDragCanceled;
 
-        vm.drop = drop;
-        vm.dragStart = dragStart;
-        vm.canceled = canceled;
+        vm.remove           = remove;
+        vm.onRemoveCallback = undefined;
 
         activate();
 
         ///////////////////
 
         function activate () {
-            API.getLane( vm.id ).then( ( lane ) => {
-                vm.id = lane.id;
-                vm.title = lane.title;
-                vm.completed = lane.completed;
-                vm.tasks = lane.tasks;
+            API.getLane(vm.id).then((lane) => {
+                vm.id         = lane.id;
+                vm.title      = lane.title;
+                vm.completed  = lane.completed;
+                vm.tasks      = lane.tasks;
             });
         }
 
         function openEditLane () {
-            let editLaneModal = $uibModal.open( {
-                templateUrl  : 'app/lane/edit-lane.html' ,
-                controller   : 'EditLaneController' ,
-                controllerAs : 'lane' ,
-                resolve      : {
-                    'id' : () => { return vm.id; }
-                }
-            } );
-            editLaneModal.result.then( activate );
+            let editLaneModal = $uibModal.open({
+                templateUrl  : 'app/lane/edit-lane.html',
+                controller   : 'EditLaneController',
+                controllerAs : 'lane',
+                resolve      : { 'id' : () => { return vm.id; } }
+            });
+            editLaneModal.result.then(activate);
         }
 
         function openNewTask () {
-            let taskAddModal = $uibModal.open( {
-                templateUrl  : 'app/task/new-task.html' ,
-                controller   : 'NewTaskController' ,
-                controllerAs : 'task' ,
-                resolve      : {
-                    'laneId' : () => { return vm.id; }
-                }
-            } );
-            taskAddModal.result.then( activate );
+            let newTaskModal = $uibModal.open({
+                templateUrl  : 'app/task/new-task.html',
+                controller   : 'NewTaskController',
+                controllerAs : 'task',
+                resolve      : { 'laneId' : () => { return vm.id; } }
+            });
+            newTaskModal.result.then(activate);
         }
 
         function remove () {
-            API.removeLane( vm.id ).then( vm.onRemove );
+            API.removeLane(vm.id).then(vm.onRemoveCallback);
         }
 
         ///////////////////
 
-        function drop (task) {
-          API.addTaskToLane( vm.id , task ).then(activate);
+        function taskDropped (task) {
+          API.addTaskToLane(vm.id, task).then(activate);
         }
 
-        function dragStart (index,task) {
-          API.removeTaskFromLane( vm.id , task.id ).then(activate);
+        function taskDragStart (index, task) {
+          API.removeTaskFromLane(vm.id, task.id).then(activate);
         }
 
-        function canceled (task) {
+        function taskDragCanceled (task) {
           console.log(task);
           //API.addTaskToLane( vm.id , task ).then(activate);
         }

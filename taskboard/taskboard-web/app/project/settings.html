@@ -10,26 +10,25 @@
                 <input type="text" id="title" class="form-control" placeholder="Title" ng-model="settings.title">
             </div>
         </div>
-        <div class="form-group" ng-class="{'m-b-0':!settings.secured}">
-            <label for="secured" class="col-sm-3 control-label">Secured</label>
-            <div class="col-sm-9">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" id="secured" ng-model="settings.secured">
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group m-b-0" ng-show="settings.secured">
+        <div class="form-group m-b-0">
             <label for="password" class="col-sm-3 control-label">Password</label>
             <div class="col-sm-9">
-                <input type="password" id="password" class="form-control" placeholder="Password" ng-model="settings.password">
+              <div class="input-group">
+                  <input type="password" ng-disabled="!settings.secured" id="password" class="form-control" placeholder="Password" ng-model="settings.password">
+                  <span class="input-group-btn">
+                      <button ng-click="settings.toggleSecured()" class="btn btn-{{ settings.secured ? 'success' : 'danger' }}" type="button">
+                        <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                      </button>
+                  </span>
+              </div>
             </div>
         </div>
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger" ng-click="settings.remove()">Remove</button>
+    <button type="button" class="btn btn-danger pull-left" ng-click="settings.remove()">
+      <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+    </button>
     <button type="button" class="btn btn-default" ng-click="settings.close()">Close</button>
     <button type="button" class="btn btn-primary" ng-click="settings.save()">Save changes</button>
 </div>

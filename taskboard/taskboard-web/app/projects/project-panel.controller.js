@@ -16,7 +16,6 @@
 
       ///////////////////
 
-      vm.onRemove;
       vm.redirect = redirect;
 
       activate();

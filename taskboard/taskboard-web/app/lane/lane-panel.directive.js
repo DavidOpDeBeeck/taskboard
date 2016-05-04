@@ -6,10 +6,10 @@
   function lanePanel() {
     let directive = {
       bindToController : {
-         id       : '=laneId',
-         onRemove : '&onRemove'
+         id               : '=laneId',
+         onRemoveCallback : '&onRemove'
       },
-      restrict         : 'EA' ,
+      restrict         : 'E' ,
       replace          : 'true',
       controller       : 'LanePanelController',
       controllerAs     : 'lane',

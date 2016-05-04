@@ -15,8 +15,8 @@
 
     ///////////////////
 
-    vm.save = save;
-    vm.close  = close;
+    vm.save         = save;
+    vm.close        = close;
 
     activate();
 

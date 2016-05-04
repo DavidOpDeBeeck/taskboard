@@ -10,17 +10,16 @@
 
       ///////////////////
 
-      vm.title = "";
-      vm.password = "";
+      vm.title;
+      vm.password;
       vm.secured = false;
 
       vm.projects  = [];
 
       ///////////////////
 
-      vm.create = create;
-      vm.onProjectRemove = activate;
-      vm.toggleSecured = toggleSecured;
+      vm.createProject    = createProject;
+      vm.toggleSecured    = toggleSecured;
 
       activate();
 
@@ -30,15 +29,24 @@
         API.getProjects().then((projects) => vm.projects = projects);
       }
 
-      function create () {
+      function clearForm () {
+        vm.title = "";
+        vm.password = "";
+        vm.secured = false;
+      }
+
+      function createProject () {
         API.addProject({
           'title'   : vm.title,
           'secured' : vm.secured,
           'password': vm.password
-        }).then(activate);
+        }).then(() => {
+          clearForm();
+          activate();
+        });
       }
 
-      function toggleSecured() {
+      function toggleSecured () {
         vm.secured = !vm.secured;
       }
   }

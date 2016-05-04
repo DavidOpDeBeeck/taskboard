@@ -6,11 +6,11 @@
   function taskPanel() {
     let directive = {
       bindToController : {
-         id      : '=taskId',
-         laneId  : '=laneId',
-         onRemove: '&onRemove'
+         id               : '=taskId',
+         laneId           : '=laneId',
+         onRemoveCallback : '&onRemove'
       },
-      restrict         : 'EA' ,
+      restrict         : 'E' ,
       replace          : 'true',
       controller       : 'TaskPanelController',
       controllerAs     : 'task',

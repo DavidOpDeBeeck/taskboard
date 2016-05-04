@@ -4,14 +4,14 @@
     </div>
     <div class="panel-body"
         dnd-list="lane.tasks"
-        dnd-drop="lane.drop(item)">
+        dnd-drop="lane.taskDropped(item)">
         <div ng-repeat="t in lane.tasks"
              dnd-draggable="t"
              dnd-effect-allowed="move"
              dnd-moved="lane.tasks.splice($index, 1)"
-             dnd-dragstart="lane.dragStart($index,t)"
-             dnd-canceled="lane.canceled(t)">
-            <task-panel task-id="t.id" lane-id="lane.id" on-remove="lane.onTaskRemove()"></task-panel>
+             dnd-dragstart="lane.taskDragStart($index,t)"
+             dnd-canceled="lane.taskDragCanceled(t)">
+            <task-panel task-id="t.id" lane-id="lane.id" on-remove="lane.onTaskRemove()"/>
         </div>
     </div>
     <div class="panel-footer clearfix">

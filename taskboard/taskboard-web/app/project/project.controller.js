@@ -11,14 +11,13 @@
 
     vm.id;
     vm.title;
-    vm.lanes = [];
+    vm.lanes;
 
     ///////////////////
 
-    vm.goBack = goBack;
-    vm.openNewLane = openNewLane;
+    vm.goBack       = goBack;
+    vm.openNewLane  = openNewLane;
     vm.openSettings = openSettings;
-
     vm.onLaneRemove = onLaneRemove;
 
     activate();
@@ -26,35 +25,33 @@
     ///////////////////
 
     function activate () {
-      Security.validate($routeParams.id).then(() => {
-        API.getProject($routeParams.id).then((project) => {
-            vm.id = project.id;
-            vm.title = project.title;
-            vm.lanes = project.lanes;
-            vm.lanes.sort((a,b) => {
-                return parseInt( a.sequence ) - parseInt( b.sequence );
-            });
-            vm.lanes.forEach((lane,index) => {
-                API.getLane(lane.id).then((updated) => vm.lanes[ index ].tasks = updated.tasks);
-            });
-        });
+      API.getProject($routeParams.id).then((project) => {
+          vm.id = project.id;
+          vm.title = project.title;
+          vm.lanes = project.lanes;
+          vm.lanes.forEach(loadTasks);
       });
     }
 
-    function goBack() {
+    function loadTasks ( lane ) {
+      let index = vm.lanes.indexOf(lane);
+      API.getLane(lane.id).then((updated) => vm.lanes[ index ].tasks = updated.tasks);
+    }
+
+    function goBack () {
       $location.path("/projects");
     }
 
-    function openNewLane() {
-      let addLaneModal = $uibModal.open({
+    function openNewLane () {
+      let newLaneModal = $uibModal.open({
         templateUrl : 'app/lane/new-lane.html',
         controller  : 'NewLaneController',
         controllerAs: 'lane'
       });
-      addLaneModal.result.then(activate);
+      newLaneModal.result.then(activate);
     }
 
-    function openSettings() {
+    function openSettings () {
       let settingsModal = $uibModal.open({
         templateUrl  : 'app/project/settings.html',
         controller   : 'SettingsController',
@@ -64,6 +61,7 @@
     }
 
     function onLaneRemove () {
+      // TODO maybe remove from lanes and don't refresh them all?
       activate();
     }
 

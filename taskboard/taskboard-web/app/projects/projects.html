@@ -9,7 +9,7 @@
                         <button id="is-secured-button" ng-click="projects.toggleSecured()" class="btn btn-{{ projects.secured ? 'success' : 'danger' }}" type="button">
                           <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                         </button>
-                        <button id="search-add-button" ng-click="projects.create()" class="btn btn-default" type="button">
+                        <button id="search-add-button" ng-click="projects.createProject()" class="btn btn-default" type="button">
                           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>
                     </span>
@@ -22,7 +22,7 @@
         <div class="row m-t-md">
             <div class="col-md-12">
                 <div ng-repeat="p in projects.projects | filter : { title : projects.title }">
-                  <project-panel project-id="p.id" on-remove="projects.onProjectRemove()"></project-panel>
+                  <project-panel project-id="p.id" />
                 </div>
             </div>
         </div>

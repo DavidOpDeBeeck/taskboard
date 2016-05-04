@@ -15,8 +15,8 @@
 
     ///////////////////
 
-    vm.create = create;
-    vm.close  = close;
+    vm.create       = create;
+    vm.close        = close;
 
     ///////////////////
 

@@ -15,7 +15,7 @@
             <div class="col-sm-9">
                 <select id="sequence" ng-model="lane.sequence" class="form-control" convert-to-number>
                     <option value="0">at the start</option>
-                    <option ng-repeat="l in lane.lanes | orderBy : 'sequence' : 1" ng-show="l.id != lane.id" value="{{ l.sequence }}">{{ l.title }}</option>
+                    <option ng-repeat="l in lane.lanes | orderBy : 'sequence'" ng-show="l.id != lane.id" value="{{ l.sequence }}">{{ l.title }}</option>
                 </select>
             </div>
         </div>

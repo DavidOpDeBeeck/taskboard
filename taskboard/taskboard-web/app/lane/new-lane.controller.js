@@ -9,22 +9,22 @@
 
     ///////////////////
 
-    vm.title     = "";
-    vm.sequence  = 0;
-    vm.completed = false;
-    vm.lanes     = [];
+    vm.title      = "";
+    vm.sequence   = 0;
+    vm.completed  = false;
+    vm.lanes      = [];
 
     ///////////////////
 
-    vm.create = create;
-    vm.close  = close;
+    vm.create     = create;
+    vm.close      = close;
 
     activate();
 
     ///////////////////
 
     function activate () {
-        API.getProject($routeParams.id).then((project) => vm.lanes = project.lanes);
+      API.getProject($routeParams.id).then((project) => vm.lanes = project.lanes);
     }
 
     function create() {

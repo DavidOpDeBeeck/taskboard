@@ -6,10 +6,9 @@
   function projectPanel() {
     let directive = {
       bindToController  : {
-         id         : '=projectId',
-         onRemove   : '&onRemove',
+         id         : '=projectId'
       },
-      restrict          : 'EA' ,
+      restrict          : 'E',
       replace           : 'true',
       controller        : 'ProjectPanelController',
       controllerAs      : 'project',

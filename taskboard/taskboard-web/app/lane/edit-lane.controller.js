@@ -26,16 +26,15 @@
     ///////////////////
 
     function activate () {
-        API.getProject($routeParams.id)
-          .then((project) => vm.lanes = project.lanes)
-          .then(() => {
-            API.getLane(id)
-              .then((lane) => {
-                vm.title = lane.title;
-                vm.sequence = lane.sequence - 1 < 0 ? "0" : lane.sequence;
-                vm.completed = lane.completed;
-            });
-        });
+      API.getProject($routeParams.id)
+        .then((project) => vm.lanes = project.lanes)
+        .then(() => {
+          API.getLane(id).then((lane) => {
+              vm.title      = lane.title;
+              vm.sequence   = lane.sequence;
+              vm.completed  = lane.completed;
+          });
+      });
     }
 
     function save() {
@@ -43,9 +42,7 @@
         'title'     : vm.title,
         'sequence'  : vm.sequence + 1,
         'completed' : vm.completed
-      }).then(() => {
-          $uibModalInstance.close();
-      });
+      }).then($uibModalInstance.close);
     }
 
     function close() {

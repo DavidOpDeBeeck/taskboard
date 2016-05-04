@@ -15,13 +15,13 @@
     vm.description;
     vm.completed;
 
-    vm.laneId;
+    vm.laneId           = undefined;
 
     ///////////////////
 
-    vm.onRemove;
-    vm.remove = remove;
-    vm.openEditTask = openEditTask;
+    vm.openEditTask     = openEditTask;
+    vm.remove           = remove;
+    vm.onRemoveCallback = undefined;
 
     activate();
 
@@ -29,13 +29,11 @@
 
     function activate () {
         API.getTask(vm.id).then((task) => {
-            vm.title = task.title;
-            vm.description = task.description;
-            vm.assignee = task.assignee;
+            vm.title        = task.title;
+            vm.description  = task.description;
+            vm.assignee     = task.assignee;
         });
-        API.getLane(vm.laneId).then((lane) => {
-            vm.completed = lane.completed;
-        });
+        API.getLane(vm.laneId).then((lane) => vm.completed = lane.completed );
     }
 
     function openEditTask () {
@@ -43,15 +41,13 @@
         templateUrl  : 'app/task/edit-task.html',
         controller   : 'EditTaskController',
         controllerAs : 'task',
-        resolve      : {
-          'id'  : () => { return vm.id; }
-        }
+        resolve      : { 'id'  : () => { return vm.id; } }
       });
       editTaskModal.result.then(activate);
     }
 
     function remove () {
-      API.removeTask(vm.id).then(vm.onRemove);
+      API.removeTask(vm.id).then(vm.onRemoveCallback);
     }
   }
 })();
