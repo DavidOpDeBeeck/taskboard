@@ -14,14 +14,13 @@
     vm.assignee;
     vm.description;
     vm.completed;
-
-    vm.laneId           = undefined;
+    vm.laneId;
 
     ///////////////////
 
     vm.openEditTask     = openEditTask;
     vm.remove           = remove;
-    vm.onRemoveCallback = undefined;
+    vm.onRemoveCallback;
 
     activate();
 

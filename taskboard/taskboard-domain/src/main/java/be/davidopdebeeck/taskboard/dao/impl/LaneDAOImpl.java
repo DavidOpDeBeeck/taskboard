@@ -55,7 +55,7 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
         String title = lane.getTitle();
         int sequence = normalise( lane.getSequence() );
         boolean completed = lane.isCompleted();
-        moveRight( sequence );
+        moveRight( sequence, lane );
         jdbcTemplate.update( "insert into lane values(?,?,?,?)", id, title, completed, sequence );
         return lane;
     }
@@ -67,7 +67,8 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
         String title = lane.getTitle();
         int sequence = normalise( lane.getSequence() );
         boolean completed = lane.isCompleted();
-        moveRight( sequence );
+        if ( lane.getSequence() != sequence )
+            moveRight( sequence, lane );
         jdbcTemplate.update( "update lane set title=?, sequence=?, completed=? WHERE id=?", title, sequence, completed, id );
         return lane;
     }
@@ -86,7 +87,7 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
             lane.getTasks().forEach( taskDAO::remove );
 
         jdbcTemplate.update( "delete from lane WHERE id=?", id );
-        moveLeft( lane.getSequence() );
+        moveLeft( lane.getSequence(), lane );
     }
 
     @Override
@@ -125,19 +126,17 @@ public class LaneDAOImpl extends JdbcTemplateDAO implements LaneDAO
 
     private int normalise( int sequence )
     {
-        return ( sequence < 0 ) ? 0 : ( sequence > getMax() + 1 ) ? getMax() + 1 : sequence;
+        return ( sequence < 1 ) ? 1 : ( sequence > getMax() + 1 ) ? getMax() + 1 : sequence;
     }
 
-    private void moveLeft( int sequence )
+    private void moveLeft( int sequence, Lane lane )
     {
-        for ( Lane lane : getAll() )
-            jdbcTemplate.update( "update lane set sequence=? WHERE sequence > ? AND id=?", lane.getSequence() - 1, sequence, lane.getId() );
+        jdbcTemplate.update( "update lane set sequence=sequence - 1 WHERE sequence > ? AND id != ?", sequence, lane.getId() );
     }
 
-    private void moveRight( int sequence )
+    private void moveRight( int sequence, Lane lane )
     {
-        for ( Lane lane : getAll() )
-            jdbcTemplate.update( "update lane set sequence=? WHERE sequence >= ? AND id=?", lane.getSequence() + 1, sequence, lane.getId() );
+        jdbcTemplate.update( "update lane set sequence=sequence + 1 WHERE sequence >= ? AND id != ?", sequence, lane.getId() );
     }
 
 }

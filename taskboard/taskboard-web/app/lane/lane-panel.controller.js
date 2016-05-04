@@ -2,7 +2,7 @@
     'use strict'
     angular.module( 'taskBoardApp.controllers' ).controller( "LanePanelController" , LanePanelController );
 
-    function LanePanelController ( API , $routeParams , $location , $uibModal ) {
+    function LanePanelController ( API , $uibModal ) {
 
         let vm = this;
 
@@ -21,10 +21,11 @@
 
         vm.taskDropped      = taskDropped;
         vm.taskDragStart    = taskDragStart;
+        vm.taskDragEnd      = taskDragEnd;
         vm.taskDragCanceled = taskDragCanceled;
 
         vm.remove           = remove;
-        vm.onRemoveCallback = undefined;
+        vm.onRemoveCallback;
 
         activate();
 
@@ -65,17 +66,23 @@
 
         ///////////////////
 
-        function taskDropped (task) {
-          API.addTaskToLane(vm.id, task).then(activate);
+        function taskDropped (task, index) {
+          API.addTaskToLane(vm.id, task).then(() => vm.tasks.splice(index, 0, task));
+          return true;
         }
 
-        function taskDragStart (index, task) {
-          API.removeTaskFromLane(vm.id, task.id).then(activate);
+        function taskDragStart (task, index) {
+          API.removeTaskFromLane(vm.id, task.id);
         }
 
-        function taskDragCanceled (task) {
-          console.log(task);
-          //API.addTaskToLane( vm.id , task ).then(activate);
+        function taskDragEnd (task, index) {
+          vm.tasks.splice(index, 1);
+        }
+
+        function taskDragCanceled(task, index) {
+          API.addTaskToLane(vm.id,task).then(() => {
+            vm.tasks.splice(index, 0, task);
+          });
         }
 
     }

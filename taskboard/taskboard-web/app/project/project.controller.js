@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.controllers')
     .controller("ProjectController", ProjectController);
 
-  function ProjectController( API , $routeParams , $location , $timeout , $uibModal , Security ) {
+  function ProjectController( API , $routeParams , $rootScope , $location , $timeout , $uibModal , Security ) {
 
     let vm = this;
 
@@ -26,16 +26,10 @@
 
     function activate () {
       API.getProject($routeParams.id).then((project) => {
-          vm.id = project.id;
-          vm.title = project.title;
-          vm.lanes = project.lanes;
-          vm.lanes.forEach(loadTasks);
+          vm.id     = project.id;
+          vm.title  = project.title;
+          vm.lanes  = project.lanes;
       });
-    }
-
-    function loadTasks ( lane ) {
-      let index = vm.lanes.indexOf(lane);
-      API.getLane(lane.id).then((updated) => vm.lanes[ index ].tasks = updated.tasks);
     }
 
     function goBack () {
@@ -64,6 +58,10 @@
       // TODO maybe remove from lanes and don't refresh them all?
       activate();
     }
+
+    ///////////////////
+
+    $rootScope.$on("EditLaneEvent", activate);
 
   }
 })();

@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.controllers')
     .controller("EditLaneController", EditLaneController);
 
-  function EditLaneController( API , $routeParams , $uibModalInstance , id ) {
+  function EditLaneController( API , $rootScope, $routeParams , $uibModalInstance , id ) {
 
     let vm = this;
 
@@ -27,11 +27,12 @@
 
     function activate () {
       API.getProject($routeParams.id)
-        .then((project) => vm.lanes = project.lanes)
+        .then((project) => vm.lanes = project.lanes.filter(lane => lane.id != vm.id))
         .then(() => {
           API.getLane(id).then((lane) => {
+            console.log(lane);
               vm.title      = lane.title;
-              vm.sequence   = lane.sequence;
+              vm.sequence   = lane.sequence - 1;
               vm.completed  = lane.completed;
           });
       });
@@ -42,7 +43,10 @@
         'title'     : vm.title,
         'sequence'  : vm.sequence + 1,
         'completed' : vm.completed
-      }).then($uibModalInstance.close);
+      }).then(() => {
+        $rootScope.$broadcast("EditLaneEvent");
+        $uibModalInstance.close();
+      });
     }
 
     function close() {

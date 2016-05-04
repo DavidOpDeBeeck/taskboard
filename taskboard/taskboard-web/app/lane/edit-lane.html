@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <button type="button" class="close" ng-click="lane.close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title">Lane : {{ lane.title }}</h4>
 </div>
 <div class="modal-body">
@@ -15,7 +15,7 @@
             <div class="col-sm-9">
                 <select id="sequence" ng-model="lane.sequence" class="form-control" convert-to-number>
                     <option value="0">at the start</option>
-                    <option ng-repeat="l in lane.lanes | orderBy : 'sequence'" ng-show="l.id != lane.id" value="{{ l.sequence }}">{{ l.title }}</option>
+                    <option ng-repeat="l in lane.lanes | orderBy : 'sequence'" value="{{ l.sequence }}">{{ l.title }}</option>
                 </select>
             </div>
         </div>

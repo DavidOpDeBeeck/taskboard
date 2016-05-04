@@ -2,17 +2,17 @@
     <div class="panel-heading">
         <h3 class="panel-title text-center">{{ lane.title }}</h3>
     </div>
-    <div class="panel-body"
-        dnd-list="lane.tasks"
-        dnd-drop="lane.taskDropped(item)">
+    <div class="panel-body">
+      <div dnd-list="lane.tasks" dnd-drop="lane.taskDropped(item, index)">
         <div ng-repeat="t in lane.tasks"
              dnd-draggable="t"
              dnd-effect-allowed="move"
-             dnd-moved="lane.tasks.splice($index, 1)"
-             dnd-dragstart="lane.taskDragStart($index,t)"
-             dnd-canceled="lane.taskDragCanceled(t)">
+             dnd-dragstart="lane.taskDragStart(t, $index)"
+             dnd-dragend="lane.taskDragEnd(t, $index)"
+             dnd-canceled="lane.taskDragCanceled(t, $index)">
             <task-panel task-id="t.id" lane-id="lane.id" on-remove="lane.onTaskRemove()"/>
         </div>
+      </div>
     </div>
     <div class="panel-footer clearfix">
       <button type="button" class="btn btn-default btn-sm pull-right" ng-click="lane.remove()">
