@@ -1,6 +1,6 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
-import be.davidopdebeeck.taskboard.api.application.Application;
+import be.davidopdebeeck.taskboard.api.Application;
 import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
 import be.davidopdebeeck.taskboard.api.dto.ProjectDTO;
 import be.davidopdebeeck.taskboard.core.Lane;

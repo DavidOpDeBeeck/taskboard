@@ -1,4 +1,4 @@
-package be.davidopdebeeck.taskboard.api.application;
+package be.davidopdebeeck.taskboard.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.services')
     .factory("API", apiService)
 
-  function apiService ( $resource , apiUrl , $q ) {
+  function apiService ( $resource , apiUrl ) {
 
       let project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
           update : {
@@ -62,6 +62,13 @@
               method : "DELETE"
           }
       });
+
+      let validateProject = $resource( apiUrl + "/validate" , {} , {
+            post : {
+                method  : "POST" ,
+                isArray : false
+            }
+        });
 
       ///////////////////
 
@@ -154,10 +161,7 @@
       }
 
       function validate( projectId , password ) {
-        //TODO implement
-        return $q((resolve, reject) => {
-          reject();
-        });
+        return validateProject.post({'projectId' : projectId , 'password' : password}).$promise;
       }
   };
 })();

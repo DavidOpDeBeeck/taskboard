@@ -2,6 +2,7 @@ package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
 import be.davidopdebeeck.taskboard.api.dto.ProjectDTO;
+import be.davidopdebeeck.taskboard.api.security.SecurityManager;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
@@ -23,6 +24,9 @@ public class ProjectController
 
     @Autowired
     TaskBoard taskBoard;
+
+    @Autowired
+    SecurityManager securityManager;
 
     @RequestMapping( method = RequestMethod.GET )
     public ResponseEntity<Collection<Project>> getProjects()

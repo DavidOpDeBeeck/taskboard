@@ -23,10 +23,9 @@
       ///////////////////
 
       function activate () {
-        API.getProject(vm.id).then((project) => {
-          vm.title = project.title;
-          vm.secured = project.secured;
-        });
+        vm.id = vm.project.id;
+        vm.title = vm.project.title;
+        vm.secured = vm.project.secured;
       }
 
       function redirect () {

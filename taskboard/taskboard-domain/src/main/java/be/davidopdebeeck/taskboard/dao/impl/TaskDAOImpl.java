@@ -34,6 +34,17 @@ public class TaskDAOImpl extends JdbcTemplateDAO implements TaskDAO
     }
 
     @Override
+    public Project getProject( Task task )
+    {
+        return jdbcTemplate.query( "SELECT p.* FROM lane_has_task lht INNER JOIN lane l ON (lht.lane_id=l.id AND task_id=?) INNER JOIN project_has_lane phl ON (lht.lane_id=l.id AND phl.lane_id=l.id) INNER JOIN project p ON (phl.project_id = p.id)", preparedStatement -> preparedStatement
+                .setString( 1, task.getId() ), rs -> {
+            if ( rs.next() )
+                return Converter.toProject( rs );
+            return null;
+        } );
+    }
+
+    @Override
     public Task create( Task task )
     {
         String id = task.getId();

@@ -1,4 +1,4 @@
-package be.davidopdebeeck.taskboard.api.application;
+package be.davidopdebeeck.taskboard.api.config;
 
 import be.davidopdebeeck.taskboard.dao.LaneDAO;
 import be.davidopdebeeck.taskboard.dao.ProjectDAO;
@@ -10,7 +10,6 @@ import be.davidopdebeeck.taskboard.service.TaskBoard;
 import be.davidopdebeeck.taskboard.service.TaskBoardImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -18,7 +17,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan( "be.davidopdebeeck.taskboard" )
 public class DatabaseConfig
 {
 

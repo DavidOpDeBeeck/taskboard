@@ -22,7 +22,7 @@
         <div class="row m-t-md">
             <div class="col-md-12">
                 <div ng-repeat="p in projects.projects | filter : { title : projects.title }">
-                  <project-panel project-id="p.id" />
+                  <project-panel project="p" />
                 </div>
             </div>
         </div>

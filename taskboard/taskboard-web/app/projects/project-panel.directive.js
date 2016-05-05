@@ -6,7 +6,7 @@
   function projectPanel() {
     let directive = {
       bindToController  : {
-         id         : '=projectId'
+          project : '=project'
       },
       restrict          : 'E',
       replace           : 'true',

@@ -18,4 +18,12 @@ public interface TaskDAO extends CrudDAO<Task, String>
      * @return All the tasks from a project from the assignee
      */
     Collection<Task> getByAssignee( Project project, String assignee );
+
+    /**
+     * Gets the project from a task
+     *
+     * @param task The task to get the project from
+     * @return The project of the task
+     */
+    Project getProject( Task task );
 }

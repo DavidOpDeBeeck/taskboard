@@ -9,7 +9,7 @@
          id               : '=laneId',
          onRemoveCallback : '&onRemove'
       },
-      restrict         : 'E' ,
+      restrict         : 'E',
       replace          : 'true',
       controller       : 'LanePanelController',
       controllerAs     : 'lane',

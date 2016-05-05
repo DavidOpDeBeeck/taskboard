@@ -25,24 +25,26 @@
       function validate ( projectId ) {
         let password, securityModal;
         return $q((resolve, reject) => {
-          resolve();
-          /*password = $cookies.get(projectId);
+          password = $cookies.get(projectId);
           if (password == undefined) {
             modal.resolve = { 'projectId' : () => { return projectId; } };
             securityModal = $uibModal.open(modal);
             securityModal.result.then((result) => {
+              console.log(result);
               API.validate(projectId,result.password)
-                .then(() => {
-                  $cookies.put(projectId,result.password );
-                  resolve(result.password);
-                }, () => {
-                  securityModal.close();
-                  validate(projectId);
+                .then((res) => {
+                  if (res.success) {
+                    $cookies.put(projectId, res.token);
+                    resolve();
+                  } else {
+                    securityModal.close();
+                    validate(projectId);
+                  }
                 });
             });
           } else {
-            return resolve(password);
-          }*/
+            return resolve();
+          }
         });
       }
   };
