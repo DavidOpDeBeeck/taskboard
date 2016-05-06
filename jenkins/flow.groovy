@@ -208,7 +208,7 @@ node ('docker')
   // build the docker image (with the id of the build to make it unique)
   buildImage( web.name )
   // run the image and expose the web port (8000)
-  runContainer( web.name, web.name, "-P" )
+  runContainer( web.name, web.name, "-P --build-arg API_HOST=192.168.99.100 --build-arg API_PORT=8081" )
   // connect the web frontend to the network
   connect(network, web.name, 'web')
 }
@@ -221,7 +221,7 @@ node ('docker')
   // build the docker image (with the id of the build to make it unique)
   buildImage( restApi.name )
   // run the image and expose the web port (8080)
-  runContainer( restApi.name, restApi.name, "-P" )
+  runContainer( restApi.name, restApi.name, "-p 8081:8080" )
   // connect the rest api to the network
   connect(network, restApi.name, 'rest-api')
 }
@@ -236,6 +236,8 @@ node ('webdriver && gradle')
     node ('docker') { connect(network, nodeId, 'docker') }
     // unstash the 'taskboard' files
     unstash 'taskboard'
+    // webdriver slave needs a dislay
+    sh "Xvfb &"
     // we run the web tests
     sh "gradle webTests -Denv=acc"
   } catch (err)
