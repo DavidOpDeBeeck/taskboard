@@ -1,5 +1,7 @@
 package be.davidopdebeeck.taskboard.api.security;
 
+import be.davidopdebeeck.taskboard.api.security.exception.TokenInvalidException;
+import be.davidopdebeeck.taskboard.api.security.exception.TokenNotFoundException;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.dao.LaneDAO;
 import be.davidopdebeeck.taskboard.dao.ProjectDAO;
@@ -60,15 +62,16 @@ public class SecurityInterceptor implements HandlerInterceptor
                 Cookie[] cookies = request.getCookies();
 
                 if ( cookies == null )
-                    return false;
+                    throw new TokenNotFoundException();
 
-                boolean passwordValid = false;
+                boolean passwordValid = false, cookieFound = false;
 
                 for ( Cookie cookie : cookies )
                 {
                     if ( cookie.getName().equals( project.getId() ) )
                     {
                         String password = cookie.getValue();
+                        cookieFound = true;
 
                         if ( securityManager.validate( project.getId(), password ) )
                         {
@@ -77,7 +80,11 @@ public class SecurityInterceptor implements HandlerInterceptor
                     }
                 }
 
-                return passwordValid;
+                if ( !cookieFound )
+                    throw new TokenNotFoundException();
+
+                if ( !passwordValid )
+                    throw new TokenInvalidException();
             }
 
             return true;

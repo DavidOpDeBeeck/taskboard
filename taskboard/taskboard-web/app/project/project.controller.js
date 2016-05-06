@@ -25,12 +25,10 @@
     ///////////////////
 
     function activate () {
-      Security.validate($routeParams.id).then(() => {
-        API.getProject($routeParams.id).then((project) => {
-            vm.id     = project.id;
-            vm.title  = project.title;
-            vm.lanes  = project.lanes;
-        });
+      API.getProject($routeParams.id).then((project) => {
+          vm.id     = project.id;
+          vm.title  = project.title;
+          vm.lanes  = project.lanes;
       });
     }
 

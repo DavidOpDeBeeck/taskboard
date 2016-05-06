@@ -3,9 +3,14 @@
   angular.module( 'taskBoardApp.services')
     .factory("API", apiService)
 
-  function apiService ( $resource , apiUrl ) {
+  function apiService ( $resource , apiUrl , Security , $routeParams ) {
 
       let project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
+          query: {
+              method:'GET',
+              isArray: false,
+              withCredentials: true
+          },
           update : {
               method  : "PUT" ,
               isArray : false
@@ -63,13 +68,6 @@
           }
       });
 
-      let validateProject = $resource( apiUrl + "/validate" , {} , {
-            post : {
-                method  : "POST" ,
-                isArray : false
-            }
-        });
-
       ///////////////////
 
       let service = {
@@ -88,8 +86,7 @@
         removeTaskFromLane    : removeTaskFromLane,
         getTask               : getTask,
         updateTask            : updateTask,
-        removeTask            : removeTask,
-        validate              : validate
+        removeTask            : removeTask
       };
 
       return service;
@@ -97,7 +94,9 @@
       ///////////////////
 
       function getProject( projectId ) {
-        return project.get({'projectId' : projectId}).$promise;
+        return authenticate().then(() => {
+          return project.query({'projectId' : projectId}).$promise;
+        });
       }
 
       function updateProject( projectId , updated ) {
@@ -160,8 +159,10 @@
         return task.delete({'taskId': taskId}).$promise;
       }
 
-      function validate( projectId , password ) {
-        return validateProject.post({'projectId' : projectId , 'password' : password}).$promise;
+      function authenticate() {
+        if ($routeParams.id != undefined)
+          return Security.validate($routeParams.id);
+        return $q((resolve, reject) => resolve());
       }
   };
 })();

@@ -1,4 +1,4 @@
-package be.davidopdebeeck.taskboard.api.controller;
+package be.davidopdebeeck.taskboard.api.core;
 
 import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Task;

@@ -1,4 +1,4 @@
-package be.davidopdebeeck.taskboard.api.controller;
+package be.davidopdebeeck.taskboard.api.security;
 
 import be.davidopdebeeck.taskboard.api.dto.PasswordDTO;
 import be.davidopdebeeck.taskboard.api.dto.TokenDTO;
@@ -28,7 +28,7 @@ public class SecurityController
         TokenDTO token = new TokenDTO();
         Project project = taskBoard.getProjectById( dto.getProjectId() );
 
-        if ( project.isPasswordValid( dto.getPassword() ) )
+        if ( dto.getPassword() != null && !dto.getPassword().isEmpty() && project.isPasswordValid( dto.getPassword() ) )
         {
             token.setToken( securityManager.save( project.getId() ) );
             token.setSuccess( true );
