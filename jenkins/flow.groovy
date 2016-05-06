@@ -206,9 +206,9 @@ node ('docker')
   // we unstash the web project so we can build the docker images and run it
   unstash 'web'
   // build the docker image (with the id of the build to make it unique)
-  buildImage( web.name )
+  buildImage( web.name , "--build-arg API_HOST=192.168.99.100 --build-arg API_PORT=8081" )
   // run the image and expose the web port (8000)
-  runContainer( web.name, web.name, "-P --build-arg API_HOST=192.168.99.100 --build-arg API_PORT=8081" )
+  runContainer( web.name, web.name, "-P" )
   // connect the web frontend to the network
   connect(network, web.name, 'web')
 }
@@ -271,9 +271,9 @@ def getNodeContainer()
 // DOCKER FUNCTIONS
 //------------------------------
 
-def buildImage( name )
+def buildImage( name , def options = "" )
 {
-  sh "docker build -t $name ."
+  sh "docker build -t $name $options ."
 }
 
 def runContainer( name , image , options )
