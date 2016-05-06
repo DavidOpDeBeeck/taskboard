@@ -90,13 +90,13 @@ node ('gradle')
     sh "gradle flywayMigrate -Denv=test"
     // execute the repository tests
     sh "gradle repositoryTests -Denv=test"
-    // archive the test results so we can use them at a later time
-    step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-domain/build/test-results/TEST-*.xml"])
   } catch (err)
   {
     // when a gradle task fails we mark the stage as failed to be able to shutdown the dock containers
     stageFailed = true
   }
+  // archive the test results so we can use them at a later time
+  step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-domain/build/test-results/TEST-*.xml"])
 }
 
 node ('docker')
@@ -150,13 +150,13 @@ node ('gradle')
       sh "gradle flywayMigrate -Denv=acc"
       // execute the rest api tests
       sh "gradle acceptanceTests -Denv=acc"
-      // archive the test results so we can use them at a later time
-      step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-rest-api/build/test-results/TEST-*.xml"])
     } catch (err)
     {
       // when a gradle task fails we mark the stage as failed to be able to shutdown the dock containers
       stageFailed = true
     }
+    // archive the test results so we can use them at a later time
+    step([$class: 'JUnitResultArchiver', testResults: "**/taskboard-rest-api/build/test-results/TEST-*.xml"])
 }
 
 node ('docker')

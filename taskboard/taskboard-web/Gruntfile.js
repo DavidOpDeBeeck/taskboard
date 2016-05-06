@@ -41,8 +41,14 @@ module.exports = function(grunt) {
 
   ///////////////////
 
+  var host = grunt.option('host') || 'localhost';
+  var port = grunt.option('port') || '8080';
+
+  ///////////////////
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    clean: ['dist', 'lib'],
     bower: {
         install: {
           options: {
@@ -51,7 +57,17 @@ module.exports = function(grunt) {
           }
         }
     },
-    clean: ['dist'],
+    ngconstant: {
+      'app-config': {
+        options: {
+          dest: 'app/app.config.js',
+          name: 'taskBoardApp.config',
+        },
+        constants: {
+          'apiUrl': 'http://' + host + ':' + port
+        }
+      }
+    },
     concat: {
       'libs-js': {
         options: {
@@ -104,9 +120,10 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-bower-task');
-  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-ng-constant');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
-  grunt.registerTask('default', ['bower', 'clean', 'concat', 'babel', 'copy']);
+  grunt.registerTask('default', ['clean', 'bower', 'ngconstant' ,'concat', 'babel', 'copy']);
 };
