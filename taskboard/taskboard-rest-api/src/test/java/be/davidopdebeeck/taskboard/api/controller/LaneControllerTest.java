@@ -46,7 +46,7 @@ public class LaneControllerTest extends ControllerTest
     public void testGetLane() throws Exception
     {
         String title = "To Verify";
-        int sequence = 3;
+        int sequence = 1;
         boolean completed = true;
 
         Lane lane = new Lane( title, sequence, completed );
