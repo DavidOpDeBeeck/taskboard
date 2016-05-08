@@ -9,5 +9,5 @@
       'taskBoardApp.controllers' ,
       'taskBoardApp.services' ,
       'taskBoardApp.directives'
-  ] );
+  ]);
 })();

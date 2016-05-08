@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@CrossOrigin
 @RestController
 @RequestMapping( "/lanes/{laneId}" )
 public class LaneController

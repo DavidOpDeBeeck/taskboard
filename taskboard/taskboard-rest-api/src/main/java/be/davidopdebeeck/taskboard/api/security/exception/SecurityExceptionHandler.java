@@ -13,13 +13,13 @@ public class SecurityExceptionHandler
     @ExceptionHandler( TokenInvalidException.class )
     public ResponseEntity<ErrorDTO> handle( TokenInvalidException e )
     {
-        return new ResponseEntity<>( new ErrorDTO( HttpStatus.UNAUTHORIZED, e.getMessage() ), HttpStatus.UNAUTHORIZED );
+        return new ResponseEntity<>( new ErrorDTO( HttpStatus.UNAUTHORIZED, e.getMessage() ), HttpStatus.OK );
     }
 
     @ExceptionHandler( TokenNotFoundException.class )
     public ResponseEntity<ErrorDTO> handle( TokenNotFoundException e )
     {
-        return new ResponseEntity<>( new ErrorDTO( HttpStatus.UNAUTHORIZED, e.getMessage() ), HttpStatus.UNAUTHORIZED );
+        return new ResponseEntity<>( new ErrorDTO( HttpStatus.UNAUTHORIZED, e.getMessage() ), HttpStatus.OK );
     }
 
 }

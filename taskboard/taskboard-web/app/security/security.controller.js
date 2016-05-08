@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.controllers')
     .controller("SecurityController", SecurityController);
 
-  function SecurityController( API , $uibModalInstance ) {
+  function SecurityController( API , $uibModalInstance , $location ) {
 
     let vm = this;
 
@@ -23,6 +23,7 @@
     }
 
     function close() {
+      $location.path("/projects");
       $uibModalInstance.dismiss('cancel');
     }
   }

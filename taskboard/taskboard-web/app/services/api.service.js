@@ -6,11 +6,6 @@
   function apiService ( $resource , apiUrl , Security , $routeParams ) {
 
       let project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
-          query: {
-              method:'GET',
-              isArray: false,
-              withCredentials: true
-          },
           update : {
               method  : "PUT" ,
               isArray : false
@@ -94,9 +89,11 @@
       ///////////////////
 
       function getProject( projectId ) {
-        return authenticate().then(() => {
-          return project.query({'projectId' : projectId}).$promise;
-        });
+        return Security.wrap(
+          project.get({
+            'projectId' : projectId
+          })
+        );
       }
 
       function updateProject( projectId , updated ) {
@@ -157,12 +154,6 @@
 
       function removeTask( taskId ) {
         return task.delete({'taskId': taskId}).$promise;
-      }
-
-      function authenticate() {
-        if ($routeParams.id != undefined)
-          return Security.validate($routeParams.id);
-        return $q((resolve, reject) => resolve());
       }
   };
 })();

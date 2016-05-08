@@ -16,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 
-@CrossOrigin
 @RestController
 @RequestMapping( "/projects" )
 public class ProjectController

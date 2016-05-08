@@ -3,7 +3,7 @@
   angular.module( 'taskBoardApp.services')
     .factory("Security", securityService)
 
-  function securityService ( $uibModal , $q , $cookies , apiUrl , $resource ) {
+  function securityService ( $resource , apiUrl , $uibModal , $q , $cookies , $routeParams ) {
 
       let modal = {
         templateUrl : 'app/security/security.html',
@@ -12,9 +12,9 @@
         backdrop    : 'static'
       };
 
-      let validateProject = $resource( apiUrl + "/validate" , {} , {
+      let validate = $resource( apiUrl + "/validate" , {} , {
           post : {
-              method  : "POST" ,
+              method  : "POST",
               isArray : false
           }
       });
@@ -22,41 +22,55 @@
       ///////////////////
 
       let service = {
-        validate : validate
+        wrap : wrap
       };
 
       return service;
 
       ///////////////////
 
-      function validate ( projectId ) {
+      function wrap ( request ) {
+        return request.$promise
+          .then(res => {
+            console.log(res);
+            if (res.code && res.code == 401) {
+              return authenticate($routeParams.id)
+                .then(() => {return request.$promise})
+                .then((r) => console.log(r));
+            }
+            return res;
+          });
+      }
+
+      function validateProject ( projectId , password ) {
+        return validate.post({'projectId' : projectId , 'password' : password}).$promise;
+      }
+
+      function authenticate ( projectId ) {
         let password, securityModal;
 
-        let validateRequest = (projectId, password) => {
-          return validateProject.post({'projectId' : projectId , 'password' : password}).$promise;
-        }
-
-        return $q((resolve, reject) => {
+        let promise = (resolve, reject) => {
           password = $cookies.get(projectId);
-         if (password == undefined) {
+          if (password == undefined) {
             securityModal = $uibModal.open(modal);
-            securityModal.result.then((result) => {
-              validateRequest(projectId,result.password).then((res) => {
-                console.log(res);
-                  if (res.success) {
-                    $cookies.put(projectId, res.token);
-                    resolve();
-                  } else {
-                    securityModal.close();
-                    return validate(projectId);
-                  }
+            securityModal.result
+              .then((result) => {
+                validateProject(projectId,result.password)
+                  .then((res) => {
+                    if (res.success) {
+                      $cookies.put(projectId, res.token);
+                      resolve();
+                    } else {
+                      securityModal.close();
+                      return authenticate(projectId);
+                    }
                 });
-            });
+              });
           } else {
             resolve();
           }
-        });
+        }
+        return $q(promise);
       }
-
   };
 })();
