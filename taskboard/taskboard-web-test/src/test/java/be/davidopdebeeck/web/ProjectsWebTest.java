@@ -65,9 +65,6 @@ public class ProjectsWebTest extends WebTest
 
         List<String> titles = projects.stream().map( project -> project.findElement( By.className( "title" ) ).getText() ).collect( Collectors.toCollection( LinkedList::new ) );
 
-        for ( String title : titles )
-            System.out.println( title );
-
         assertTrue( titles.contains( projectTitles[ 0 ] ) );
         assertTrue( titles.contains( projectTitles[ 1 ] ) );
         assertTrue( !titles.contains( projectTitles[ 2 ] ) );
