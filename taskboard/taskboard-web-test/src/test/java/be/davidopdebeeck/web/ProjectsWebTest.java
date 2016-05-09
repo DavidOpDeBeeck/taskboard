@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -52,13 +53,7 @@ public class ProjectsWebTest extends WebTest
         {
             searchField.click();
             searchField.sendKeys( title );
-            try
-            {
-                webDriver.wait( 2000 );
-            } catch ( InterruptedException e )
-            {
-                e.printStackTrace();
-            }
+            webDriver.manage().timeouts().implicitlyWait( 2, TimeUnit.SECONDS );
             addButton.click();
         }
 
