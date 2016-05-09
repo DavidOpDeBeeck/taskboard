@@ -56,12 +56,17 @@ public class ProjectsWebTest extends WebTest
             addButton.click();
         }
 
+        wait( By.className( "project" ) );
+
         searchField.click();
         searchField.sendKeys( "Test Project" );
 
         List<WebElement> projects = webDriver.findElements( By.className( "project" ) );
 
         List<String> titles = projects.stream().map( project -> project.findElement( By.className( "title" ) ).getText() ).collect( Collectors.toCollection( LinkedList::new ) );
+
+        for ( String title : titles )
+            System.out.println( title );
 
         assertTrue( titles.contains( projectTitles[ 0 ] ) );
         assertTrue( titles.contains( projectTitles[ 1 ] ) );
