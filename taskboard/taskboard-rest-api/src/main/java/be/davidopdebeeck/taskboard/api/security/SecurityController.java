@@ -2,7 +2,6 @@ package be.davidopdebeeck.taskboard.api.security;
 
 import be.davidopdebeeck.taskboard.api.dto.PasswordDTO;
 import be.davidopdebeeck.taskboard.api.dto.TokenDTO;
-import be.davidopdebeeck.taskboard.api.security.SecurityManager;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping( "/validate" )
+@RequestMapping( "/authenticate" )
 public class SecurityController
 {
 

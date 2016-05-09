@@ -34,11 +34,11 @@ public class SecurityInterceptor implements HandlerInterceptor
     SecurityManager securityManager;
 
     @Override
-    public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
     {
         Map<String, String> pathVariables = (Map) request.getAttribute( HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE );
 
-        if ( pathVariables != null )
+        if ( pathVariables != null && !request.getMethod().equals( "OPTIONS" ) )
         {
             String projectId = pathVariables.get( "projectId" );
             String laneId = pathVariables.get( "laneId" );

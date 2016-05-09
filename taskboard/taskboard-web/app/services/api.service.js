@@ -7,32 +7,32 @@
 
       let project = $resource( apiUrl + "/projects/:projectId" , { projectId : "@projectId" } , {
           update : {
-              method  : "PUT" ,
+              method  : "PUT",
               isArray : false
           }
       });
 
       let projects = $resource( apiUrl + "/projects", {} , {
           post : {
-              method  : "POST" ,
+              method  : "POST",
               isArray : false
           }
       });
 
       let projectLanes = $resource( apiUrl + "/projects/:projectId/lanes" , { projectId : "@projectId" } , {
           post : {
-              method  : "POST" ,
+              method  : "POST",
               isArray : false
           },
           delete : {
-            method  : "DELETE" ,
+            method  : "DELETE",
             isArray : false
           }
       });
 
       let lane = $resource( apiUrl + "/lanes/:laneId" , { laneId : "@laneId" } , {
           update : {
-              method  : "PUT" ,
+              method  : "PUT",
               isArray : false
           } ,
           delete : {
@@ -42,7 +42,7 @@
 
       let laneTasks = $resource( apiUrl + "/lanes/:laneId/tasks" , { laneId : "@laneId" } , {
           post : {
-              method  : "POST" ,
+              method  : "POST",
               isArray : false
           }
       });
@@ -55,7 +55,7 @@
 
       let task = $resource( apiUrl + "/tasks/:taskId" , { taskId : "@taskId" } , {
           update : {
-              method  : "PUT" ,
+              method  : "PUT",
               isArray : false
           } ,
           delete : {
@@ -89,71 +89,129 @@
       ///////////////////
 
       function getProject( projectId ) {
-        return Security.wrap(
+        return Security.wrap(() =>
           project.get({
             'projectId' : projectId
-          })
+          }).$promise
         );
       }
 
       function updateProject( projectId , updated ) {
-        return project.update({'projectId' : projectId}, updated).$promise;
+        return Security.wrap(() =>
+          project.update({
+            'projectId' : projectId
+          }, updated).$promise
+        );
       }
 
       function removeProject( projectId ) {
-        return project.delete({'projectId' : projectId}).$promise;
+        return Security.wrap(() =>
+          project.delete({
+            'projectId' : projectId
+          }).$promise
+        );
       }
 
       function getProjects() {
-        return projects.query().$promise;
+        return Security.wrap(() =>
+          projects.query().$promise
+        );
       }
 
       function addProject(project) {
-        return projects.post(project).$promise;
+        return Security.wrap(() =>
+          projects.post(project).$promise
+        );
       }
 
       function getLanesFromProject( projectId ) {
-        return projectLanes.query({ 'projectId' : projectId }).$promise;
+        return Security.wrap(() =>
+          projectLanes.query({
+            'projectId' : projectId
+          }).$promise
+        );
       }
 
       function addLaneToProject( projectId, lane ) {
-        return projectLanes.post({ 'projectId' : projectId }, lane).$promise;
+        return Security.wrap(() =>
+          projectLanes.post({
+            'projectId' : projectId
+          }, lane).$promise
+        );
       }
 
       function removeLaneFromProject( projectId, laneId ) {
-        return projectLanes.post({ 'projectId' : projectId, 'laneId' : laneId }).$promise;
+        return Security.wrap(() =>
+          projectLanes.post({
+            'projectId' : projectId,
+            'laneId' : laneId
+          }).$promise
+        );
       }
 
       function getLane( laneId ) {
-        return lane.get({'laneId': laneId}).$promise;
+        return Security.wrap(() =>
+          lane.get({
+            'laneId': laneId
+          }).$promise
+        );
       }
 
       function updateLane( laneId , updated ) {
-        return lane.update({'laneId': laneId}, updated).$promise;
+        return Security.wrap(() =>
+          lane.update({
+            'laneId': laneId
+          }, updated).$promise
+        );
       }
 
       function removeLane( laneId ) {
-        return lane.delete({'laneId': laneId}).$promise;
+        return Security.wrap(() =>
+          lane.delete({
+            'laneId': laneId
+          }).$promise
+        );
       }
 
       function addTaskToLane( laneId , task ) {
-        return laneTasks.post({'laneId': laneId}, task).$promise;
+        return Security.wrap(() =>
+          laneTasks.post({
+            'laneId': laneId
+          }, task).$promise
+        );
       }
 
       function removeTaskFromLane( laneId , taskId ) {
-        return laneTask.delete({'laneId' : laneId, 'taskId' : taskId}).$promise;
+        return Security.wrap(() =>
+          laneTask.delete({
+            'laneId' : laneId,
+            'taskId' : taskId
+          }).$promise
+        );
       }
 
       function getTask( taskId ) {
-        return task.get({'taskId': taskId}).$promise;
+        return Security.wrap(() =>
+          task.get({
+            'taskId': taskId
+          }).$promise
+        );
       }
 
       function updateTask( taskId , updated ) {
-        return task.update({'taskId': taskId}, updated).$promise;
+        return Security.wrap(() =>
+          task.update({
+            'taskId': taskId
+          }, updated).$promise
+        );
       }
 
       function removeTask( taskId ) {
-        return task.delete({'taskId': taskId}).$promise;
+        return Security.wrap(() =>
+          task.delete({
+            'taskId': taskId
+          }).$promise
+        );
       }
   };
 })();

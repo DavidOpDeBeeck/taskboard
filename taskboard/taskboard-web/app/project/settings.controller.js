@@ -35,7 +35,7 @@
       API.updateProject($routeParams.id, {
         'title'   : vm.title,
         'secured' : vm.secured,
-        'password': vm.password.length > 0 ? vm.password : null
+        'password': vm.password && vm.password.length > 0 ? vm.password : null
       }).then($uibModalInstance.close);
     }
 

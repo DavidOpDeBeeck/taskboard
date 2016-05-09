@@ -1,6 +1,6 @@
 package be.davidopdebeeck.taskboard.api.security.exception;
 
-public class TokenInvalidException extends Exception
+public class TokenInvalidException extends RuntimeException
 {
     public TokenInvalidException()
     {

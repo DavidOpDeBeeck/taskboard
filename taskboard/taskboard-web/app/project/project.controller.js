@@ -26,7 +26,6 @@
 
     function activate () {
       API.getProject($routeParams.id).then((project) => {
-        console.log(project);
           vm.id     = project.id;
           vm.title  = project.title;
           vm.lanes  = project.lanes;

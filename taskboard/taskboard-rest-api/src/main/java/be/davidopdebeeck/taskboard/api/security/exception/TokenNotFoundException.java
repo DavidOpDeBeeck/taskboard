@@ -1,6 +1,6 @@
 package be.davidopdebeeck.taskboard.api.security.exception;
 
-public class TokenNotFoundException extends Exception
+public class TokenNotFoundException extends RuntimeException
 {
     public TokenNotFoundException()
     {

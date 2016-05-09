@@ -12,7 +12,7 @@
         backdrop    : 'static'
       };
 
-      let validate = $resource( apiUrl + "/validate" , {} , {
+      let Auth = $resource( apiUrl + "/authenticate" , {} , {
           post : {
               method  : "POST",
               isArray : false
@@ -30,45 +30,38 @@
       ///////////////////
 
       function wrap ( request ) {
-        return request.$promise
-          .then(res => {
-            console.log(res);
-            if (res.code && res.code == 401) {
+        return request()
+          .then(response => {
+            if (response.code && response.code == 401) {
               return authenticate($routeParams.id)
-                .then(() => {return request.$promise})
-                .then((r) => console.log(r));
+                .then(request)
+                .then(res => res);
             }
-            return res;
+            return response;
           });
       }
-
-      function validateProject ( projectId , password ) {
-        return validate.post({'projectId' : projectId , 'password' : password}).$promise;
-      }
-
+      
       function authenticate ( projectId ) {
-        let password, securityModal;
-
-        let promise = (resolve, reject) => {
-          password = $cookies.get(projectId);
-          if (password == undefined) {
-            securityModal = $uibModal.open(modal);
-            securityModal.result
-              .then((result) => {
-                validateProject(projectId,result.password)
-                  .then((res) => {
-                    if (res.success) {
-                      $cookies.put(projectId, res.token);
-                      resolve();
-                    } else {
-                      securityModal.close();
-                      return authenticate(projectId);
-                    }
-                });
+        let securityModal;
+        let endpoint  = (id,password) => Auth.post({
+          'projectId' : id,
+          'password'  : password
+        }).$promise;
+        let promise   = (resolve, reject) => {
+          securityModal = $uibModal.open(modal);
+          securityModal.result
+            .then(result => {
+              endpoint(projectId, result.password)
+                .then(response => {
+                  if (response.success) {
+                    $cookies.put(projectId, response.token);
+                    resolve();
+                  } else {
+                    securityModal.close();
+                    return promise(resolve, reject);
+                  }
               });
-          } else {
-            resolve();
-          }
+            });
         }
         return $q(promise);
       }
