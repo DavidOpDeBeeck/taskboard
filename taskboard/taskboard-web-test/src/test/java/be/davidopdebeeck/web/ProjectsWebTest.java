@@ -52,6 +52,13 @@ public class ProjectsWebTest extends WebTest
         {
             searchField.click();
             searchField.sendKeys( title );
+            try
+            {
+                webDriver.wait( 2000 );
+            } catch ( InterruptedException e )
+            {
+                e.printStackTrace();
+            }
             addButton.click();
         }
 

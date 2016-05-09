@@ -237,7 +237,7 @@ node ('webdriver && gradle')
     // unstash the 'taskboard' files
     unstash 'taskboard'
     // webdriver slave needs a dislay
-    sh "Xvfb &"
+    sh "Xvfb :10 -ac"
     // we run the web tests
     sh "gradle webTests -Denv=acc"
   } catch (err)
