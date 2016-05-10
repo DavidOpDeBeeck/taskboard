@@ -70,37 +70,6 @@ public class ProjectsWebTest extends WebTest
         assertTrue( !titles.contains( projectTitles[ 2 ] ) );
     }
 
-    @Test
-    public void testLinkButton()
-    {
-        /*webDriver.get( url() );
-
-        wait( By.id( "search-add-field" ) );
-
-        WebElement addField = webDriver.findElement( By.id( "search-add-field" ) );
-        WebElement addButton = webDriver.findElement( By.id( "search-add-button" ) );
-
-        addField.click();
-        addField.sendKeys( "Test Project" );
-        addButton.click();
-
-        wait( By.className( "title" ) );
-
-        WebElement project = webDriver.findElements( By.className( "project" ) ).get( 0 );
-
-        WebElement titleField = project.findElement( By.className( "title" ) );
-        String titleOverviewText = titleField.getText();
-
-        WebElement linkButton = project.findElement( By.className( "link" ) );
-        linkButton.click();
-
-        wait( By.tagName( "h2" ) );
-
-        String titleText = webDriver.findElement( By.tagName( "h2" ) ).getText();
-
-        assertEquals( titleOverviewText, titleText );*/
-    }
-
     @Override
     protected String context()
     {
