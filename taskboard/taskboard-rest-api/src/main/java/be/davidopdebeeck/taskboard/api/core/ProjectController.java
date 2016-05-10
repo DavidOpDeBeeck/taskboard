@@ -28,13 +28,13 @@ public class ProjectController
     SecurityManager securityManager;
 
     @RequestMapping( method = RequestMethod.GET )
-    public ResponseEntity<Collection<Project>> getProjects()
+    public ResponseEntity<Collection<Project>> get()
     {
         return new ResponseEntity<>( taskBoard.getAllProjects(), HttpStatus.OK );
     }
 
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity addProject( @RequestBody ProjectDTO dto, UriComponentsBuilder b )
+    public ResponseEntity create( @RequestBody ProjectDTO dto, UriComponentsBuilder b )
     {
         String title = dto.getTitle();
         String password = dto.getPassword();
@@ -44,10 +44,11 @@ public class ProjectController
 
         Project project;
 
-        if ( !dto.isSecured() || password == null || password.isEmpty() )
-            project = taskBoard.createProject( title );
-        else
+        if ( dto.isSecured() && password != null && !password.isEmpty() )
             project = taskBoard.createProject( title, password );
+        else
+            project = taskBoard.createProject( title );
+
 
         UriComponents components = b.path( "projects/{id}" ).buildAndExpand( project.getId() );
 
@@ -58,40 +59,59 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}", method = RequestMethod.GET )
-    public ResponseEntity<Project> getProject( @PathVariable( "projectId" ) String projectId )
+    public ResponseEntity<Project> get( @PathVariable( "projectId" ) String projectId )
     {
-        return new ResponseEntity<>( taskBoard.getProjectById( projectId ), HttpStatus.OK );
+        Project project = taskBoard.getProjectById( projectId );
+
+        if (project == null)
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
+        return new ResponseEntity<>( project, HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{projectId}", method = RequestMethod.PUT )
-    public ResponseEntity updateProject( @PathVariable( "projectId" ) String projectId, @RequestBody ProjectDTO dto )
+    public ResponseEntity update( @PathVariable( "projectId" ) String projectId, @RequestBody ProjectDTO dto )
     {
         Project project = taskBoard.getProjectById( projectId );
+
+        if (project == null)
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
         project.setTitle( dto.getTitle() );
 
-        if ( ( project.isSecured() && dto.isSecured() ) || ( !project.isSecured() && dto.isSecured() ) )
-        {
-            if ( dto.getPassword() != null && !dto.getPassword().isEmpty() )
-                project.setPassword( dto.getPassword() );
-        } else if ( project.isSecured() )
-        {
+        String password = dto.getPassword();
+
+        if ( dto.isSecured() && password != null && !password.isEmpty() )
+            project.setPassword( password );
+        else
             project.setPassword( null );
-        }
 
         taskBoard.updateProject( project );
+
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{projectId}", method = RequestMethod.DELETE )
-    public ResponseEntity removeProject( @PathVariable( "projectId" ) String projectId )
+    public ResponseEntity delete( @PathVariable( "projectId" ) String projectId )
     {
+        Project project = taskBoard.getProjectById( projectId );
+
+        if (project == null)
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
         taskBoard.removeProject( projectId );
+
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
     @RequestMapping( value = "/{projectId}/lanes", method = RequestMethod.POST )
-    public ResponseEntity addLaneToProject( @PathVariable( "projectId" ) String projectId, @RequestBody LaneDTO dto, UriComponentsBuilder b )
+    public ResponseEntity createLane( @PathVariable( "projectId" ) String projectId, @RequestBody LaneDTO dto, UriComponentsBuilder b )
     {
+        Project project = taskBoard.getProjectById( projectId );
+
+        if (project == null)
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
         Lane lane = taskBoard.addLaneToProject( projectId, dto.getTitle(), dto.getSequence(), dto.isCompleted() );
 
         UriComponents components = b.path( "lanes/{id}" ).buildAndExpand( lane.getId() );
@@ -103,9 +123,21 @@ public class ProjectController
     }
 
     @RequestMapping( value = "/{projectId}/lanes/{laneId}", method = RequestMethod.DELETE )
-    public ResponseEntity<Lane> removeLaneFromProject( @PathVariable( "projectId" ) String projectId, @PathVariable( "laneId" ) String laneId )
+    public ResponseEntity<Lane> deleteLane( @PathVariable( "projectId" ) String projectId, @PathVariable( "laneId" ) String laneId )
     {
+        Project project = taskBoard.getProjectById( projectId );
+
+        if (project == null)
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
+        Lane lane = taskBoard.getLaneById( laneId );
+
+        if (lane == null)
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
+
         taskBoard.removeLaneFromProject( projectId, laneId );
+
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
