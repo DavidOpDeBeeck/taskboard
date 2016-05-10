@@ -1,4 +1,4 @@
-(function() {
-  'use strict'
-  angular.module( 'taskBoardApp.services' , ['ngResource'] );
-})();
+( () => {
+    'use strict'
+    angular.module( 'taskBoardApp.services', [ 'ngResource' ] );
+} )();

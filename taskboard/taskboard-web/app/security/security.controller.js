@@ -1,30 +1,32 @@
-(function() {
-  'use strict'
-  angular.module( 'taskBoardApp.controllers')
-    .controller("SecurityController", SecurityController);
+( () => {
+    'use strict'
+    angular.module( 'taskBoardApp.controllers' )
+        .controller( "SecurityController", SecurityController );
 
-  function SecurityController( API , $uibModalInstance , $location ) {
+    function SecurityController( $uibModalInstance, $location ) {
 
-    let vm = this;
+        let vm = this;
 
-    ///////////////////
+        ///////////////////
 
-    vm.password;
+        vm.password;
 
-    ///////////////////
+        ///////////////////
 
-    vm.submit = submit;
-    vm.close  = close;
+        vm.submit = submit;
+        vm.close = close;
 
-    ///////////////////
+        ///////////////////
 
-    function submit() {
-      $uibModalInstance.close({ 'password' : vm.password });
+        function submit() {
+            $uibModalInstance.close( {
+                'password': vm.password
+            } );
+        }
+
+        function close() {
+            $location.path( "/projects" );
+            $uibModalInstance.dismiss( 'cancel' );
+        }
     }
-
-    function close() {
-      $location.path("/projects");
-      $uibModalInstance.dismiss('cancel');
-    }
-  }
-})();
+} )();

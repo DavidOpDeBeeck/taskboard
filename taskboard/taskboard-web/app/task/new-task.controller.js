@@ -1,35 +1,36 @@
-(function() {
-  'use strict'
-  angular.module( 'taskBoardApp.controllers')
-    .controller("NewTaskController", NewTaskController);
+( () => {
+    'use strict'
+    angular.module( 'taskBoardApp.controllers' )
+        .controller( "NewTaskController", NewTaskController );
 
-  function NewTaskController( API , $uibModalInstance , laneId ) {
+    function NewTaskController( API, $uibModalInstance, laneId ) {
 
-    let vm = this;
+        let vm = this;
 
-    ///////////////////
+        ///////////////////
 
-    vm.title        = "";
-    vm.description  = "";
-    vm.assignee     = "";
+        vm.title = "";
+        vm.description = "";
+        vm.assignee = "";
 
-    ///////////////////
+        ///////////////////
 
-    vm.create       = create;
-    vm.close        = close;
+        vm.create = create;
+        vm.close = close;
 
-    ///////////////////
+        ///////////////////
 
-    function create() {
-      API.addTaskToLane(laneId, {
-        'title'       : vm.title,
-        'description' : vm.description,
-        'assignee'    : vm.assignee
-      }).then($uibModalInstance.close);
+        function create() {
+            API.addTaskToLane( laneId, {
+                    'title': vm.title,
+                    'description': vm.description,
+                    'assignee': vm.assignee
+                } )
+                .then( $uibModalInstance.close );
+        }
+
+        function close() {
+            $uibModalInstance.dismiss( 'cancel' );
+        }
     }
-
-    function close() {
-      $uibModalInstance.dismiss('cancel');
-    }
-  }
-})();
+} )();

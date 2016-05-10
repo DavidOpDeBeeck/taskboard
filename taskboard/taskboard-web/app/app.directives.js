@@ -1,4 +1,4 @@
-(function() {
-  'use strict'
-  angular.module( 'taskBoardApp.directives' , [] );
-})();
+( () => {
+    'use strict'
+    angular.module( 'taskBoardApp.directives', [] );
+} )();

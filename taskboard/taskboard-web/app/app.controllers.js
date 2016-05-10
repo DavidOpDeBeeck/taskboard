@@ -1,4 +1,4 @@
-(function() {
-  'use strict'
-  angular.module( 'taskBoardApp.controllers' , ['ui.bootstrap'] );
-})();
+( () => {
+    'use strict'
+    angular.module( 'taskBoardApp.controllers', [ 'ui.bootstrap' ] );
+} )();

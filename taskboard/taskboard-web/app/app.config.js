@@ -1,5 +1,4 @@
-angular.module('taskBoardApp.config', [])
-
-.constant('apiUrl', 'http://localhost:8080')
-
-;
+( () => {
+    'use strict'
+    angular.module( 'taskBoardApp.config', [] );
+} )();
