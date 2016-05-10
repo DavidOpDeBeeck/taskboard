@@ -2,16 +2,9 @@
 // GLOBALS
 //------------------------------
 
-def stageFailed = false;
-
-//------------------------------
-// NETWORK
-//------------------------------
-
-def generateNetworkId() {
-  Random random = new Random();
-  return 'network-' + random.nextInt(999999 - 0) + 0;
-}
+// the container id of the jenkns slave and the name of the network used in the environment
+def nodeId, network, ip;
+def stageFailed   = false
 
 //------------------------------
 // DATABASE CONFIGS
@@ -24,23 +17,26 @@ def testDatabase = [
 ]
 
 def accDatabase = [
-    name      : "$env.BUILD_TAG-acc-database",
+    name      : 'acc-database',
     user      : 'db-acc',
     password  : 'asiyat37'
 ]
 
 def web = [
-    name      : "$env.BUILD_TAG-web",
+    name      : 'web',
     port      : '8000'
 ]
 
 def restApi = [
-    name      : "$env.BUILD_TAG-rest-api",
+    name      : 'rest-api',
     port      : '9000'
 ]
 
-// the container id of the jenkns slave and the name of the network used in the environment
-def nodeId, network;
+def selenium = [
+    name      : 'selenium-node',
+    port      : '9999'
+]
+
 
 //------------------------------
 // COMMIT STAGE
@@ -67,7 +63,7 @@ node ('docker')
   // run database with test environment properties
   runContainer( testDatabase.name, 'mysql', "-e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
   // generate a unique network id so we don't have collision
-  network = generateNetworkId()
+  network = getNetworkId()
   // create a network (used to connect database and gradle slave)
   createNetwork(network)
   // connect the databe to the network with 'mysql' as his alias
@@ -79,7 +75,7 @@ node ('gradle')
   try
   {
     // get the container id of the gradle node
-    nodeId = getNodeContainer()
+    nodeId = getNodeContainerId()
     // connect the gradle slave to the network
     node ('docker') { connect(network, nodeId, 'docker') }
     // unstash the 'taskboard' files so we can execute gradle tasks
@@ -127,7 +123,7 @@ node ('docker')
   // run the database with the acceptance properties
   runContainer(accDatabase.name,'mysql', "-d -e MYSQL_DATABASE=taskboard -e MYSQL_USER=$accDatabase.user -e MYSQL_PASSWORD=$accDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
   // generate a unique network id so we don't have collision
-  network = generateNetworkId()
+  network = getNetworkId()
   // create a network (used to connect database and gradle slave)
   createNetwork(network)
   // connect the database to the network with 'mysql' as his alias
@@ -139,7 +135,7 @@ node ('gradle')
     try
     {
       // get the container id of the gradle node
-      nodeId = getNodeContainer()
+      nodeId = getNodeContainerId()
       // connect the gradle slave to the network
       node ('docker') { connect(network, nodeId, 'docker') }
       // unstash the 'taskboard' files so we can execute gradle tasks
@@ -194,52 +190,68 @@ node ('gradle')
 node ('docker')
 {
   // generate a unique network id so we don't have collision
-  network = generateNetworkId()
+  network = getNetworkId()
   // create a network (used to connect web, rest api, database and gradle slave)
   createNetwork(network)
   // connect the database to the network with 'mysql' as his alias
   connect(network, accDatabase.name, 'mysql')
+  // clean the former acceptance containers
+  removeContainer(web.name);
+  removeContainer(restApi.name);
 }
 
-node ('docker')
-{
-  // we unstash the web project so we can build the docker images and run it
-  unstash 'web'
-  // build the docker image (with the id of the build to make it unique)
-  buildImage( web.name , "--build-arg API_HOST=192.168.99.100 --build-arg API_PORT=8081" )
-  // run the image and expose the web port (8000)
-  runContainer( web.name, web.name, "-P" )
-  // connect the web frontend to the network
-  connect(network, web.name, 'web')
-}
+parallel (
+    webSetup : {
+      node ('docker')
+      {
+        ip = env.DOCKER_HOST.split(":")[0];
+        // we unstash the web project so we can build the docker images and run it
+        unstash 'web'
+        // build the docker image (with the id of the build to make it unique)
+        buildImage( web.name , "--build-arg API_HOST=$ip --build-arg API_PORT=$restApi.port" )
+        // run the image and expose the web port (8000)
+        runContainer( web.name, web.name, "-p $web.port:8000" )
+        // connect the web frontend to the network
+        connect(network, web.name, 'web')
+      }
+    },
+    apiSetup : {
+      node ('docker')
+      {
+        // we unstash the config file and the rest api files to build the docker images and run it
+        unstash 'config'
+        unstash 'rest-api'
+        // build the docker image (with the id of the build to make it unique)
+        buildImage( restApi.name )
+        // run the image and expose the web port (8080)
+        runContainer( restApi.name, restApi.name, "-p $restApi.port:8080" )
+        // connect the rest api to the network
+        connect(network, restApi.name, 'rest-api')
+      }
+    },
+    seleniumSetup : {
+      node ('docker')
+      {
+        // run the image and expose the web port (4444)
+        runContainer( selenium.name, 'selenium/standalone-firefox', "-p $selenium.port:4444" )
+        // connect the selenium node to the network
+        connect(network, selenium.name, 'selenium-node')
+      }
+    }
+)
 
-node ('docker')
-{
-  // we unstash the config file and the rest api files to build the docker images and run it
-  unstash 'config'
-  unstash 'rest-api'
-  // build the docker image (with the id of the build to make it unique)
-  buildImage( restApi.name )
-  // run the image and expose the web port (8080)
-  runContainer( restApi.name, restApi.name, "-p 8081:8080" )
-  // connect the rest api to the network
-  connect(network, restApi.name, 'rest-api')
-}
-
-node ('webdriver && gradle')
+node ('gradle')
 {
   try
   {
     // get the container id of the gradle node
-    nodeId = getNodeContainer()
+    nodeId = getNodeContainerId()
     // connect the gradle slave to the network
     node ('docker') { connect(network, nodeId, 'docker') }
     // unstash the 'taskboard' files
     unstash 'taskboard'
-    // webdriver slave needs a dislay
-    sh "Xvfb :10 -ac"
     // we run the web tests
-    sh "gradle webTests -Denv=acc"
+    sh "gradle webTests -Denv=acc-webdriver"
   } catch (err)
   {
     // when a gradle task fails we mark the stage as failed to be able to shutdown the dock containers
@@ -251,20 +263,32 @@ node ('webdriver && gradle')
 
 node ('docker')
 {
-  // removeContainer( accDatabase.name )
+  // remove the selenium node because we don't need it anymore
+  removeContainer( 'selenium-node' )
   // if the stage has failed we throw an error so execution is stopped
   if (stageFailed) {
     error 'Stage failed'
   }
 }
 
+input message: "Does http://$ip:$web.port look ok?", ok: 'yes'
+
 //------------------------------
 // NODE FUNCTIONS
 //------------------------------
 
-def getNodeContainer()
+def getNodeContainerId()
 {
   return env.NODE_NAME.split("-")[1]
+}
+
+//------------------------------
+// NETWORK
+//------------------------------
+
+def getNetworkId()
+{
+  return "network-$env.BUILD_NUMBER";
 }
 
 //------------------------------
@@ -278,12 +302,12 @@ def buildImage( name , def options = "" )
 
 def runContainer( name , image , options )
 {
-  sh "docker run -d $options --name=$name $image"
+  sh "docker run -d $options --name=$name $image || echo 'Container $name does already exist!'"
 }
 
 def removeContainer( name )
 {
-  sh "docker rm -f $name"
+  sh "docker rm -f $name || echo 'Container $name does not exist!'"
 }
 
 def createNetwork( name )

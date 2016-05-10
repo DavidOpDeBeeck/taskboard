@@ -8,34 +8,46 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 
 public abstract class WebTest
 {
 
-    private static String address;
-    private static int port;
-    private static boolean ssl;
+    private static String serverAddress;
+    private static int serverPort;
+    private static boolean serverSsl;
+
+    private static String nodeAddress;
+    private static int nodePort;
 
     protected WebDriver webDriver;
 
     @BeforeClass
     public static void beforeClass()
     {
-        address = System.getProperty( "webdriver.server.address" );
-        port = Integer.parseInt( System.getProperty( "webdriver.server.port" ) );
-        ssl = Boolean.parseBoolean( System.getProperty( "webdriver.server.ssl.enabled" ) );
+        serverAddress = System.getProperty( "webdriver.server.address" );
+        serverPort = Integer.parseInt( System.getProperty( "webdriver.server.port" ) );
+        serverSsl = Boolean.parseBoolean( System.getProperty( "webdriver.server.ssl.enabled" ) );
+
+        nodeAddress = System.getProperty( "webdriver.node.address" );
+        nodePort = Integer.parseInt( System.getProperty( "webdriver.node.port" ) );
     }
 
     @Before
     public void setUp() throws ConfigurationException
     {
-        webDriver = new FirefoxDriver();
+        try
+        {
+            webDriver = new RemoteWebDriver( new URL( "http://" + nodeAddress + ":" + nodePort + "/wd/hub" ), DesiredCapabilities.firefox() );
+        } catch ( MalformedURLException ignored ) {}
     }
 
     @After
@@ -51,7 +63,7 @@ public abstract class WebTest
 
     protected String baseUrl()
     {
-        return ( ssl ? "https" : "http" ) + "://" + address + ":" + port;
+        return ( serverSsl ? "https" : "http" ) + "://" + serverAddress + ":" + serverPort;
     }
 
     protected abstract String context();
