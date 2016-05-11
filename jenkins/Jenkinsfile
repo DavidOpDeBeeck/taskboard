@@ -44,7 +44,7 @@ def selenium = [
 
 stage "COMMIT STAGE"
 
-node('gradle')
+node('master')
 {
     git 'https://github.com/DavidOpDeBeeck/taskboard.git'
     dir ('taskboard'){
@@ -198,6 +198,7 @@ node ('docker')
   // clean the former acceptance containers
   removeContainer(web.name);
   removeContainer(restApi.name);
+  removeNetwork(getPreviousNetworkId())
 }
 
 parallel (
@@ -287,6 +288,11 @@ def getNodeContainerId()
 //------------------------------
 
 def getNetworkId()
+{
+  return "network-$env.BUILD_NUMBER";
+}
+
+def getPreviousNetworkId()
 {
   return "network-$env.BUILD_NUMBER";
 }

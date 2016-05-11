@@ -3,6 +3,8 @@ package be.davidopdebeeck.web;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class ProjectsWebTest extends WebTest
         addField.sendKeys( "Test Project" );
         addButton.click();
 
-        wait( By.className( "project" ) );
+        (new WebDriverWait(webDriver, 10)).until( (ExpectedCondition<Boolean>) d -> addField.getText().length() == 0 );
 
         List<WebElement> newProjects = webDriver.findElements( By.className( "project" ) );
 
