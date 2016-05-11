@@ -3,7 +3,7 @@
 ## Configuration
 
 When executing a test or a database migration you will have to specify a configuration that will be used.  
-A few configuration files are made available under `taskboard/conf/`, you can add your own configuration files or edit the existing ones.
+A few configuration files are made available under `/taskboard/conf/`, you can add your own configuration files or edit the existing ones.
 
 The configuration file can be specified using the `-Denv` argument.  
 E.g. `gradle flywayMigrate -Denv=local` when `/taskboard/conf/local.properties` exists).
