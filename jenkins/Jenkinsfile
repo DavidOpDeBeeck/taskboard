@@ -236,6 +236,8 @@ parallel (
         // we unstash the config file and the rest api files to build the docker images and run it
         unstash 'config'
         unstash 'rest-api'
+        // rename acc.properties to application.properties
+        sh 'mv acc.properties application.properties'
         // build the docker image (with the id of the build to make it unique)
         buildImage( restApi.name )
         // run the image and expose the web port (8080)
