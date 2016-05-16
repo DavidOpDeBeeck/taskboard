@@ -12,6 +12,7 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class ProjectControllerTest extends ControllerTest
         Project p3 = new Project( "Test Project #3" );
         Project p4 = new Project( "Test Project #4" );
 
-        projectDAO.create( p1 );
-        projectDAO.create( p2 );
-        projectDAO.create( p3 );
-        projectDAO.create( p4 );
+        projectRepository.save( p1 );
+        projectRepository.save( p2 );
+        projectRepository.save( p3 );
+        projectRepository.save( p4 );
 
         ResponseEntity<List<Project>> apiResponse = restTemplate.exchange( url(), HttpMethod.GET, null, new ParameterizedTypeReference<List<Project>>()
         {} );
@@ -50,10 +51,10 @@ public class ProjectControllerTest extends ControllerTest
         assertTrue( projects.contains( p3 ) );
         assertTrue( projects.contains( p4 ) );
 
-        projectDAO.remove( p1 );
-        projectDAO.remove( p2 );
-        projectDAO.remove( p3 );
-        projectDAO.remove( p4 );
+        projectRepository.delete( p1 );
+        projectRepository.delete( p2 );
+        projectRepository.delete( p3 );
+        projectRepository.delete( p4 );
     }
 
     @Test
@@ -77,20 +78,20 @@ public class ProjectControllerTest extends ControllerTest
 
         assertNotNull( apiResponse );
 
-        Project project = projectDAO.getById( apiResponse.getBody().getId() );
+        Project project = projectRepository.findOne( apiResponse.getBody().getId() );
         assertEquals( project.getId(), apiResponse.getBody().getId() );
         assertEquals( project.getTitle(), apiResponse.getBody().getTitle() );
 
-        projectDAO.remove( project );
+        projectRepository.delete(project);
     }
 
     @Test
     public void testGetProject()
     {
         Project project = new Project( "Test Project" );
-        String projectId = project.getId();
 
-        projectDAO.create( project );
+        projectRepository.save( project );
+        String projectId = project.getId();
 
         Project apiResponse = restTemplate.getForObject( url() + "/" + projectId, Project.class );
 
@@ -98,7 +99,7 @@ public class ProjectControllerTest extends ControllerTest
         assertEquals( project.getId(), apiResponse.getId() );
         assertEquals( project.getTitle(), apiResponse.getTitle() );
 
-        projectDAO.remove( project );
+        projectRepository.delete(project);
     }
 
     @Test
@@ -109,7 +110,7 @@ public class ProjectControllerTest extends ControllerTest
 
         Project project = new Project( title1 );
 
-        projectDAO.create( project );
+        projectRepository.save( project );
 
         ProjectDTO dto = new ProjectDTO();
         dto.setTitle( title2 );
@@ -120,25 +121,27 @@ public class ProjectControllerTest extends ControllerTest
         HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         restTemplate.put( url() + "/" + project.getId(), httpEntity, Project.class );
 
-        Project newProject = projectDAO.getById( project.getId() );
+        Project newProject = projectRepository.findOne( project.getId() );
         assertEquals( project.getId(), newProject.getId() );
         assertEquals( title2, newProject.getTitle() );
 
-        projectDAO.remove( project );
+        projectRepository.delete(project);
     }
 
     @Test
     public void testRemoveProject()
     {
         Project project = new Project( "Test Project" );
-        String projectId = project.getId();
 
-        projectDAO.create( project );
+        projectRepository.save( project );
+        String projectId = project.getId();
 
         restTemplate.delete( url() + "/" + projectId );
 
-        Project removedProject = projectDAO.getById( projectId );
+        Project removedProject = projectRepository.findOne( projectId );
         assertNull( removedProject );
+
+        projectRepository.delete(project);
     }
 
     @Test
@@ -150,7 +153,7 @@ public class ProjectControllerTest extends ControllerTest
 
         Project project = new Project( "Test Project" );
 
-        projectDAO.create( project );
+        projectRepository.save( project );
 
         LaneDTO dto = new LaneDTO();
         dto.setTitle( title );
@@ -170,14 +173,14 @@ public class ProjectControllerTest extends ControllerTest
 
         assertNotNull( apiResponse );
 
-        Lane lane = laneDAO.getById( apiResponse.getBody().getId() );
+        Lane lane = laneRepository.findOne( apiResponse.getBody().getId() );
 
         assertEquals( lane.getId(), apiResponse.getBody().getId() );
         assertEquals( lane.getTitle(), apiResponse.getBody().getTitle() );
         assertEquals( lane.getSequence(), apiResponse.getBody().getSequence() );
         assertEquals( lane.isCompleted(), apiResponse.getBody().isCompleted() );
 
-        projectDAO.remove( project );
+        projectRepository.delete(project);
     }
 
     @Override

@@ -1,22 +1,35 @@
 package be.davidopdebeeck.taskboard.core;
 
-import java.util.UUID;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 /**
  * Identifiable class
  */
+@MappedSuperclass
 public abstract class Identifiable
 {
 
-    protected final UUID id;
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "id")
+    protected String id;
 
     /**
-     * Identifiable constructor that takes an UUID
-     *
-     * @param id The unique id of the identifiable
+     * Default constructor
      */
-    public Identifiable( UUID id )
-    {
+    public Identifiable() {}
+
+    /**
+     * Sets the id of the identifiable
+     * @param id The id of the identifiable
+     */
+    public void setId( String id ) {
         this.id = id;
     }
 
@@ -25,7 +38,7 @@ public abstract class Identifiable
      */
     public String getId()
     {
-        return id.toString();
+        return id;
     }
 
     @Override

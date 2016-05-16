@@ -3,9 +3,9 @@ package be.davidopdebeeck.taskboard.api.security;
 import be.davidopdebeeck.taskboard.api.security.exception.TokenInvalidException;
 import be.davidopdebeeck.taskboard.api.security.exception.TokenNotFoundException;
 import be.davidopdebeeck.taskboard.core.Project;
-import be.davidopdebeeck.taskboard.dao.LaneDAO;
-import be.davidopdebeeck.taskboard.dao.ProjectDAO;
-import be.davidopdebeeck.taskboard.dao.TaskDAO;
+import be.davidopdebeeck.taskboard.repository.LaneRepository;
+import be.davidopdebeeck.taskboard.repository.ProjectRepository;
+import be.davidopdebeeck.taskboard.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,13 +22,13 @@ public class SecurityInterceptor implements HandlerInterceptor
 {
 
     @Autowired
-    ProjectDAO projectDAO;
+    ProjectRepository projectRepository;
 
     @Autowired
-    LaneDAO laneDAO;
+    LaneRepository laneRepository;
 
     @Autowired
-    TaskDAO taskDAO;
+    TaskRepository taskRepository;
 
     @Autowired
     SecurityManager securityManager;
@@ -48,11 +48,11 @@ public class SecurityInterceptor implements HandlerInterceptor
             boolean secured = false;
 
             if ( projectId != null )
-                project = projectDAO.getById( projectId );
+                project = projectRepository.findOne( projectId );
             else if ( laneId != null )
-                project = laneDAO.getProject( laneDAO.getById( laneId ) );
+                project = laneRepository.findProject( laneRepository.findOne( laneId ) );
             else if ( taskId != null )
-                project = taskDAO.getProject( taskDAO.getById( taskId ) );
+                project = taskRepository.findProject( taskRepository.findOne( taskId ) );
 
             if ( project != null )
                 secured = project.isSecured();
@@ -94,14 +94,8 @@ public class SecurityInterceptor implements HandlerInterceptor
     }
 
     @Override
-    public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception
-    {
-
-    }
+    public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {}
 
     @Override
-    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex ) throws Exception
-    {
-
-    }
+    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex ) throws Exception {}
 }

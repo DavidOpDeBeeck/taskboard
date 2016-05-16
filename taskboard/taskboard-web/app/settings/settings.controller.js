@@ -25,6 +25,7 @@
         ///////////////////
 
         function activate() {
+            console.log( "ze" );
             API.getProject( $routeParams.id )
                 .then( project => {
                     vm.title = project.title;
@@ -44,7 +45,7 @@
         function remove() {
             API.removeProject( $routeParams.id )
                 .then( () => {
-                    $uibModalInstance.close();
+                    $uibModalInstance.dismiss();
                     $location.path( "/projects" );
                 } );
         }

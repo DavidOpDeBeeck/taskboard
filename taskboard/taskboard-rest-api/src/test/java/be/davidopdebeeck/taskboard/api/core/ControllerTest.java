@@ -1,13 +1,12 @@
 package be.davidopdebeeck.taskboard.api.core;
 
-import be.davidopdebeeck.taskboard.dao.LaneDAO;
-import be.davidopdebeeck.taskboard.dao.ProjectDAO;
-import be.davidopdebeeck.taskboard.dao.TaskDAO;
+import be.davidopdebeeck.taskboard.repository.LaneRepository;
+import be.davidopdebeeck.taskboard.repository.ProjectRepository;
+import be.davidopdebeeck.taskboard.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.web.client.RestTemplate;
-
 
 public abstract class ControllerTest
 {
@@ -21,23 +20,23 @@ public abstract class ControllerTest
     @Value( "${server.ssl.enabled}" )
     private boolean ssl;
 
-    protected RestTemplate restTemplate = new TestRestTemplate();
+    RestTemplate restTemplate = new TestRestTemplate();
 
     @Autowired
-    protected ProjectDAO projectDAO;
+    protected ProjectRepository projectRepository;
 
     @Autowired
-    protected LaneDAO laneDAO;
+    protected LaneRepository laneRepository;
 
     @Autowired
-    protected TaskDAO taskDAO;
+    protected TaskRepository taskRepository;
 
-    protected String url()
+    String url()
     {
         return baseUrl() + "/" + context();
     }
 
-    protected String baseUrl()
+    String baseUrl()
     {
         return ( ssl ? "https" : "http" ) + "://" + address + ":" + port;
     }

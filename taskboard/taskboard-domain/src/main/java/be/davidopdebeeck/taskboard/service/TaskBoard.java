@@ -60,26 +60,6 @@ public interface TaskBoard
      */
     Collection<Project> getAllProjects();
 
-    /**
-     * Adds a lane to a project
-     *
-     * @param projectId The id of the project to add the lane too
-     * @param title     The title of the lane
-     * @param sequence  The sequence of the lane
-     * @param completed Defines if tasks are completed when in this lane
-     * @return The lane that is added, if an error occurs null is returned
-     */
-    Lane addLaneToProject( String projectId, String title, int sequence, boolean completed );
-
-    /**
-     * Removes a lane from a project
-     *
-     * @param projectId The id of the project to remove the lane from
-     * @param laneId    The id of the lane to remove
-     * @return If the lane is successfully removed from the project
-     */
-    boolean removeLaneFromProject( String projectId, String laneId );
-
     //-------------------------------------------
     // endregion
     //-------------------------------------------
@@ -87,6 +67,16 @@ public interface TaskBoard
     //-------------------------------------------
     // region Lane
     //-------------------------------------------
+
+    /**
+     * Creates a new lane
+     *
+     * @param title     The title of the lane
+     * @param sequence  The sequence of the lane
+     * @param completed Defines if tasks are completed when in this lane
+     * @return The lane that is created
+     */
+    Lane createLane( String title, int sequence, boolean completed );
 
     /**
      * Updates a lane in the database
@@ -105,35 +95,6 @@ public interface TaskBoard
     Lane getLaneById( String id );
 
     /**
-     * Adds a task to a lane
-     *
-     * @param laneId      The identifier of the lane to add the task too
-     * @param title       The title of the task
-     * @param description The identifier of the task
-     * @param assignee    The assignee of the task
-     * @return The task that is added, if an error occurs null is returned
-     */
-    Task addTaskToLane( String laneId, String title, String description, String assignee );
-
-    /**
-     * Adds a task to a lane
-     *
-     * @param laneId The identifier of the lane to add the task too
-     * @param taskId The identifier of the task to add the task too
-     * @return The task that is added, if an error occurs null is returned
-     */
-    Task addTaskToLane( String laneId, String taskId );
-
-    /**
-     * Removes a task from a lane
-     *
-     * @param laneId The identifier of the lane to remove the task from
-     * @param taskId The identifier of the task to remove from the lane
-     * @return If the task is successfully removed
-     */
-    boolean removeTaskFromLane( String laneId, String taskId );
-
-    /**
      * Removes a lane from the database
      *
      * @param id The id of the lane to remove
@@ -147,6 +108,16 @@ public interface TaskBoard
     //-------------------------------------------
     // region Task
     //-------------------------------------------
+
+    /**
+     * Creates a new task
+     *
+     * @param title       The title of the task
+     * @param description The identifier of the task
+     * @param assignee    The assignee of the task
+     * @return The task that is created
+     */
+    Task createTask( String title, String description, String assignee );
 
     /**
      * Updates a task in the database

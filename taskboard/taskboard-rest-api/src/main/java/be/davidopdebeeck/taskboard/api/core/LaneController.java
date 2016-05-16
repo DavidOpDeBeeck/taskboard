@@ -65,13 +65,19 @@ public class LaneController
     @RequestMapping( value = "/tasks", method = RequestMethod.POST )
     public ResponseEntity createTask( @PathVariable( "laneId" ) String laneId, @RequestBody TaskDTO dto, UriComponentsBuilder b )
     {
+        Lane lane = taskBoard.getLaneById(laneId);
+
         if ( dto.getId() != null )
         {
-            taskBoard.addTaskToLane( laneId, dto.getId() );
+            Task task = taskBoard.getTaskById( dto.getId());
+            lane.addTask(task);
+            taskBoard.updateLane(lane);
             return new ResponseEntity<Void>( HttpStatus.OK );
         }
 
-        Task task = taskBoard.addTaskToLane( laneId, dto.getTitle(), dto.getDescription(), dto.getAssignee() );
+        Task task = taskBoard.createTask(dto.getTitle(), dto.getDescription(), dto.getAssignee());
+        lane.addTask(task);
+        taskBoard.updateLane(lane);
 
         UriComponents components = b.path( "tasks/{id}" ).buildAndExpand( task.getId() );
 
@@ -94,7 +100,8 @@ public class LaneController
         if (task == null)
             return new ResponseEntity<>( HttpStatus.NOT_FOUND );
 
-        taskBoard.removeTaskFromLane( laneId, taskId );
+        lane.removeTask(task);
+        taskBoard.updateLane(lane);
 
         return new ResponseEntity<>( HttpStatus.OK );
     }

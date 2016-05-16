@@ -6,8 +6,6 @@ import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.core.Task;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -17,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
@@ -26,31 +25,18 @@ import static org.junit.Assert.*;
 public class LaneControllerTest extends ControllerTest
 {
 
-    private Project project;
-
-    @Before
-    public void setUp()
-    {
-        Project project = new Project( "Test Project" );
-        projectDAO.create( project );
-        this.project = project;
-    }
-
-    @After
-    public void breakDown()
-    {
-        projectDAO.remove( project );
-    }
-
     @Test
     public void testGetLane() throws Exception
     {
+        Project project = new Project( "Test Project" );
+        projectRepository.save( project );
+
         String title = "To Verify";
         int sequence = 1;
         boolean completed = true;
 
         Lane lane = new Lane( title, sequence, completed );
-        laneDAO.create( lane );
+        laneRepository.save( lane );
 
         HttpEntity<Lane> apiResponse = restTemplate.exchange( url() + "/" + lane.getId(), HttpMethod.GET, null, Lane.class );
 
@@ -60,6 +46,8 @@ public class LaneControllerTest extends ControllerTest
         assertEquals( lane.getTitle(), apiResponse.getBody().getTitle() );
         assertEquals( lane.getSequence(), apiResponse.getBody().getSequence() );
         assertEquals( lane.isCompleted(), apiResponse.getBody().isCompleted() );
+
+        projectRepository.delete(project);
     }
 
     @Test
@@ -69,10 +57,14 @@ public class LaneControllerTest extends ControllerTest
         int sequence = 3;
         boolean completed = true;
 
+        Project project = new Project( "Test Project" );
         Lane lane = new Lane( title, sequence, completed );
 
-        laneDAO.create( lane );
-        projectDAO.addLane( project, lane );
+        projectRepository.save( project );
+        laneRepository.save( lane );
+
+        project.addLane( lane );
+        projectRepository.save( project );
 
         title = "ToDo";
         sequence = 1;
@@ -89,34 +81,45 @@ public class LaneControllerTest extends ControllerTest
         HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         restTemplate.put( url() + "/" + lane.getId(), httpEntity, Lane.class );
 
-        lane = laneDAO.getById( lane.getId() );
+        lane = laneRepository.findOne( lane.getId() );
 
         assertEquals( title, lane.getTitle() );
         assertEquals( sequence, lane.getSequence() );
         assertEquals( completed, lane.isCompleted() );
+
+        projectRepository.delete(project);
     }
 
     @Test
     public void testRemoveLane()
     {
+        Project project = new Project( "Test Project" );
         Lane lane = new Lane( "Test Lane", 0, false );
-        String laneId = lane.getId();
 
-        laneDAO.create( lane );
+        projectRepository.save( project );
+        laneRepository.save( lane );
+
+        String laneId = lane.getId();
 
         restTemplate.delete( url() + "/" + laneId );
 
-        Lane removedLane = laneDAO.getById( laneId );
+        Lane removedLane = laneRepository.findOne( laneId );
         assertNull( removedLane );
+
+        projectRepository.delete(project);
     }
 
     @Test
     public void testAddTaskToLane() throws Exception
     {
+        Project project = new Project( "Test Project" );
         Lane lane = new Lane( "To Verify", 3, true );
 
-        laneDAO.create( lane );
-        projectDAO.addLane( project, lane );
+        projectRepository.save( project );
+        laneRepository.save( lane );
+
+        project.addLane( lane );
+        projectRepository.save( project );
 
         String title = "Make a Task";
         String description = "Make a Task description";
@@ -141,12 +144,14 @@ public class LaneControllerTest extends ControllerTest
 
         assertNotNull( apiResponse );
 
-        Task task = taskDAO.getById( apiResponse.getBody().getId() );
+        Task task = taskRepository.findOne( apiResponse.getBody().getId() );
 
         assertEquals( task.getId(), apiResponse.getBody().getId() );
         assertEquals( task.getTitle(), apiResponse.getBody().getTitle() );
         assertEquals( task.getDescription(), apiResponse.getBody().getDescription() );
         assertEquals( task.getAssignee(), apiResponse.getBody().getAssignee() );
+
+        projectRepository.delete(project);
     }
 
     @Override

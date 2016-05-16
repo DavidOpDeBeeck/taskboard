@@ -3,24 +3,28 @@ package be.davidopdebeeck.taskboard.service;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.core.Task;
-import be.davidopdebeeck.taskboard.dao.LaneDAO;
-import be.davidopdebeeck.taskboard.dao.ProjectDAO;
-import be.davidopdebeeck.taskboard.dao.TaskDAO;
+import be.davidopdebeeck.taskboard.repository.LaneRepository;
+import be.davidopdebeeck.taskboard.repository.ProjectRepository;
+import be.davidopdebeeck.taskboard.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-public class TaskBoardImpl implements TaskBoard
-{
+@Service
+@Transactional( propagation = Propagation.REQUIRES_NEW )
+public class TaskBoardImpl implements TaskBoard {
 
     @Autowired
-    ProjectDAO projectDAO;
+    ProjectRepository projectRepository;
 
     @Autowired
-    LaneDAO laneDAO;
+    LaneRepository laneRepository;
 
     @Autowired
-    TaskDAO taskDAO;
+    TaskRepository taskRepository;
 
     //-------------------------------------------
     // region Project
@@ -28,59 +32,33 @@ public class TaskBoardImpl implements TaskBoard
 
 
     @Override
-    public Project createProject( String title )
-    {
-        return projectDAO.create( new Project( title ) );
+    public Project createProject( String title ) {
+        return projectRepository.save(new Project(title));
     }
 
     @Override
-    public Project createProject( String title, String plainTextPassword )
-    {
-        return projectDAO.create( new Project( title, plainTextPassword ) );
+    public Project createProject( String title, String plainTextPassword ) {
+        return projectRepository.save(new Project(title, plainTextPassword));
     }
 
     @Override
-    public Project updateProject( Project project )
-    {
-        return projectDAO.update( project );
+    public Project updateProject( Project project ) {
+        return projectRepository.save(project);
     }
 
     @Override
-    public void removeProject( String id )
-    {
-        Project project = projectDAO.getById( id );
-        projectDAO.remove( project );
+    public void removeProject( String id ) {
+        projectRepository.delete(projectRepository.findOne(id));
     }
 
     @Override
-    public Project getProjectById( String id )
-    {
-        return projectDAO.getById( id );
+    public Project getProjectById( String id ) {
+        return projectRepository.findOne(id);
     }
 
     @Override
-    public Collection<Project> getAllProjects()
-    {
-        return projectDAO.getAll();
-    }
-
-    @Override
-    public Lane addLaneToProject( String projectId, String title, int sequence, boolean completed )
-    {
-        Project project = projectDAO.getById( projectId );
-        Lane lane = new Lane( title, sequence, completed );
-        laneDAO.create( lane );
-        if ( projectDAO.addLane( project, lane ) )
-            return lane;
-        return null;
-    }
-
-    @Override
-    public boolean removeLaneFromProject( String projectId, String laneId )
-    {
-        Project project = projectDAO.getById( projectId );
-        Lane lane = laneDAO.getById( laneId );
-        return projectDAO.removeLane( project, lane );
+    public Collection<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 
     //-------------------------------------------
@@ -92,49 +70,25 @@ public class TaskBoardImpl implements TaskBoard
     //-------------------------------------------
 
     @Override
-    public Lane updateLane( Lane lane )
-    {
-        return laneDAO.update( lane );
+    public Lane createLane( String title, int sequence, boolean completed ) {
+        return laneRepository.save(new Lane(title, sequence, completed));
     }
 
     @Override
-    public Lane getLaneById( String id )
-    {
-        return laneDAO.getById( id );
+    public Lane updateLane( Lane lane ) {
+        return laneRepository.save(lane);
     }
 
     @Override
-    public Task addTaskToLane( String laneId, String title, String description, String assignee )
-    {
-        Lane lane = laneDAO.getById( laneId );
-        Task task = new Task( title, description, assignee );
-        taskDAO.create( task );
-        laneDAO.addTask( lane, task );
-        return task;
+    public Lane getLaneById( String id ) {
+        return laneRepository.findOne(id);
     }
 
     @Override
-    public Task addTaskToLane( String laneId, String taskId )
-    {
-        Lane lane = laneDAO.getById( laneId );
-        Task task = taskDAO.getById( taskId );
-        laneDAO.addTask( lane, task );
-        return task;
+    public void removeLane( String id ) {
+        laneRepository.delete(laneRepository.findOne(id));
     }
 
-    @Override
-    public boolean removeTaskFromLane( String laneId, String taskId )
-    {
-        Lane lane = laneDAO.getById( laneId );
-        Task task = taskDAO.getById( taskId );
-        return laneDAO.removeTask( lane, task );
-    }
-
-    @Override
-    public void removeLane( String id )
-    {
-        laneDAO.remove( laneDAO.getById( id ) );
-    }
 
     //-------------------------------------------
     // endregion
@@ -145,22 +99,23 @@ public class TaskBoardImpl implements TaskBoard
     //-------------------------------------------
 
     @Override
-    public Task updateTask( Task task )
-    {
-        return taskDAO.update( task );
-    }
-
-
-    @Override
-    public Task getTaskById( String id )
-    {
-        return taskDAO.getById( id );
+    public Task createTask( String title, String description, String assignee ) {
+        return taskRepository.save(new Task(title, description, assignee));
     }
 
     @Override
-    public void removeTask( String id )
-    {
-        taskDAO.remove( taskDAO.getById( id ) );
+    public Task updateTask( Task task ) {
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task getTaskById( String id ) {
+        return taskRepository.findOne(id);
+    }
+
+    @Override
+    public void removeTask( String id ) {
+        taskRepository.delete(taskRepository.findOne(id));
     }
 
     //-------------------------------------------

@@ -6,17 +6,21 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    springVersion = '4.2.5.RELEASE'
     mysqlVersion = '5.1.38'
     junitVersion = '4.11'
-    jacksonVersion = '2.7.4'
+    hibernatEMVersion = '5.1.0.Final'
+    hibernateValidationVersion = '5.2.4.Final'
+    springVersion = '4.2.6.RELEASE'
+    springDataVersion = '1.9.2.RELEASE'
+    javaxElVersion = '3.0.0'
 }
 
 dependencies {
     compile "mysql:mysql-connector-java:$mysqlVersion"
-    compile "org.springframework:spring-jdbc:$springVersion"
-    compile "org.springframework:spring-context:$springVersion"
-    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    compile "org.hibernate:hibernate-entitymanager:$hibernatEMVersion"
+    compile "org.hibernate:hibernate-validator:$hibernateValidationVersion"
+    compile "org.springframework.data:spring-data-jpa:$springDataVersion"
+    compile "javax.el:javax.el-api:$javaxElVersion"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "junit:junit:$junitVersion"
 }

@@ -6,10 +6,10 @@ CREATE TABLE IF NOT EXISTS project_has_lane (
   FOREIGN KEY (project_id)
   REFERENCES project (id)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   CONSTRAINT fk_project_has_lane_2
   FOREIGN KEY (lane_id)
   REFERENCES lane (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );

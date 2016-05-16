@@ -1,34 +1,44 @@
 package be.davidopdebeeck.taskboard.core;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Project class
  */
-@JsonInclude( JsonInclude.Include.NON_NULL )
-public class Project extends Identifiable
-{
+@Entity
+@Table( name = "project" )
+public class Project extends Identifiable {
+
+    @NotBlank( message = "Title should not be empty!")
+    @Column( name = "title", nullable = false )
     private String title;
-    @JsonIgnore
+
+    @Column( name = "password" )
     private String password;
-    @JsonIgnore
+
+    @Column( name = "salt" )
     private String salt;
+
+    @OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true )
+    @JoinTable(
+            name = "project_has_lane",
+            joinColumns = {@JoinColumn( name = "project_id", referencedColumnName = "id" )},
+            inverseJoinColumns = {@JoinColumn( name = "lane_id", referencedColumnName = "id" )}
+    )
     private Set<Lane> lanes;
 
     /**
      * Empty constructor
      */
-    public Project()
-    {
-        this( null );
+    public Project() {
     }
 
     /**
@@ -36,9 +46,8 @@ public class Project extends Identifiable
      *
      * @param title The title of the project
      */
-    public Project( String title )
-    {
-        this( UUID.randomUUID(), title );
+    public Project( String title ) {
+        this.title = title;
     }
 
     /**
@@ -47,39 +56,34 @@ public class Project extends Identifiable
      * @param title             The title of the project
      * @param plainTextPassword The plaintext password of the project
      */
-    public Project( String title, String plainTextPassword )
-    {
-        this( UUID.randomUUID(), title );
-        this.salt = new BigInteger( 130, new SecureRandom() ).toString( 20 );
-        this.password = createHash( plainTextPassword, salt );
+    public Project( String title, String plainTextPassword ) {
+        this(title);
+        this.salt = new BigInteger(130, new SecureRandom()).toString(20);
+        this.password = createHash(plainTextPassword, salt);
     }
 
     /**
-     * Project constructor that takes a UUID and a title
+     * Adds a lane to a project
      *
-     * @param id    The unique identifier of the project
-     * @param title The title of the project
+     * @param lane The lane that will be added to the project
+     * @return If the lane is successfully added to the project
      */
-    public Project( UUID id, String title )
-    {
-        super( id );
-        this.title = title;
+    public boolean addLane( Lane lane ) {
+        if (lanes == null)
+            lanes = new HashSet<>();
+        return lanes.add(lane);
     }
 
     /**
-     * Project constructor that takes a UUID, a title, a password and a salt
+     * Removed a lane from the project
      *
-     * @param id       The unique identifier of the project
-     * @param title    The title of the project
-     * @param password The password of the project
-     * @param salt     The salt of the project
+     * @param lane The lane that will be removed from the project
+     * @return If the lane is successfully removed
      */
-    public Project( UUID id, String title, String password, String salt )
-    {
-        super( id );
-        this.title = title;
-        this.password = password;
-        this.salt = salt;
+    public boolean removeLane( Lane lane ){
+        if (lanes == null)
+            return false;
+        return lanes.remove(lane);
     }
 
     /**
@@ -88,16 +92,14 @@ public class Project extends Identifiable
      * @param plainTextPassword The plaintext password
      * @return True if the plaintext password matches the saved password
      */
-    public boolean isPasswordValid( String plainTextPassword )
-    {
-        return createHash( plainTextPassword, salt ).equals( password );
+    public boolean isPasswordValid( String plainTextPassword ) {
+        return createHash(plainTextPassword, salt).equals(password);
     }
 
     /**
      * @return If the project is secured with a password
      */
-    public boolean isSecured()
-    {
+    public boolean isSecured() {
         return password != null;
     }
 
@@ -106,8 +108,7 @@ public class Project extends Identifiable
      *
      * @param title The title of the project
      */
-    public void setTitle( String title )
-    {
+    public void setTitle( String title ) {
         this.title = title;
     }
 
@@ -116,10 +117,9 @@ public class Project extends Identifiable
      *
      * @param plainTextPassword The plaintext password of the project
      */
-    public void setPassword( String plainTextPassword )
-    {
-        this.salt = new BigInteger( 130, new SecureRandom() ).toString( 20 );
-        this.password = createHash( plainTextPassword, salt );
+    public void setPassword( String plainTextPassword ) {
+        this.salt = new BigInteger(130, new SecureRandom()).toString(20);
+        this.password = createHash(plainTextPassword, salt);
     }
 
     /**
@@ -127,59 +127,52 @@ public class Project extends Identifiable
      *
      * @param lanes The lanes of the project
      */
-    public void setLanes( Set<Lane> lanes )
-    {
+    public void setLanes( Set<Lane> lanes ) {
         this.lanes = lanes;
     }
 
     /**
      * @return The title of the project
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
     /**
      * @return The password of the project
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
     /**
      * @return The salt of the project
      */
-    public String getSalt()
-    {
+    public String getSalt() {
         return salt;
     }
 
     /**
      * @return The lanes of the project
      */
-    public Set<Lane> getLanes()
-    {
+    public Set<Lane> getLanes() {
         return lanes;
     }
 
     @Override
-    public boolean equals( Object o )
-    {
-        if ( this == o )
+    public boolean equals( Object o ) {
+        if (this == o)
             return true;
-        if ( o == null || getClass() != o.getClass() )
+        if (o == null || getClass() != o.getClass())
             return false;
 
         Project project = (Project) o;
 
-        return id.equals( project.id );
+        return id.equals(project.id);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return id.hashCode();
     }
 
@@ -189,24 +182,23 @@ public class Project extends Identifiable
      * @param plainTextPassword The password that will be hashed
      * @return The password in hashed form.
      */
-    private String createHash( String plainTextPassword, String salt )
-    {
-        if ( plainTextPassword == null )
+    private String createHash( String plainTextPassword, String salt ) {
+        if (plainTextPassword == null)
             return null;
 
         MessageDigest digest = null;
 
-        try
-        {
-            digest = MessageDigest.getInstance( "SHA-512" );
+        try {
+            digest = MessageDigest.getInstance("SHA-512");
             digest.reset();
-        } catch ( NoSuchAlgorithmException ignored ) { }
+        } catch (NoSuchAlgorithmException ignored) {
+        }
 
-        digest.update( plainTextPassword.getBytes() );
+        digest.update(plainTextPassword.getBytes());
 
-        if ( salt != null )
-            digest.update( salt.getBytes() );
+        if (salt != null)
+            digest.update(salt.getBytes());
 
-        return ( new BigInteger( 1, digest.digest() ).toString( 40 ) );
+        return (new BigInteger(1, digest.digest()).toString(40));
     }
 }

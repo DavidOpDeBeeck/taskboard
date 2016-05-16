@@ -48,7 +48,7 @@
 
         function openSettings() {
             let settingsModal = $uibModal.open( {
-                templateUrl: 'app/project/settings.html',
+                templateUrl: 'app/settings/settings.html',
                 controller: 'SettingsController',
                 controllerAs: 'settings'
             } );

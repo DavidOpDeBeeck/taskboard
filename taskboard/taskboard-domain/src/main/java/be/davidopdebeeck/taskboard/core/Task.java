@@ -1,24 +1,34 @@
 package be.davidopdebeeck.taskboard.core;
 
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * Task class
  */
+@Entity
+@Table( name = "task" )
 public class Task extends Identifiable
 {
 
+    @NotBlank( message = "Title should not be empty!")
+    @Column( name = "title", nullable = false )
     private String title;
+
+    @Column( name = "description" )
     private String description;
+
+    @Column( name = "assignee" )
     private String assignee;
 
     /**
      * Empty constructor
      */
-    public Task()
-    {
-        this( null );
-    }
+    public Task() {}
 
     /**
      * Task constructor that takes a title
@@ -27,7 +37,7 @@ public class Task extends Identifiable
      */
     public Task( String title )
     {
-        this( title, null, null );
+        this.title = title;
     }
 
     /**
@@ -38,7 +48,8 @@ public class Task extends Identifiable
      */
     public Task( String title, String description )
     {
-        this( title, description, null );
+        this( title );
+        this.description = description;
     }
 
     /**
@@ -50,22 +61,7 @@ public class Task extends Identifiable
      */
     public Task( String title, String description, String assignee )
     {
-        this( UUID.randomUUID(), title, description, assignee );
-    }
-
-    /**
-     * Task constructor tat takes a UUID, title, a description and an assignee
-     *
-     * @param id          The unique identifier of the task
-     * @param title       The title of the task
-     * @param description The description of the task
-     * @param assignee    The name of the assigned person of the task
-     */
-    public Task( UUID id, String title, String description, String assignee )
-    {
-        super( id );
-        this.title = title;
-        this.description = description;
+        this( title, description );
         this.assignee = assignee;
     }
 

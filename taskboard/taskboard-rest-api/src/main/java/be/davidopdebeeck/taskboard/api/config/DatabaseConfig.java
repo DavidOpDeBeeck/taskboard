@@ -1,11 +1,5 @@
 package be.davidopdebeeck.taskboard.api.config;
 
-import be.davidopdebeeck.taskboard.dao.LaneDAO;
-import be.davidopdebeeck.taskboard.dao.ProjectDAO;
-import be.davidopdebeeck.taskboard.dao.TaskDAO;
-import be.davidopdebeeck.taskboard.dao.impl.LaneDAOImpl;
-import be.davidopdebeeck.taskboard.dao.impl.ProjectDAOImpl;
-import be.davidopdebeeck.taskboard.dao.impl.TaskDAOImpl;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import be.davidopdebeeck.taskboard.service.TaskBoardImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,30 +27,6 @@ public class DatabaseConfig
     public TaskBoard taskBoard()
     {
         return new TaskBoardImpl();
-    }
-
-    @Bean
-    public ProjectDAO projectDAO()
-    {
-        ProjectDAOImpl projectDAO = new ProjectDAOImpl();
-        projectDAO.setJdbcTemplate( jdbcTemplate() );
-        return projectDAO;
-    }
-
-    @Bean
-    public LaneDAO laeDAO()
-    {
-        LaneDAOImpl laneDAO = new LaneDAOImpl();
-        laneDAO.setJdbcTemplate( jdbcTemplate() );
-        return laneDAO;
-    }
-
-    @Bean
-    public TaskDAO taskDAO()
-    {
-        TaskDAOImpl taskDAO = new TaskDAOImpl();
-        taskDAO.setJdbcTemplate( jdbcTemplate() );
-        return taskDAO;
     }
 
     @Bean

@@ -31,7 +31,7 @@ public class TaskControllerTest extends ControllerTest
 
         Task task = new Task( title1, description, assignee );
 
-        taskDAO.create( task );
+        taskRepository.save( task );
 
         TaskDTO dto = new TaskDTO();
 
@@ -45,22 +45,24 @@ public class TaskControllerTest extends ControllerTest
         HttpEntity<?> httpEntity = new HttpEntity<>( dto, requestHeaders );
         restTemplate.put( url() + "/" + task.getId(), httpEntity, Task.class );
 
-        Task newTask = taskDAO.getById( task.getId() );
+        Task newTask = taskRepository.findOne( task.getId() );
         assertEquals( task.getId(), newTask.getId() );
         assertEquals( title2, newTask.getTitle() );
+
+        taskRepository.delete(task);
     }
 
     @Test
     public void testRemoveTaskFromLane()
     {
         Task task = new Task( "Test Task", "Test Task description", "David" );
-        String taskId = task.getId();
 
-        taskDAO.create( task );
+        taskRepository.save( task );
+        String taskId = task.getId();
 
         restTemplate.delete( url() + "/" + taskId );
 
-        Task removedTask = taskDAO.getById( taskId );
+        Task removedTask = taskRepository.findOne( taskId );
         assertNull( removedTask );
     }
 
