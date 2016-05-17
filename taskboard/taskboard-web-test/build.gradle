@@ -15,10 +15,9 @@ ext {
 }
 
 dependencies {
-    compile "xml-apis:xml-apis:$xmlApiVersion"
-    compile "org.fluentlenium:fluentlenium-assertj:$fluentleniumVersion"
-    compile "org.seleniumhq.selenium:selenium-server:$seleniumVersion"
-    compile "commons-configuration:commons-configuration:$commonsVersion"
+    testCompile "xml-apis:xml-apis:$xmlApiVersion"
+    testCompile "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+    testCompile "commons-configuration:commons-configuration:$commonsVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
     testCompile "junit:junit:$junitVersion"
 }
