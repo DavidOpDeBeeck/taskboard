@@ -8,7 +8,7 @@ targetCompatibility = 1.8
 ext {
     xmlApiVersion = '1.4.01'
     fluentleniumVersion = '0.10.3'
-    seleniumVersion = '2.45.0'
+    seleniumVersion = '2.43.1'
     commonsVersion = '1.7'
     assertjVersion = '1.7.0'
     junitVersion = '4.11'
@@ -17,7 +17,7 @@ ext {
 dependencies {
     compile "xml-apis:xml-apis:$xmlApiVersion"
     compile "org.fluentlenium:fluentlenium-assertj:$fluentleniumVersion"
-    compile "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+    compile "org.seleniumhq.selenium:selenium-server-standalone:$seleniumVersion"
     compile "commons-configuration:commons-configuration:$commonsVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
     testCompile "junit:junit:$junitVersion"

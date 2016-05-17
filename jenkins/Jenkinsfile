@@ -34,7 +34,7 @@ def restApi = [
 
 def selenium = [
     name      : 'selenium-node',
-    port      : '9999'
+    port      : '4444'
 ]
 
 
