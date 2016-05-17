@@ -109,9 +109,9 @@ def initEnvironment() {
         env = 'local' // we default to local config
 
     if (project.parent == null)
-        location = "$project.rootDir/conf/${env}.properties"
+        location = "$project.rootDir/config/${env}.properties"
     else
-        location = "$project.parent.rootDir/conf/${env}.properties"
+        location = "$project.parent.rootDir/config/${env}.properties"
 
     props.load(new FileInputStream(location))
 
