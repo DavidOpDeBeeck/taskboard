@@ -3,20 +3,14 @@
 //------------------------------
 
 def currentNetworkName  = "network-${env.BUILD_NUMBER}"
-def previousNetworkName = "network-${$env.BUILD_NUMBER - 1}"
+def previousNetworkName = "network-${env.BUILD_NUMBER.toInteger() - 1}"
 def stageFailed         = false
 
 //------------------------------
 // NODE VARIABLES
 //------------------------------
 
-def gradleSlaveId;
-def dockerServerIp;
-
-def currentNodeId()
-{
-    return env.NODE_NAME.split("-" as Closure)[1]
-}
+def gradleSlaveId, dockerServerIp;
 
 //------------------------------
 // DATABASE CONFIGS
@@ -76,13 +70,13 @@ stage 'REPOSITORY TESTS'
 node ('docker')
 {
   // Set the docker ip variable
-  dockerServerIp = env.DOCKER_HOST.split(":" as Closure)[0]
+  dockerServerIp = env.DOCKER_HOST.split(":")[0]
   // run database with test environment properties
   runContainer( testDatabase.name, 'mysql', "-e MYSQL_DATABASE=taskboard -e MYSQL_USER=$testDatabase.user -e MYSQL_PASSWORD=$testDatabase.password -e MYSQL_ALLOW_EMPTY_PASSWORD=true" )
   // create a network (used to connect database and gradle slave)
   createNetwork(currentNetworkName)
   // connect the database to the network with 'mysql' as his alias
-  connect(currentNetworkName, testDatabase.name, testDatabase.name)
+  connect(currentNetworkName, testDatabase.name, 'mysql')
 }
 
 node ('gradle')
@@ -90,11 +84,12 @@ node ('gradle')
   try
   {
     // get the container id of the gradle node
-    gradleSlaveId = currentNodeId()
+    gradleSlaveId = env.NODE_NAME.split("-")[1]
     // connect the gradle slave to the network
     node ('docker') { connect(currentNetworkName, gradleSlaveId, 'gradle-slave') }
     // unstash the 'taskboard' files so we can execute gradle tasks
     unstash 'taskboard'
+    sh "gradle clean -Dorg.gradle.daemon=true"
     // initialise the database with the specified tables
     sh "gradle flywayMigrate -Denv=test-flyway"
     // execute the repository tests
@@ -145,7 +140,7 @@ node ('docker')
   // create a network (used to connect database and gradle slave)
   createNetwork(currentNetworkName)
   // connect the database to the network with 'mysql' as his alias
-  connect(currentNetworkName, accDatabase.name, accDatabase.name)
+  connect(currentNetworkName, accDatabase.name, 'mysql')
 }
 
 node ('gradle')
@@ -153,7 +148,7 @@ node ('gradle')
     try
     {
       // get the container id of the gradle node
-      gradleSlaveId = currentNodeId()
+      gradleSlaveId = env.NODE_NAME.split("-")[1]
       // connect the gradle slave to the network
       node ('docker') { connect(currentNetworkName, gradleSlaveId, 'docker') }
       // unstash the 'taskboard' files so we can execute gradle tasks
@@ -204,11 +199,11 @@ parallel (
             // we unstash the 'taskboard' files to build the rest-api
             unstash 'taskboard'
             // we ignore tests because the slave isn't connected to a database
-            sh "gradle build -x test"
+            sh "gradle build -x test -Dorg.gradle.daemon=true"
             // we archive the rest api jar for later use
             archive '**/taskboard-rest-api/build/libs/*.jar'
             // we stash the acceptance properties to use with the rest api later on
-            dir ('conf') { stash includes: 'acc.properties', name: 'config' }
+            dir ('config') { stash includes: 'acc.properties', name: 'config' }
             // we stash the rest api files for later use
             dir ('taskboard-rest-api') { stash includes: '**', name: 'rest-api' }
             // we stash the web files for later use
@@ -281,7 +276,7 @@ node ('gradle')
   try
   {
     // get the container id of the gradle node
-    gradleSlaveId = currentNodeId()
+    gradleSlaveId = env.NODE_NAME.split("-")[1]
     // connect the gradle slave to the network
     node ('docker') { connect(currentNetworkName, gradleSlaveId, 'docker') }
     // unstash the 'taskboard' files

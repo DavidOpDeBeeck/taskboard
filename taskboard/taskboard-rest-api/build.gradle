@@ -20,19 +20,20 @@ repositories {
 }
 
 ext {
+    junitVersion = '4.11'
+    mysqlVersion = '5.1.38'
+    aspectJVersion = '1.8.9'
     springVersion = '4.2.5.RELEASE'
-    taskBoardVersion = 1.0
-    junitVersion = 4.11
-    flywayVersion = 4.0
 }
 
 dependencies {
     compile project(":taskboard-domain")
+    compile "mysql:mysql-connector-java:$mysqlVersion"
     compile "org.springframework:spring-jdbc:$springVersion"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-test"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
-    compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
+    compile "org.aspectj:aspectjweaver:$aspectJVersion"
     testCompile "junit:junit:$junitVersion"
 }
 
