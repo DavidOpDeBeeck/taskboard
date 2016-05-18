@@ -264,7 +264,7 @@ parallel (
       node ('docker')
       {
         // run the image and expose the web port (4444)
-        runContainer( selenium.name, 'selenium/standalone-firefox', "-p $selenium.port:4444" )
+        runContainer( selenium.name, 'selenium/standalone-chrome', "-p $selenium.port:4444" )
         // connect the selenium node to the network
         connect(currentNetworkName, selenium.name, selenium.name)
       }
