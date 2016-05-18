@@ -216,7 +216,7 @@ parallel (
             // create a network (used to connect web, rest api, database and gradle slave)
             createNetwork(currentNetworkName)
             // connect the database to the network with 'mysql' as his alias
-            connect(currentNetworkName, accDatabase.name, accDatabase.name)
+            connect(currentNetworkName, accDatabase.name, 'mysql')
         }
     },
     clearAcceptanceEnvironment : {
