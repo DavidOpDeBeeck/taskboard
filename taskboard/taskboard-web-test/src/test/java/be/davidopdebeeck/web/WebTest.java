@@ -46,7 +46,7 @@ public abstract class WebTest
     {
         try
         {
-            webDriver = new RemoteWebDriver( new URL( "http://" + nodeAddress + ":" + nodePort + "/wd/hub" ), DesiredCapabilities.firefox() );
+            webDriver = new RemoteWebDriver( new URL( "http://" + nodeAddress + ":" + nodePort + "/wd/hub" ), DesiredCapabilities.chrome() );
         } catch ( MalformedURLException ignored ) {}
     }
 

@@ -1,5 +1,7 @@
 package be.davidopdebeeck.web;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -16,6 +18,15 @@ import static org.junit.Assert.assertTrue;
 public class ProjectsWebTest extends WebTest
 {
 
+    List<WebElement> projects;
+
+    @Before
+    public void setUp() throws ConfigurationException
+    {
+        super.setUp();
+        projects = webDriver.findElements( By.className( "project" ) );
+    }
+
     @Test
     public void testCreateButton()
     {
@@ -25,17 +36,16 @@ public class ProjectsWebTest extends WebTest
 
         WebElement addField = webDriver.findElement( By.id( "search-add-field" ) );
         WebElement addButton = webDriver.findElement( By.id( "search-add-button" ) );
-        List<WebElement> projects = webDriver.findElements( By.className( "project" ) );
+
+        int projectCount = getProjectCount();
 
         addField.click();
         addField.sendKeys( "Test Project" );
         addButton.click();
 
-        (new WebDriverWait(webDriver, 10)).until( (ExpectedCondition<Boolean>) d -> addField.getText().length() == 0 );
+        waitForProjects( projectCount + 1 );
 
-        List<WebElement> newProjects = webDriver.findElements( By.className( "project" ) );
-
-        assertEquals( projects.size() + 1, newProjects.size() );
+        assertEquals( projectCount + 1, getProjectCount() );
     }
 
     @Test
@@ -53,23 +63,37 @@ public class ProjectsWebTest extends WebTest
         for ( String title : projectTitles )
         {
             searchField.click();
-            searchField.clear();
             searchField.sendKeys( title );
             addButton.click();
+            waitForProjects( getProjectCount() + 1 );
         }
-
-        wait( By.className( "project" ) );
 
         searchField.click();
         searchField.sendKeys( "Test Project" );
 
-        List<WebElement> projects = webDriver.findElements( By.className( "project" ) );
+        waitForProjects( 3 );
 
-        List<String> titles = projects.stream().map( project -> project.findElement( By.className( "title" ) ).getText() ).collect( Collectors.toCollection( LinkedList::new ) );
+        final List<WebElement> filteredProjects = webDriver.findElements( By.className( "project" ) );
+
+        List<String> titles = filteredProjects.stream()
+                .map( project -> project.findElement( By.className( "title" ) )
+                        .getText() )
+                .collect( Collectors.toCollection( LinkedList::new ) );
 
         assertTrue( titles.contains( projectTitles[ 0 ] ) );
         assertTrue( titles.contains( projectTitles[ 1 ] ) );
         assertTrue( !titles.contains( projectTitles[ 2 ] ) );
+    }
+
+    private int getProjectCount()
+    {
+        return webDriver.findElements( By.className( "project" ) )
+                .size();
+    }
+
+    private boolean waitForProjects( int count )
+    {
+        return ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> getProjectCount() >= count );
     }
 
     @Override
