@@ -89,7 +89,7 @@ node ('gradle')
     node ('docker') { connect(currentNetworkName, gradleSlaveId, 'gradle-slave') }
     // unstash the 'taskboard' files so we can execute gradle tasks
     unstash 'taskboard'
-    sh "gradle clean -Dorg.gradle.daemon=true"
+    sh "gradle clean"
     // initialise the database with the specified tables
     sh "gradle flywayMigrate -Denv=test-flyway"
     // execute the repository tests
@@ -199,7 +199,7 @@ parallel (
             // we unstash the 'taskboard' files to build the rest-api
             unstash 'taskboard'
             // we ignore tests because the slave isn't connected to a database
-            sh "gradle build -x test -Dorg.gradle.daemon=true"
+            sh "gradle build -x test"
             // we archive the rest api jar for later use
             archive '**/taskboard-rest-api/build/libs/*.jar'
             // we stash the acceptance properties to use with the rest api later on

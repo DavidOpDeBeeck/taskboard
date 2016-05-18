@@ -58,7 +58,7 @@ public class ProjectsWebTest extends WebTest
             addButton.click();
         }
 
-        wait( By.( "project" ) );
+        wait( By.className( "project" ) );
 
         searchField.click();
         searchField.sendKeys( "Test Project" );
