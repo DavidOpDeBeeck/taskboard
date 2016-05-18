@@ -203,7 +203,7 @@ parallel (
             // we archive the rest api jar for later use
             archive '**/taskboard-rest-api/build/libs/*.jar'
             // we stash the acceptance properties to use with the rest api later on
-            dir ('config') { stash includes: 'acc.properties', name: 'config' }
+            dir ('config') { stash includes: 'acc-boot.properties', name: 'config' }
             // we stash the rest api files for later use
             dir ('taskboard-rest-api') { stash includes: '**', name: 'rest-api' }
             // we stash the web files for later use
@@ -251,7 +251,7 @@ parallel (
         unstash 'config'
         unstash 'rest-api'
         // rename acc.properties to application.properties
-        sh 'mv acc.properties application.properties'
+        sh 'mv acc-boot.properties application.properties'
         // build the docker image (with the id of the build to make it unique)
         buildImage( restApi.name )
         // run the image and expose the web port (8080)
