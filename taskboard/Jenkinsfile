@@ -190,7 +190,7 @@ node ('docker')
 // WEB TESTS
 //------------------------------
 
-stage "WEB TESTS"
+stage "SETUP"
 
 parallel (
     seperateProjectsStashes : {
@@ -270,6 +270,8 @@ parallel (
       }
     }
 )
+
+stage "WEB TESTS"
 
 node ('gradle')
 {
