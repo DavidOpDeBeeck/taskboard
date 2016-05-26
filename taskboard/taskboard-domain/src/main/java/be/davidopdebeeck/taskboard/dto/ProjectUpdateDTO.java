@@ -1,12 +1,12 @@
-package be.davidopdebeeck.taskboard.api.dto;
+package be.davidopdebeeck.taskboard.dto;
 
-public class ProjectDTO
+public class ProjectUpdateDTO
 {
     private String title;
     private boolean secured;
     private String password;
 
-    public ProjectDTO() {}
+    public ProjectUpdateDTO() {}
 
     public void setTitle( String title )
     {

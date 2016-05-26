@@ -1,8 +1,8 @@
-package be.davidopdebeeck.taskboard.api.core;
+package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.Application;
-import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
-import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
+import be.davidopdebeeck.taskboard.dto.LaneDTO;
+import be.davidopdebeeck.taskboard.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.core.Task;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 

@@ -18,5 +18,7 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-ng-constant": "^2.0.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "grunt": "^1.0.1"
+  }
 }

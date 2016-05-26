@@ -1,11 +1,11 @@
 package be.davidopdebeeck.taskboard.api.dto;
 
-public class PasswordDTO
+public class PasswordValidateDTO
 {
     private String projectId;
     private String password;
 
-    public PasswordDTO() {}
+    public PasswordValidateDTO() {}
 
     public void setProjectId( String projectId )
     {

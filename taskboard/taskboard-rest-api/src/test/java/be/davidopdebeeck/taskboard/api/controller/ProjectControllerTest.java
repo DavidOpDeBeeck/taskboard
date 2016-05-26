@@ -1,8 +1,8 @@
-package be.davidopdebeeck.taskboard.api.core;
+package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.Application;
-import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
-import be.davidopdebeeck.taskboard.api.dto.ProjectDTO;
+import be.davidopdebeeck.taskboard.dto.LaneDTO;
+import be.davidopdebeeck.taskboard.dto.ProjectUpdateDTO;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import org.junit.Test;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class ProjectControllerTest extends ControllerTest
     {
         String title = "Test Project";
 
-        ProjectDTO dto = new ProjectDTO();
+        ProjectUpdateDTO dto = new ProjectUpdateDTO();
         dto.setTitle( title );
 
         HttpHeaders requestHeaders = new HttpHeaders();
@@ -112,7 +111,7 @@ public class ProjectControllerTest extends ControllerTest
 
         projectRepository.save( project );
 
-        ProjectDTO dto = new ProjectDTO();
+        ProjectUpdateDTO dto = new ProjectUpdateDTO();
         dto.setTitle( title2 );
 
         HttpHeaders requestHeaders = new HttpHeaders();

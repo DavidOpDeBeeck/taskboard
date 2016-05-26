@@ -1,11 +1,11 @@
-package be.davidopdebeeck.taskboard.api.core;
+package be.davidopdebeeck.taskboard.api.controller;
 
-import be.davidopdebeeck.taskboard.api.dto.LaneDTO;
-import be.davidopdebeeck.taskboard.api.dto.ProjectDTO;
+import be.davidopdebeeck.taskboard.dto.*;
 import be.davidopdebeeck.taskboard.api.security.SecurityManager;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping( "/projects" )
@@ -26,12 +27,17 @@ public class ProjectController {
     SecurityManager securityManager;
 
     @RequestMapping( method = RequestMethod.GET )
-    public ResponseEntity<Collection<Project>> get() {
-        return new ResponseEntity<>(taskBoard.getAllProjects(), HttpStatus.OK);
+    public ResponseEntity<Collection<ProjectDTO>> get() {
+        Collection<ProjectDTO> dtoList = taskBoard.getAllProjects().stream().map( p -> {
+            ProjectDTO dto = new ProjectDTO();
+            BeanUtils.copyProperties( p, dto );
+            return dto;
+        } ).collect( Collectors.toList());
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity create( @RequestBody ProjectDTO dto, UriComponentsBuilder b ) {
+    public ResponseEntity create( @RequestBody ProjectUpdateDTO dto, UriComponentsBuilder b ) {
         String title = dto.getTitle();
         String password = dto.getPassword();
 
@@ -55,17 +61,20 @@ public class ProjectController {
     }
 
     @RequestMapping( value = "/{projectId}", method = RequestMethod.GET )
-    public ResponseEntity<Project> get( @PathVariable( "projectId" ) String projectId ) {
+    public ResponseEntity<ProjectWithLanesDTO> get( @PathVariable( "projectId" ) String projectId ) {
         Project project = taskBoard.getProjectById(projectId);
 
         if (project == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<>(project, HttpStatus.OK);
+        ProjectWithLanesDTO dto = new ProjectWithLanesDTO();
+        BeanUtils.copyProperties( project, dto );
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @RequestMapping( value = "/{projectId}", method = RequestMethod.PUT )
-    public ResponseEntity update( @PathVariable( "projectId" ) String projectId, @RequestBody ProjectDTO dto ) {
+    public ResponseEntity update( @PathVariable( "projectId" ) String projectId, @RequestBody ProjectUpdateDTO dto ) {
         Project project = taskBoard.getProjectById(projectId);
 
         if (project == null)
@@ -98,7 +107,7 @@ public class ProjectController {
     }
 
     @RequestMapping( value = "/{projectId}/lanes", method = RequestMethod.POST )
-    public ResponseEntity createLane( @PathVariable( "projectId" ) String projectId, @RequestBody LaneDTO dto, UriComponentsBuilder b ) {
+    public ResponseEntity createLane( @PathVariable( "projectId" ) String projectId, @RequestBody LaneUpdateDTO dto, UriComponentsBuilder b ) {
         Project project = taskBoard.getProjectById(projectId);
 
         if (project == null)

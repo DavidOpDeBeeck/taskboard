@@ -1,6 +1,6 @@
-package be.davidopdebeeck.taskboard.api.core;
+package be.davidopdebeeck.taskboard.api.controller;
 
-import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
+import be.davidopdebeeck.taskboard.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Task;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
 import org.springframework.beans.factory.annotation.Autowired;

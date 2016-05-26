@@ -1,4 +1,4 @@
-package be.davidopdebeeck.taskboard.api.dto;
+package be.davidopdebeeck.taskboard.dto;
 
 public class TaskDTO
 {

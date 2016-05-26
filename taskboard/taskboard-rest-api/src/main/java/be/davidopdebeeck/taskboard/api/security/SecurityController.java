@@ -1,6 +1,6 @@
 package be.davidopdebeeck.taskboard.api.security;
 
-import be.davidopdebeeck.taskboard.api.dto.PasswordDTO;
+import be.davidopdebeeck.taskboard.api.dto.PasswordValidateDTO;
 import be.davidopdebeeck.taskboard.api.dto.TokenDTO;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
@@ -22,7 +22,7 @@ public class SecurityController
     SecurityManager securityManager;
 
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity<TokenDTO> validateProjectPassword( @RequestBody PasswordDTO dto )
+    public ResponseEntity<TokenDTO> validateProjectPassword( @RequestBody PasswordValidateDTO dto )
     {
         TokenDTO token = new TokenDTO();
         Project project = taskBoard.getProjectById( dto.getProjectId() );

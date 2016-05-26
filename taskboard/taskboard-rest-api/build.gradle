@@ -24,10 +24,12 @@ ext {
     mysqlVersion = '5.1.38'
     aspectJVersion = '1.8.9'
     springVersion = '4.2.5.RELEASE'
+    beanUtilsVersion = '1.9.2'
 }
 
 dependencies {
     compile project(":taskboard-domain")
+    compile "commons-beanutils:commons-beanutils:$beanUtilsVersion"
     compile "mysql:mysql-connector-java:$mysqlVersion"
     compile "org.springframework:spring-jdbc:$springVersion"
     compile "org.springframework.boot:spring-boot-starter-web"

@@ -1,4 +1,4 @@
-package be.davidopdebeeck.taskboard.api.core;
+package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.repository.LaneRepository;
 import be.davidopdebeeck.taskboard.repository.ProjectRepository;

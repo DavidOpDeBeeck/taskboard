@@ -1,13 +1,13 @@
-package be.davidopdebeeck.taskboard.api.dto;
+package be.davidopdebeeck.taskboard.dto;
 
-public class LaneDTO
+public class LaneUpdateDTO
 {
 
     private String title;
     private int sequence;
     private boolean completed;
 
-    public LaneDTO() {}
+    public LaneUpdateDTO() {}
 
     public void setTitle( String title )
     {

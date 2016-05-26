@@ -1,7 +1,7 @@
-package be.davidopdebeeck.taskboard.api.core;
+package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.api.Application;
-import be.davidopdebeeck.taskboard.api.dto.TaskDTO;
+import be.davidopdebeeck.taskboard.dto.TaskDTO;
 import be.davidopdebeeck.taskboard.core.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
