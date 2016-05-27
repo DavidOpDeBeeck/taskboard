@@ -37,15 +37,15 @@ public class ProjectsWebTest extends WebTest
         WebElement addField = webDriver.findElement( By.id( "search-add-field" ) );
         WebElement addButton = webDriver.findElement( By.id( "search-add-button" ) );
 
-        int before = getProjectCount();
+        int projectCount = getProjectCount();
 
         addField.click();
         addField.sendKeys( "Test Project" );
         addButton.click();
 
-        waitForTotalProjects( before );
+        waitForTotalProjects( projectCount + 1 );
 
-        assertEquals( before + 1, getProjectCount() );
+        assertEquals( projectCount + 1, getProjectCount() );
     }
 
     @Test
@@ -60,19 +60,18 @@ public class ProjectsWebTest extends WebTest
 
         String[] projectTitles = { "Test Project #1" , "Test Project #2" , "Project #3" };
 
-        int before = getProjectCount();
         for ( String title : projectTitles )
         {
             searchField.click();
             searchField.sendKeys( title );
             addButton.click();
-            waitForTotalProjects( ++before );
+            waitForTotalProjects( getProjectCount() + 1 );
         }
 
         searchField.click();
         searchField.sendKeys( "Test Project" );
 
-        waitForTotalProjects( before + 3 );
+        waitForTotalProjects( 3 );
 
         final List<WebElement> filteredProjects = webDriver.findElements( By.className( "project" ) );
 
@@ -94,9 +93,14 @@ public class ProjectsWebTest extends WebTest
 
     private boolean waitForTotalProjects( int count )
     {
-        return ( new WebDriverWait( webDriver, 5 ) ).until( (ExpectedCondition<Boolean>) d -> getProjectCount() >= count );
+        return ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> getProjectCount() >= count );
     }
 
+
+    private boolean waitForNewProjects( int count )
+    {
+        return ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> getProjectCount() >= count );
+    }
 
     @Override
     protected String context()

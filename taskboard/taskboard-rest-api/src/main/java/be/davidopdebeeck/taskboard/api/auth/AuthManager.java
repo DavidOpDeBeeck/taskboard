@@ -1,6 +1,6 @@
-package be.davidopdebeeck.taskboard.api.security;
+package be.davidopdebeeck.taskboard.api.auth;
 
-public interface SecurityManager
+public interface AuthManager
 {
 
     String save( String key );

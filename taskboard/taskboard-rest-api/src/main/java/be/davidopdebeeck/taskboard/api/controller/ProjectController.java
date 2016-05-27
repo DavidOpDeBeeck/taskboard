@@ -1,7 +1,7 @@
 package be.davidopdebeeck.taskboard.api.controller;
 
 import be.davidopdebeeck.taskboard.dto.*;
-import be.davidopdebeeck.taskboard.api.security.SecurityManager;
+import be.davidopdebeeck.taskboard.api.auth.AuthManager;
 import be.davidopdebeeck.taskboard.core.Lane;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.service.TaskBoard;
@@ -24,7 +24,7 @@ public class ProjectController {
     TaskBoard taskBoard;
 
     @Autowired
-    SecurityManager securityManager;
+    AuthManager authManager;
 
     @RequestMapping( method = RequestMethod.GET )
     public ResponseEntity<Collection<ProjectDTO>> get() {

@@ -1,16 +1,16 @@
-package be.davidopdebeeck.taskboard.api.security;
+package be.davidopdebeeck.taskboard.api.auth;
 
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-public class SecurityManagerImpl implements SecurityManager
+public class AuthManagerImpl implements AuthManager
 {
 
     Map<String, List<String>> map;
 
-    public SecurityManagerImpl()
+    public AuthManagerImpl()
     {
         this.map = new HashMap<>();
     }

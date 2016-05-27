@@ -1,14 +1,14 @@
-package be.davidopdebeeck.taskboard.api.dto;
+package be.davidopdebeeck.taskboard.api.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude( JsonInclude.Include.NON_NULL )
-public class TokenDTO
+public class AuthResponseDTO
 {
     private String token;
     private boolean success;
 
-    public TokenDTO() {}
+    public AuthResponseDTO() {}
 
     public void setToken( String token )
     {

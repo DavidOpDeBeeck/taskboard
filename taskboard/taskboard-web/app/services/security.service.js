@@ -5,13 +5,6 @@
 
     function securityService( $resource, apiUrl, $uibModal, $q, $cookies, $routeParams ) {
 
-        let modal = {
-            templateUrl: 'app/security/security.html',
-            controller: 'SecurityController',
-            controllerAs: 'security',
-            backdrop: 'static'
-        };
-
         let Auth = $resource( apiUrl + "/authenticate", {}, {
             post: {
                 method: "POST",
@@ -33,7 +26,7 @@
             return request()
                 .then( response => {
                     if ( response.code && response.code == 401 ) {
-                        return authenticate( $routeParams.id )
+                        return authenticate( $routeParams.id , response.title )
                             .then( request )
                             .then( res => res );
                     }
@@ -41,7 +34,7 @@
                 } );
         }
 
-        function authenticate( projectId ) {
+        function authenticate( projectId , projectTitle) {
             let securityModal;
             let endpoint = ( id, password ) => Auth.post( {
                     'projectId': id,
@@ -49,7 +42,15 @@
                 } )
                 .$promise;
             let promise = ( resolve, reject ) => {
-                securityModal = $uibModal.open( modal );
+                securityModal = $uibModal.open( {
+                    templateUrl: 'app/security/security.html',
+                    controller: 'SecurityController',
+                    controllerAs: 'security',
+                    backdrop: 'static',
+                    resolve: {
+                        'projectTitle' : () => projectTitle
+                    }
+                } );
                 securityModal.result
                     .then( result => {
                         endpoint( projectId, result.password )

@@ -1,7 +1,7 @@
-package be.davidopdebeeck.taskboard.api.security;
+package be.davidopdebeeck.taskboard.api.auth;
 
-import be.davidopdebeeck.taskboard.api.security.exception.TokenInvalidException;
-import be.davidopdebeeck.taskboard.api.security.exception.TokenNotFoundException;
+import be.davidopdebeeck.taskboard.api.auth.exception.TokenInvalidException;
+import be.davidopdebeeck.taskboard.api.auth.exception.TokenNotFoundException;
 import be.davidopdebeeck.taskboard.core.Project;
 import be.davidopdebeeck.taskboard.repository.LaneRepository;
 import be.davidopdebeeck.taskboard.repository.ProjectRepository;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Component
-public class SecurityInterceptor implements HandlerInterceptor
+public class AuthInterceptor implements HandlerInterceptor
 {
 
     @Autowired
@@ -31,7 +31,7 @@ public class SecurityInterceptor implements HandlerInterceptor
     TaskRepository taskRepository;
 
     @Autowired
-    SecurityManager securityManager;
+    AuthManager authManager;
 
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
@@ -62,7 +62,7 @@ public class SecurityInterceptor implements HandlerInterceptor
                 Cookie[] cookies = request.getCookies();
 
                 if ( cookies == null )
-                    throw new TokenNotFoundException();
+                    throw new TokenNotFoundException(project);
 
                 boolean passwordValid = false, cookieFound = false;
 
@@ -73,7 +73,7 @@ public class SecurityInterceptor implements HandlerInterceptor
                         String password = cookie.getValue();
                         cookieFound = true;
 
-                        if ( securityManager.validate( project.getId(), password ) )
+                        if ( authManager.validate( project.getId(), password ) )
                         {
                             passwordValid = true;
                         }
@@ -81,10 +81,10 @@ public class SecurityInterceptor implements HandlerInterceptor
                 }
 
                 if ( !cookieFound )
-                    throw new TokenNotFoundException();
+                    throw new TokenNotFoundException(project);
 
                 if ( !passwordValid )
-                    throw new TokenInvalidException();
+                    throw new TokenInvalidException(project);
             }
 
             return true;

@@ -3,13 +3,14 @@
     angular.module( 'taskBoardApp.controllers' )
         .controller( "SecurityController", SecurityController );
 
-    function SecurityController( $uibModalInstance, $location ) {
+    function SecurityController( $uibModalInstance, $location , projectTitle ) {
 
         let vm = this;
 
         ///////////////////
 
-        vm.password;
+        vm.password = "";
+        vm.projectTitle = projectTitle;
 
         ///////////////////
 
