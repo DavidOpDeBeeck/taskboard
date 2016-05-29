@@ -1,5 +1,3 @@
-group 'be.davidopdebeeck'
-
 buildscript {
     repositories {
         jcenter()
