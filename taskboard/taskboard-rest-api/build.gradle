@@ -17,10 +17,11 @@ targetCompatibility = 1.8
 repositories {
     jcenter()
     mavenCentral()
+    maven { url 'http://repo1.maven.org/maven2' }
 }
 
 ext {
-    junitVersion = '4.11'
+    junitVersion = '4.12'
     mysqlVersion = '5.1.38'
     aspectJVersion = '1.8.9'
     springVersion = '4.2.5.RELEASE'

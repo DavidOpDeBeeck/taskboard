@@ -7,7 +7,7 @@ targetCompatibility = 1.8
 
 ext {
     mysqlVersion = '5.1.38'
-    junitVersion = '4.11'
+    junitVersion = '4.12'
     hibernatEMVersion = '5.1.0.Final'
     hibernateValidationVersion = '5.2.4.Final'
     springVersion = '4.2.6.RELEASE'
