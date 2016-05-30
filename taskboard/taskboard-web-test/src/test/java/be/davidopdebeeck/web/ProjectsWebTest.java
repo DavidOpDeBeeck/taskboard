@@ -67,6 +67,7 @@ public class ProjectsWebTest extends WebTest
             searchField.click();
             searchField.sendKeys( title );
             addButton.click();
+            ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> searchField.getText().isEmpty() );
         }
 
         waitForTotalProjects( projectCount + 3 );
