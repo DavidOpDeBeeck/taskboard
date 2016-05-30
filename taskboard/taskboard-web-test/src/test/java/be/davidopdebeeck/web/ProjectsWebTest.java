@@ -60,13 +60,16 @@ public class ProjectsWebTest extends WebTest
 
         String[] projectTitles = { "Test Project #1" , "Test Project #2" , "Project #3" };
 
+        int projectCount = getProjectCount();
+
         for ( String title : projectTitles )
         {
             searchField.click();
             searchField.sendKeys( title );
             addButton.click();
-            waitForTotalProjects( getProjectCount() + 1 );
         }
+
+        waitForTotalProjects( projectCount + 3 );
 
         searchField.click();
         searchField.sendKeys( "Test Project" );
