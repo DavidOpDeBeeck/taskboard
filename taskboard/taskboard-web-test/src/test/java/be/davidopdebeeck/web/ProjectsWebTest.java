@@ -87,7 +87,7 @@ public class ProjectsWebTest extends WebTest
         assertTrue( titles.contains( projectTitles[ 0 ] ) );
         assertTrue( titles.contains( projectTitles[ 1 ] ) );
         assertTrue( !titles.contains( projectTitles[ 2 ] ) );
-    }
+    */}
 
     private int getProjectCount()
     {
@@ -104,5 +104,5 @@ public class ProjectsWebTest extends WebTest
     protected String context()
     {
         return "#/projects";
-    }*/
+    }
 }
