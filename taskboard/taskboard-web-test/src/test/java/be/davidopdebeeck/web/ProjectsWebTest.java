@@ -58,7 +58,7 @@ public class ProjectsWebTest extends WebTest
         WebElement searchField = webDriver.findElement( By.id( "search-add-field" ) );
         WebElement addButton = webDriver.findElement( By.id( "search-add-button" ) );
 
-        String[] projectTitles = { "Test Project #1" , "Test Project #2" , "Project #3" };
+        String[] projectTitles = { "Test Project #1" , "Test Project #2" , "Test Project #3" };
 
         int projectCount = getProjectCount();
 
@@ -67,7 +67,7 @@ public class ProjectsWebTest extends WebTest
             searchField.click();
             searchField.sendKeys( title );
             addButton.click();
-            ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> searchField.getText().isEmpty() );
+            searchField.clear();
         }
 
         waitForTotalProjects( projectCount + 3 );
@@ -96,12 +96,6 @@ public class ProjectsWebTest extends WebTest
     }
 
     private boolean waitForTotalProjects( int count )
-    {
-        return ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> getProjectCount() >= count );
-    }
-
-
-    private boolean waitForNewProjects( int count )
     {
         return ( new WebDriverWait( webDriver, 10 ) ).until( (ExpectedCondition<Boolean>) d -> getProjectCount() >= count );
     }
