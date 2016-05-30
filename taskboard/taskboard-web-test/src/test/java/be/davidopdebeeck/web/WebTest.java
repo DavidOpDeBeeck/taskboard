@@ -2,12 +2,14 @@ package be.davidopdebeeck.web;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -28,7 +30,7 @@ public abstract class WebTest
     private static String nodeAddress;
     private static int nodePort;
 
-    protected WebDriver webDriver;
+    protected static WebDriver webDriver;
 
     @BeforeClass
     public static void beforeClass()
@@ -39,19 +41,16 @@ public abstract class WebTest
 
         nodeAddress = System.getProperty( "webdriver.node.address" );
         nodePort = Integer.parseInt( System.getProperty( "webdriver.node.port" ) );
-    }
 
-    @Before
-    public void setUp() throws ConfigurationException
-    {
-        try
+        webDriver = new FirefoxDriver(  );
+        /*try
         {
             webDriver = new RemoteWebDriver( new URL( "http://" + nodeAddress + ":" + nodePort + "/wd/hub" ), DesiredCapabilities.chrome() );
-        } catch ( MalformedURLException ignored ) {}
+        } catch ( MalformedURLException ignored ) {}*/
     }
 
-    @After
-    public void breakDown()
+    @AfterClass
+    public static void afterClass()
     {
         webDriver.close();
     }
