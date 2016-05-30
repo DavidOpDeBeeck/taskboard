@@ -37,8 +37,7 @@ public class ProjectsWebTest extends WebTest
 
         ( new WebDriverWait( webDriver, 10 ) ).until( ( ExpectedCondition<Boolean> ) d -> webDriver.findElements( By.className( "project" ) ).size() >= projectCount + 1 );
 
-        assertEquals( projectCount + 1, webDriver.findElements( By.className( "project" ) )
-                .size() );
+        assertTrue( projectCount < webDriver.findElements( By.className( "project" ) ).size() );
     }
 
     @Test
