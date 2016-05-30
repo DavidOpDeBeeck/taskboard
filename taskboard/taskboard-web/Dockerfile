@@ -1,4 +1,4 @@
-FROM node:5.10.1-wheezy
+FROM node:6.2.0
 
 # Python
 
