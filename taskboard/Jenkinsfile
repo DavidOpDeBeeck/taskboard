@@ -332,7 +332,7 @@ def runContainer( name , image , options )
 
 def removeContainer( name )
 {
-  sh "docker rm -f $name || echo 'Container $name does not exist!'"
+  sh "docker rm -f -v $name || echo 'Container $name does not exist!'"
 }
 
 def createNetwork( name )
