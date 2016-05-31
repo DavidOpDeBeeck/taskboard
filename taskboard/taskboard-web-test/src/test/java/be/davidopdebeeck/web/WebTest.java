@@ -41,11 +41,12 @@ public abstract class WebTest
 
         nodeAddress = System.getProperty( "webdriver.node.address" );
         nodePort = Integer.parseInt( System.getProperty( "webdriver.node.port" ) );
-
+        webDriver = new FirefoxDriver(  );
+/*
         try
         {
             webDriver = new RemoteWebDriver( new URL( "http://" + nodeAddress + ":" + nodePort + "/wd/hub" ), DesiredCapabilities.chrome() );
-        } catch ( MalformedURLException ignored ) {}
+        } catch ( MalformedURLException ignored ) {}*/
     }
 
     @AfterClass

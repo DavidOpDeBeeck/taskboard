@@ -67,7 +67,7 @@ public class ProjectsWebTest extends WebTest
         searchField.click();
         searchField.sendKeys( "Test Project" );
 
-        ( new WebDriverWait( webDriver, 10 ) ).until( ( ExpectedCondition<Boolean> ) d -> webDriver.findElements( By.className( "project" ) ).size() >= 3 );
+        ( new WebDriverWait( webDriver, 10 ) ).until( ( ExpectedCondition<Boolean> ) d -> webDriver.findElements( By.className( "project" ) ).size() >= 2 );
 
         final List<WebElement> filteredProjects = webDriver.findElements( By.className( "project" ) );
 
