@@ -330,7 +330,7 @@ def removeContainer( name )
 
 def createNetwork( name )
 {
-  sh "docker network create -d bridge $name"
+  sh "docker network create -d overlay $name"
 }
 
 def removeNetwork( name )
