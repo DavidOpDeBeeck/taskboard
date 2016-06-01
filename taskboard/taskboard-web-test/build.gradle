@@ -2,9 +2,6 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 ext {
     xmlApiVersion = '1.4.01'
     fluentleniumVersion = '0.10.3'

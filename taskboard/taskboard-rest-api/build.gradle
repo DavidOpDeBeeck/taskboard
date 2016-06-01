@@ -1,17 +1,3 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE")
-    }
-}
-
-apply plugin: 'spring-boot'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 repositories {
     jcenter()
     mavenCentral()
@@ -36,12 +22,4 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
     compile "org.aspectj:aspectjweaver:$aspectJVersion"
     testCompile "junit:junit:$junitVersion"
-}
-
-springBoot {
-    mainClass = "be.davidopdebeeck.taskboard.api.Application"
-}
-
-bootRun {
-    systemProperties System.properties
 }
